@@ -33,27 +33,4 @@ class User extends Authenticatable
             ?Hash::make($value)
             : $value;
     }
-
-    public function isAdmin(): bool
-    {
-        return $this->role === 'admin';
-    }
-
-    // Relation avec Doctor
-    public function doctor()
-    {
-        return $this->hasOne(Doctor::class);
-    }
-
-    // Relation avec Patient
-    public function patient()
-    {
-        return $this->hasOne(Patient::class);
-    }
-
-    // Relation avec Notifications
-    public function notifications()
-    {
-        return $this->hasMany(Notification::class);
-    }
 }

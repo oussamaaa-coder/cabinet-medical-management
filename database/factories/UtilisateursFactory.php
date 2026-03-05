@@ -1,0 +1,47 @@
+<?php
+
+namespace Database\Factories;
+
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Hash;
+
+class UserFactory extends Factory
+{
+    public function definition(): array
+    {
+        return [
+            'name' => fake()->name(),
+            'email' => fake()->unique()->safeEmail(),
+            'password' => Hash::make('password'),
+            'role' => fake()->randomElement(['doctor', 'nurse', 'secretary']),
+        ];
+    }
+
+    public function admin(): static
+    {
+        return $this->state(fn(array $attributes) => [
+        'role' => 'admin',
+        ]);
+    }
+
+    public function doctor(): static
+    {
+        return $this->state(fn(array $attributes) => [
+        'role' => 'doctor',
+        ]);
+    }
+
+    public function nurse(): static
+    {
+        return $this->state(fn(array $attributes) => [
+        'role' => 'nurse',
+        ]);
+    }
+
+    public function secretary(): static
+    {
+        return $this->state(fn(array $attributes) => [
+        'role' => 'secretary',
+        ]);
+    }
+}

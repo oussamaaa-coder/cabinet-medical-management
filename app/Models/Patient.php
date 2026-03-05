@@ -10,10 +10,13 @@ class Patient extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',   // FK vers User
+        'first_name',   // FK vers User
+        'last_name',
         'phone',
-        'address',
-        'birthdate',
+        'email',
+        'birth_date',
+        'gender',
+        'adress',
     ];
 
     // Un patient appartient à un User

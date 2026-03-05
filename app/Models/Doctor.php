@@ -10,9 +10,11 @@ class Doctor extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',   // FK vers User
+        'first_name',   // FK vers User
+        'last_name',
         'specialty',
         'phone',
+        'email',
     ];
 
     // Un doctor appartient à un User

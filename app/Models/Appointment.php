@@ -13,6 +13,7 @@ class Appointment extends Model
         'doctor_id',   // FK vers Doctor
         'patient_id',  // FK vers Patient
         'appointment_date',
+        'appointment_time',
         'status',
     ];
 

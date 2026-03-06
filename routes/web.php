@@ -6,8 +6,14 @@ use App\Http\Controllers\PatientController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\UtilisateursController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\AdminOnly;
 use App\Models\User;
+
+Route::get('/', function () {
+    return redirect()->route('login');
+});
+
 // Auth
 Route::get('/login', [AuthController::class , 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class , 'login'])->name('login.post');
@@ -17,29 +23,10 @@ Route::post('/logout', [AuthController::class , 'logout'])->name('logout');
 Route::middleware(['auth'])->group(function () {
 
     // Dashboard
-     Route::get('/dashboard', function () {
-
-    $totalUsers = User::count();
-    $totalAdmins = User::where('role','admin')->count();
-    $totalDoctors = User::where('role','doctor')->count();
-    $totalNurses = User::where('role','nurse')->count();
-    $totalSecretaries = User::where('role','secretary')->count();
-
-    // Add this: Fetch users, filtered by role if provided, with pagination
-    $users = User::when(request('role'), function ($query) {
-        return $query->where('role', request('role'));
-    })->paginate(10);  // Change get() to paginate(10) for 10 items per page
-
-    return view('dashbord_admin.index', compact(
-        'totalUsers',
-        'totalAdmins',
-        'totalDoctors',
-        'totalNurses',
-        'totalSecretaries',
-        'users'  // Add this
-    ));
-
-})->name('dashboard');
+    Route::get('/dashboard', function () {
+            return view('dashboard');
+        }
+        )->name('dashboard');
 
         // Routes pour les doctors
         Route::resource('doctors', DoctorController::class);
@@ -50,6 +37,10 @@ Route::middleware(['auth'])->group(function () {
 
         // Routes pour les appointments
         Route::resource('appointments', AppointmentController::class);
+
+        // Profile Management
+        Route::get('/profile', [ProfileController::class , 'edit'])->name('profile.edit');
+        Route::post('/profile', [ProfileController::class , 'update'])->name('profile.update');
 
         Route::get('/patients/list', [PatientController::class, 'listAll'])
     ->name('patients.dashboardPatient.listAll');

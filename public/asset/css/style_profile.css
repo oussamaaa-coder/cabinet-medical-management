@@ -1,0 +1,182 @@
+:root {
+    --bg-color: #f4f7f5;
+    --card-bg: #ffffff;
+    --accent: #3a7d5c;
+    --accent-hover: #2a6048;
+    --text-primary: #1a2b22;
+    --text-secondary: #4a6358;
+    --border-color: #dce8e1;
+    --shadow: 0 4px 20px rgba(26, 43, 34, 0.08);
+}
+
+.profile-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.profile-header {
+    margin-bottom: 2rem;
+}
+
+.profile-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.profile-card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+}
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 3rem;
+}
+
+@media (max-width: 768px) {
+    .profile-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.photo-section {
+    text-align: center;
+}
+
+.current-photo {
+    width: 180px;
+    height: 180px;
+    border-radius: 20px;
+    object-fit: cover;
+    border: 4px solid var(--border-color);
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.photo-placeholder {
+    width: 180px;
+    height: 180px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    font-weight: 700;
+    margin: 0 auto 1.5rem;
+    border: 4px solid var(--border-color);
+}
+
+.upload-btn {
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    background: var(--accent);
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.upload-btn:hover {
+    background: var(--accent-hover);
+    transform: translateY(-2px);
+}
+
+#profile_photo {
+    display: none;
+}
+
+.form-section h3 {
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+    font-size: 1.2rem;
+    border-bottom: 2px solid var(--bg-color);
+    padding-bottom: 0.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(58, 125, 92, 0.1);
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 1rem;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+}
+
+.submit-btn:hover {
+    background: var(--accent-hover);
+    box-shadow: 0 4px 12px rgba(58, 125, 92, 0.2);
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.alert-success {
+    background: #eaf3ee;
+    color: #1e4531;
+    border: 1px solid #c4ddd0;
+}
+
+.error-message {
+    color: #c0593a;
+    font-size: 0.85rem;
+    margin-top: 0.4rem;
+}

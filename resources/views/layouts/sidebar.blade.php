@@ -16,6 +16,7 @@
             <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="icon" type="image/svg+xml" href="{{ asset('asset/img/logo.svg') }}">
         <title>MediCal — @yield('title', 'Tableau de bord')</title>
     </head>
     <body>
@@ -171,6 +172,24 @@
                     <span class="nav-badge warn">3</span>
                 </a>
 
+                @if(auth()->check() && auth()->user()->role === 'admin')
+                <span class="nav-section-label">Admin</span>
+
+                <a
+                    href="{{ route('utilisateurs.index') }}"
+                    class="nav-item {{ request()->is('utilisateurs*') ? 'active' : '' }}">
+                    <span class="nav-icon">
+                        <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </span>
+                    <span class="nav-label">Gestion des Utilisateurs</span>
+                </a>
+                @endif
+
                 <span class="nav-section-label">Paramètres</span>
 
                 <a
@@ -184,6 +203,18 @@
                         </svg>
                     </span>
                     <span class="nav-label">Configuration</span>
+                </a>
+
+                <a
+                    href="{{ route('profile.edit') }}"
+                    class="nav-item {{ request()->routeIs('profile.edit') ? 'active' : '' }}">
+                    <span class="nav-icon">
+                        <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </span>
+                    <span class="nav-label">Mon Profil</span>
                 </a>
 
                 <a
@@ -201,17 +232,24 @@
             </nav>
 
             {{-- ── UTILISATEUR ── --}}
-            <div class="sidebar-user">
-                <div class="user-avatar">DR</div>
+            <div class="sidebar-user" onclick="window.location.href='{{ route('profile.edit') }}'" style="cursor: pointer;">
+                @if(auth()->user()->profile_photo)
+                    <img src="{{ asset('profiles/' . auth()->user()->profile_photo) }}" alt="Avatar" class="user-avatar" style="object-fit: cover;">
+                @else
+                    <div class="user-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 2)) }}</div>
+                @endif
                 <div class="user-info">
-                    <div class="user-name" style="color: #3A7D5C">Dr. Rachida Alaoui</div>
-                    <div class="user-role" style="color: #3A7D5C">Médecin Généraliste</div>
+                    <div class="user-name" style="color: #3A7D5C">{{ auth()->user()->name }}</div>
+                    <div class="user-role" style="color: #3A7D5C">{{ ucfirst(auth()->user()->role) }}</div>
                 </div>
-                <div class="user-action" title="Se déconnecter">
+                <div class="user-action" title="Se déconnecter" onclick="event.stopPropagation(); document.getElementById('logout-form').submit();">
                     <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/>
                     </svg>
                 </div>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                    @csrf
+                </form>
             </div>
 
         </aside>

@@ -7,6 +7,7 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ asset('asset/css/style_login.css') }}">
+<link rel="icon" type="image/svg+xml" href="{{ asset('asset/img/logo.svg') }}">
 
 </head>
 

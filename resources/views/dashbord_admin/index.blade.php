@@ -74,10 +74,10 @@
         <table>
           <thead>
             <tr>
-              <th>Utilisateur</th>
-              <th>Rôle</th>
+              <th style="width: 60px;">Photo</th>
+              <th>Nom</th>
               <th>Email</th>
-              <th>Date de création</th>
+              <th>Rôle</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -85,14 +85,19 @@
             @foreach($users as $user)
             <tr>
               <td>
-                <div class="user-cell">
-                  <div class="user-avatar avatar-{{ $user->role }}">{{ strtoupper(substr($user->name, 0, 2)) }}</div>
-                  <div>
-                    <div class="user-name-text">{{ $user->name }}</div>
-                    <div class="user-email-text">#U-{{ str_pad($user->id, 4, '0', STR_PAD_LEFT) }}</div>
+                @if($user->profile_photo)
+                  <img src="{{ asset('profiles/' . $user->profile_photo) }}" alt="Avatar" style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover; border: 1px solid #dce8e1;">
+                @else
+                  <div style="width: 40px; height: 40px; border-radius: 8px; background: #eaf3ee; color: #3a7d5c; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; border: 1px solid #dce8e1;">
+                    {{ strtoupper(substr($user->name, 0, 2)) }}
                   </div>
-                </div>
+                @endif
               </td>
+              <td>
+                <div class="user-name-text">{{ $user->name }}</div>
+                <div class="user-email-text">#U-{{ str_pad($user->id, 4, '0', STR_PAD_LEFT) }}</div>
+              </td>
+              <td>{{ $user->email }}</td>
               <td>
                 <span class="role-badge role-{{ $user->role }}">
                   @switch($user->role)

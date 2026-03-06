@@ -17,29 +17,10 @@ Route::post('/logout', [AuthController::class , 'logout'])->name('logout');
 Route::middleware(['auth'])->group(function () {
 
     // Dashboard
-     Route::get('/dashboard', function () {
-
-    $totalUsers = User::count();
-    $totalAdmins = User::where('role','admin')->count();
-    $totalDoctors = User::where('role','doctor')->count();
-    $totalNurses = User::where('role','nurse')->count();
-    $totalSecretaries = User::where('role','secretary')->count();
-
-    // Add this: Fetch users, filtered by role if provided, with pagination
-    $users = User::when(request('role'), function ($query) {
-        return $query->where('role', request('role'));
-    })->paginate(10);  // Change get() to paginate(10) for 10 items per page
-
-    return view('dashbord_admin.index', compact(
-        'totalUsers',
-        'totalAdmins',
-        'totalDoctors',
-        'totalNurses',
-        'totalSecretaries',
-        'users'  // Add this
-    ));
-
-})->name('dashboard');
+    Route::get('/dashboard', function () {
+            return view('dashboard');
+        }
+        )->name('dashboard');
 
         // Routes pour les doctors
         Route::resource('doctors', DoctorController::class);

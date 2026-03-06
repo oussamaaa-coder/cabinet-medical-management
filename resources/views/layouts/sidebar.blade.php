@@ -171,6 +171,24 @@
                     <span class="nav-badge warn">3</span>
                 </a>
 
+                @if(auth()->check() && auth()->user()->role === 'admin')
+                <span class="nav-section-label">Admin</span>
+
+                <a
+                    href="{{ route('utilisateurs.index') }}"
+                    class="nav-item {{ request()->is('utilisateurs*') ? 'active' : '' }}">
+                    <span class="nav-icon">
+                        <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </span>
+                    <span class="nav-label">Gestion des Utilisateurs</span>
+                </a>
+                @endif
+
                 <span class="nav-section-label">Paramètres</span>
 
                 <a

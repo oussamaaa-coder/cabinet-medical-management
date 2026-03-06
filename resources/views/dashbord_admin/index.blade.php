@@ -1,17 +1,11 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MediCal — Gestion des Utilisateurs</title>
-<link rel="stylesheet" href="{{ asset('asset/css/style_Gestion_user.css') }}">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-</head>
-<body>
-
 @extends('layouts.sidebar')
-<!-- MAIN -->
-<main class="main">
+
+@section('title', 'Gestion des Utilisateurs')
+
+@section('content')
+<link rel="stylesheet" href="{{ asset('asset/css/style_dashboard_admin.css') }}">
+<!-- MAIN CONTENT -->
+<div class="main-user-admin">
   <header class="topbar">
     <div class="topbar-left">
       <div class="topbar-title">Gestion des Utilisateurs</div>
@@ -31,7 +25,6 @@
       </a>
     </div>
   </header>
-@section('content')
   <div class="content">
     <!-- STATS -->
     <div class="stats-row">
@@ -168,7 +161,7 @@
       @endif
     </div>
   </div>
-</main>
+</div>
 
 <!-- DELETE CONFIRMATION MODAL -->
 <div class="modal-overlay" id="deleteModal">
@@ -237,5 +230,3 @@
   });
 </script>
 @endsection
-</body>
-</html>

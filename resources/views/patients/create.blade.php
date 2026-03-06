@@ -26,23 +26,20 @@
     </div>
   </div>
 
-  <form action="{{ route('patients.store') }}" method="POST" enctype="multipart/form-data">
+  <form id="patientForm" action="{{ route('patients.store') }}" method="POST" enctype="multipart/form-data">
     @csrf
 
     <!-- Toggle majeur/mineur -->
     <input type="checkbox" id="is_majeur" name="is_majeur" value="1" checked>
-    <div class="toggle-card">
-    <label for="is_majeur">
-
-        <div class="toggle-pill"></div>
-        <div class="toggle-label-text">
-          <strong>Patient majeur</strong>
-          <small>18 ans ou plus</small>
-    </div>
-        <svg style="margin-left:auto;width:20px;height:20px;color:var(--text-muted)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-          <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
-        </svg>
+    <label for="is_majeur" class="toggle-card">
+      <div class="toggle-pill"></div>
+      <div class="toggle-label-text">
+        <strong>Patient majeur</strong>
+        <small>18 ans ou plus</small>
       </div>
+      <svg style="margin-left:auto;width:20px;height:20px;color:var(--text-muted)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+      </svg>
     </label>
 
 
@@ -116,9 +113,9 @@
           <div class="form-group">
             <label>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.07 1.18 2 2 0 012.05 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-              Téléphone
+              Téléphone <span class="required-star">*</span>
             </label>
-            <input type="text" name="phone" id="phone" class="form-control" placeholder="+212 6 12 34 56 78">
+            <input type="text" name="phone" id="phone" class="form-control" placeholder="06XXXXXXXX" required>
           </div>
 
           <!-- Email -->
@@ -310,7 +307,7 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0z"/><path d="M12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
               Nom <span class="required-star">*</span>
             </label>
-            <input type="text" name="first_name_mineur" id="first_name_mineur" class="form-control" required>
+            <input type="text" name="first_name_mineur" id="first_name_mineur" class="form-control">
           </div>
 
           <div class="form-group">
@@ -318,7 +315,7 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0z"/><path d="M12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
               Prénom <span class="required-star">*</span>
             </label>
-            <input type="text" name="last_name_mineur" id="last_name_mineur" class="form-control" required>
+            <input type="text" name="last_name_mineur" id="last_name_mineur" class="form-control">
           </div>
 
           <div class="form-group">
@@ -326,7 +323,7 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
               Sexe <span class="required-star">*</span>
             </label>
-            <select name="gender_mineur" id="gender_mineur" class="form-control" required>
+            <select name="gender_mineur" id="gender_mineur" class="form-control">
               <option value="">Sélectionner</option>
               <option value="Masculin">Masculin</option>
               <option value="Féminin">Féminin</option>
@@ -338,7 +335,7 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
               Date de naissance <span class="required-star">*</span>
             </label>
-            <input type="date" name="birth_date_mineur" id="birth_date_mineur" class="form-control" required>
+            <input type="date" name="birth_date_mineur" id="birth_date_mineur" class="form-control">
           </div>
         </div>
       </div>
@@ -358,7 +355,7 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
               Type de responsable
             </label>
-            <select name="type_responsable" class="form-control">
+            <select name="type_responsable" id="type_responsable" class="form-control">
               <option value="">Sélectionner</option>
               <option value="Parent">Parent</option>
               <option value="Tuteur">Tuteur</option>
@@ -370,7 +367,7 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4M14 15h4"/></svg>
               CIN / Passeport <span class="required-star">*</span>
             </label>
-            <input type="text" name="cin_responsable" class="form-control" required>
+            <input type="text" name="cin_responsable" id="cin_responsable" class="form-control">
           </div>
 
           <div class="form-group">
@@ -378,7 +375,7 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0z"/><path d="M12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
               Nom <span class="required-star">*</span>
             </label>
-            <input type="text" name="nom_responsable" class="form-control" required>
+            <input type="text" name="nom_responsable" id="nom_responsable" class="form-control">
           </div>
 
           <div class="form-group">
@@ -386,7 +383,7 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0z"/><path d="M12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
               Prénom <span class="required-star">*</span>
             </label>
-            <input type="text" name="prenom_responsable" class="form-control" required>
+            <input type="text" name="prenom_responsable" id="prenom_responsable" class="form-control">
           </div>
 
           <div class="form-group">
@@ -394,7 +391,7 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.07 1.18 2 2 0 012.05 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
               Téléphone <span class="required-star">*</span>
             </label>
-            <input type="text" name="phone_responsable" class="form-control" required>
+            <input type="text" name="phone_responsable" id="phone_responsable" class="form-control" placeholder="06XXXXXXXX">
           </div>
 
           <div class="form-group">
@@ -467,15 +464,43 @@
   const blocMajeur = document.getElementById('bloc-majeur');
   const blocMineur = document.getElementById('bloc-mineur');
 
-  checkbox.addEventListener('change', function () {
-    if (this.checked) {
+  // Select fields that are required in Majeur mode
+  const majeurRequired = [
+    document.getElementById('first_name'),
+    document.getElementById('last_name'),
+    document.getElementById('gender'),
+    document.getElementById('birth_date'),
+    document.getElementById('phone')
+  ];
+
+  // Select fields that should be required in Mineur mode
+  const mineurRequired = [
+    document.getElementById('first_name_mineur'),
+    document.getElementById('last_name_mineur'),
+    document.getElementById('gender_mineur'),
+    document.getElementById('birth_date_mineur'),
+    document.getElementById('type_responsable'),
+    document.getElementById('cin_responsable'),
+    document.getElementById('nom_responsable'),
+    document.getElementById('prenom_responsable'),
+    document.getElementById('phone_responsable')
+  ];
+
+  function toggleRequired() {
+    if (checkbox.checked) {
       blocMajeur.style.display = 'block';
       blocMineur.style.display = 'none';
+      majeurRequired.forEach(el => el.setAttribute('required', ''));
+      mineurRequired.forEach(el => el.removeAttribute('required'));
     } else {
       blocMajeur.style.display = 'none';
       blocMineur.style.display = 'block';
+      majeurRequired.forEach(el => el.removeAttribute('required'));
+      mineurRequired.forEach(el => el.setAttribute('required', ''));
     }
-  });
+  }
+
+  checkbox.addEventListener('change', toggleRequired);
 
   // file upload feedback
   document.getElementById('photo').addEventListener('change', function () {
@@ -485,17 +510,11 @@
       span.textContent = this.files[0].name;
     }
   });
+
+  // Initial state call
+  toggleRequired();
 </script>
 @endsection
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-

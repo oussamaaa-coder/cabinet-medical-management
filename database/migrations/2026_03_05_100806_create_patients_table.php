@@ -11,7 +11,7 @@ return new class extends Migration {
             $table->id(); // PK
             $table->string('first_name');
             $table->string('last_name');
-            $table->string('phone');
+            $table->string('phone')->nullable();
             $table->date('birth_date')->nullable();
             $table->string('gender')->nullable();
             $table->string('nationality')->nullable();
@@ -47,7 +47,7 @@ return new class extends Migration {
             $table->text('antecedents_personnels')->nullable();
             $table->text('hospitalisations')->nullable();
 
-                        $table->timestamps();
+            $table->timestamps();
         });
     }
 

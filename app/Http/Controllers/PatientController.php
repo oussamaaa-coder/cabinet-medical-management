@@ -8,26 +8,26 @@ use App\Models\Patient;
 class PatientController extends Controller
 {
     public function index()
-{
-    // Tous les patients
-    $patients = Patient::all();
+    {
+        // Tous les patients
+        $patients = Patient::all();
 
-    // Total patients
-    $totalPatients = Patient::count();
+        // Total patients
+        $totalPatients = Patient::count();
 
-    // Patients ajoutés aujourd'hui
-    $patientsPlannedToday = Patient::whereDate('created_at', today())->count();
+        // Patients ajoutés aujourd'hui
+        $patientsPlannedToday = Patient::whereDate('created_at', today())->count();
 
-    // Patients consultés aujourd'hui (temporaire)
-    $patientsConsultedToday = 0;
+        // Patients consultés aujourd'hui (temporaire)
+        $patientsConsultedToday = 0;
 
-    return view('patients.index', compact(
-        'patients',
-        'totalPatients',
-        'patientsPlannedToday',
-        'patientsConsultedToday'
-    ));
-}
+        return view('patients.index', compact(
+            'patients',
+            'totalPatients',
+            'patientsPlannedToday',
+            'patientsConsultedToday'
+        ));
+    }
 
     public function create()
     {
@@ -43,19 +43,20 @@ class PatientController extends Controller
             $request->validate([
                 'first_name' => 'required|string|max:255',
                 'last_name' => 'required|string|max:255',
-                'phone' => ['required','regex:/^(0[67]\d{8}|212[67]\d{8})$/'],
+                'phone' => ['required', 'regex:/^(0[67]\d{8}|212[67]\d{8})$/'],
                 'email' => 'nullable|email|max:255|unique:patients,email',
                 'birth_date' => 'required|date',
                 'gender' => 'required|in:male,female',
                 'address' => 'nullable|string'
             ]);
 
-        } else {
+        }
+        else {
 
             $request->validate([
                 'first_name_mineur' => 'required|string|max:255',
                 'last_name_mineur' => 'required|string|max:255',
-                'phone_responsable' => ['required','regex:/^(0[67]\d{8}|212[67]\d{8})$/'],
+                'phone_responsable' => ['required', 'regex:/^(0[67]\d{8}|212[67]\d{8})$/'],
                 'email_responsable' => 'nullable|email|max:255',
                 'birth_date_mineur' => 'required|date',
                 'gender_mineur' => 'required|in:Masculin,Féminin',
@@ -69,48 +70,40 @@ class PatientController extends Controller
         $data = $request->all();
 
         // Upload photo
-        if($request->hasFile('photo')){
+        if ($request->hasFile('photo')) {
 
             $file = $request->file('photo');
-            $filename = time().'_'.$file->getClientOriginalName();
+            $filename = time() . '_' . $file->getClientOriginalName();
             $file->move(public_path('uploads/patients'), $filename);
 
-            $data['photo'] = 'uploads/patients/'.$filename;
+            $data['photo'] = 'uploads/patients/' . $filename;
         }
 
         if ($is_majeur) {
 
             $data['is_majeur'] = 1;
 
-        } else {
+        }
+        else {
 
             $data['is_majeur'] = 0;
-
             $data['first_name'] = $request->first_name_mineur;
             $data['last_name'] = $request->last_name_mineur;
             $data['birth_date'] = $request->birth_date_mineur;
+            $data['groupe_sanguin'] = $request->groupe_sanguin_mineur;
 
             if ($request->gender_mineur == 'Masculin') {
                 $data['gender'] = 'male';
             }
-
-            if ($request->gender_mineur == 'Féminin') {
+            elseif ($request->gender_mineur == 'Féminin') {
                 $data['gender'] = 'female';
             }
-
-            $data['type_responsable'] = $request->type_responsable;
-            $data['cin_responsable'] = $request->cin_responsable;
-            $data['nom_responsable'] = $request->nom_responsable;
-            $data['prenom_responsable'] = $request->prenom_responsable;
-            $data['phone_responsable'] = $request->phone_responsable;
-            $data['email_responsable'] = $request->email_responsable;
-            $data['profession_responsable'] = $request->profession_responsable;
         }
 
         Patient::create($data);
 
         return redirect()->route('patients.index')
-            ->with('success','Patient ajouté avec succès.');
+            ->with('success', 'Patient ajouté avec succès.');
     }
 
     public function edit($id)
@@ -130,18 +123,19 @@ class PatientController extends Controller
             $request->validate([
                 'first_name' => 'required|string|max:255',
                 'last_name' => 'required|string|max:255',
-                'phone' => ['required','regex:/^(0[67]\d{8}|212[67]\d{8})$/'],
-                'email' => 'nullable|email|max:255|unique:patients,email,'.$id,
+                'phone' => ['required', 'regex:/^(0[67]\d{8}|212[67]\d{8})$/'],
+                'email' => 'nullable|email|max:255|unique:patients,email,' . $id,
                 'birth_date' => 'required|date',
                 'gender' => 'required|in:male,female',
             ]);
 
-        } else {
+        }
+        else {
 
             $request->validate([
                 'first_name_mineur' => 'required|string|max:255',
                 'last_name_mineur' => 'required|string|max:255',
-                'phone_responsable' => ['required','regex:/^(0[67]\d{8}|212[67]\d{8})$/'],
+                'phone_responsable' => ['required', 'regex:/^(0[67]\d{8}|212[67]\d{8})$/'],
                 'birth_date_mineur' => 'required|date',
                 'gender_mineur' => 'required|in:Masculin,Féminin',
                 'type_responsable' => 'required',
@@ -153,32 +147,32 @@ class PatientController extends Controller
 
         $data = $request->all();
 
-        if($request->hasFile('photo')){
+        if ($request->hasFile('photo')) {
 
             $file = $request->file('photo');
-            $filename = time().'_'.$file->getClientOriginalName();
+            $filename = time() . '_' . $file->getClientOriginalName();
             $file->move(public_path('uploads/patients'), $filename);
 
-            $data['photo'] = 'uploads/patients/'.$filename;
+            $data['photo'] = 'uploads/patients/' . $filename;
         }
 
         if ($is_majeur) {
-
             $data['is_majeur'] = 1;
-
-        } else {
+            $data['groupe_sanguin'] = $request->groupe_sanguin;
+        }
+        else {
 
             $data['is_majeur'] = 0;
 
             $data['first_name'] = $request->first_name_mineur;
             $data['last_name'] = $request->last_name_mineur;
             $data['birth_date'] = $request->birth_date_mineur;
+            $data['groupe_sanguin'] = $request->groupe_sanguin_mineur;
 
             if ($request->gender_mineur == 'Masculin') {
                 $data['gender'] = 'male';
             }
-
-            if ($request->gender_mineur == 'Féminin') {
+            elseif ($request->gender_mineur == 'Féminin') {
                 $data['gender'] = 'female';
             }
 
@@ -194,7 +188,19 @@ class PatientController extends Controller
         $patient->update($data);
 
         return redirect()->route('patients.index')
-            ->with('success','Patient modifié avec succès.');
+            ->with('success', 'Patient modifié avec succès.');
+    }
+
+    public function listAll()
+    {
+        $patients = Patient::latest()->get();
+        return view('patients.list_all', compact('patients'));
+    }
+
+    public function show($id)
+    {
+        $patient = Patient::findOrFail($id);
+        return view('patients.show', compact('patient'));
     }
 
     public function destroy($id)
@@ -204,6 +210,6 @@ class PatientController extends Controller
         $patient->delete();
 
         return redirect()->route('patients.index')
-            ->with('success','Patient supprimé.');
+            ->with('success', 'Patient supprimé.');
     }
 }

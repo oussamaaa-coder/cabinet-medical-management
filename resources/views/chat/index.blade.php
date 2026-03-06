@@ -207,7 +207,7 @@
                 let html = '';
                 messages.forEach(msg => {
                     const isOwn = msg.user_id === currentUserId;
-                    const photo = msg.user.profile_photo ? `/storage/${msg.user.profile_photo}` : 'https://ui-avatars.com/api/?name=' + msg.user.name;
+                    const photo = msg.user.profile_photo ? `/profiles/${msg.user.profile_photo}` : 'https://ui-avatars.com/api/?name=' + msg.user.name;
                     const date = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
                     html += `

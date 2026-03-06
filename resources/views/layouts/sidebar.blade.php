@@ -13,6 +13,9 @@
         <link
             href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
             rel="stylesheet">
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <title>MediCal — @yield('title', 'Tableau de bord')</title>
     </head>
     <body>
@@ -48,7 +51,7 @@
                         </svg>
                     </div>
                     <div>
-                        <div class="logo-text">MediCal</div>
+                        <div class="logo-text" style="color: #3A7D5C">MediCal</div>
                         <div class="logo-sub">Gestion de Rendez-vous</div>
                     </div>
                 </div>
@@ -201,8 +204,8 @@
             <div class="sidebar-user">
                 <div class="user-avatar">DR</div>
                 <div class="user-info">
-                    <div class="user-name">Dr. Rachida Alaoui</div>
-                    <div class="user-role">Médecin Généraliste</div>
+                    <div class="user-name" style="color: #3A7D5C">Dr. Rachida Alaoui</div>
+                    <div class="user-role" style="color: #3A7D5C">Médecin Généraliste</div>
                 </div>
                 <div class="user-action" title="Se déconnecter">
                     <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

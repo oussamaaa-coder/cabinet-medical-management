@@ -7,93 +7,203 @@ use App\Models\Patient;
 
 class PatientController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
-    {
-        $patients = Patient::all();
-        return view('patients.index',compact('patients'));
+{
+    // Tous les patients
+    $patients = Patient::all();
 
-    }
+    // Total patients
+    $totalPatients = Patient::count();
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    // Patients ajoutés aujourd'hui
+    $patientsPlannedToday = Patient::whereDate('created_at', today())->count();
+
+    // Patients consultés aujourd'hui (temporaire)
+    $patientsConsultedToday = 0;
+
+    return view('patients.index', compact(
+        'patients',
+        'totalPatients',
+        'patientsPlannedToday',
+        'patientsConsultedToday'
+    ));
+}
+
     public function create()
     {
         return view('patients.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request) {
-        $request -> validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'phone' => ['required','regex:/^(0[67]\d{8}|212[67]\d{8})$/'],
-            'email'=>'email|max:255|unique:patients,email',
-            'birth_date'=>'required',
-            'gender' => 'required|in:male,female',
-            'address' => 'nullable|string',
-        ]);
-        Patient::create($request->all());
-        return redirect()->route('patients.index');
-}
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function store(Request $request)
     {
-        $patient = Patient::findorFail($id);
-        return view('patients.show',compact('patient'));
+        $is_majeur = $request->has('is_majeur');
+
+        if ($is_majeur) {
+
+            $request->validate([
+                'first_name' => 'required|string|max:255',
+                'last_name' => 'required|string|max:255',
+                'phone' => ['required','regex:/^(0[67]\d{8}|212[67]\d{8})$/'],
+                'email' => 'nullable|email|max:255|unique:patients,email',
+                'birth_date' => 'required|date',
+                'gender' => 'required|in:male,female',
+                'address' => 'nullable|string'
+            ]);
+
+        } else {
+
+            $request->validate([
+                'first_name_mineur' => 'required|string|max:255',
+                'last_name_mineur' => 'required|string|max:255',
+                'phone_responsable' => ['required','regex:/^(0[67]\d{8}|212[67]\d{8})$/'],
+                'email_responsable' => 'nullable|email|max:255',
+                'birth_date_mineur' => 'required|date',
+                'gender_mineur' => 'required|in:Masculin,Féminin',
+                'type_responsable' => 'required',
+                'cin_responsable' => 'required',
+                'nom_responsable' => 'required',
+                'prenom_responsable' => 'required',
+            ]);
+        }
+
+        $data = $request->all();
+
+        // Upload photo
+        if($request->hasFile('photo')){
+
+            $file = $request->file('photo');
+            $filename = time().'_'.$file->getClientOriginalName();
+            $file->move(public_path('uploads/patients'), $filename);
+
+            $data['photo'] = 'uploads/patients/'.$filename;
+        }
+
+        if ($is_majeur) {
+
+            $data['is_majeur'] = 1;
+
+        } else {
+
+            $data['is_majeur'] = 0;
+
+            $data['first_name'] = $request->first_name_mineur;
+            $data['last_name'] = $request->last_name_mineur;
+            $data['birth_date'] = $request->birth_date_mineur;
+
+            if ($request->gender_mineur == 'Masculin') {
+                $data['gender'] = 'male';
+            }
+
+            if ($request->gender_mineur == 'Féminin') {
+                $data['gender'] = 'female';
+            }
+
+            $data['type_responsable'] = $request->type_responsable;
+            $data['cin_responsable'] = $request->cin_responsable;
+            $data['nom_responsable'] = $request->nom_responsable;
+            $data['prenom_responsable'] = $request->prenom_responsable;
+            $data['phone_responsable'] = $request->phone_responsable;
+            $data['email_responsable'] = $request->email_responsable;
+            $data['profession_responsable'] = $request->profession_responsable;
+        }
+
+        Patient::create($data);
+
+        return redirect()->route('patients.index')
+            ->with('success','Patient ajouté avec succès.');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function edit($id)
     {
-        $patient = Patient::findorFail($id);
+        $patient = Patient::findOrFail($id);
         return view('patients.edit', compact('patient'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, $id)
     {
-        $request -> validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'phone' => ['required', 'regex:/^(0[67]\d{8}|212[67]\d{8})$/'],
-            'email'=>'email|max:255|unique:patients,email,' .$id,
-            'birth_date'=>'required',
-            'gender' => 'required|in:male,female',
-            'address' => 'nullable|string',
-        ]);
-        $patient = Patient::findorFail($id);
-        $patient->update([
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'phone' => $request->phone,
-            'email' => $request->email,
-            'birth_date' => $request->birth_date,
-            'gender' => $request->gender,
-            'address' => $request->address,
-        ]);
-        return redirect()->route('patients.index');
+        $patient = Patient::findOrFail($id);
+
+        $is_majeur = $request->has('is_majeur');
+
+        if ($is_majeur) {
+
+            $request->validate([
+                'first_name' => 'required|string|max:255',
+                'last_name' => 'required|string|max:255',
+                'phone' => ['required','regex:/^(0[67]\d{8}|212[67]\d{8})$/'],
+                'email' => 'nullable|email|max:255|unique:patients,email,'.$id,
+                'birth_date' => 'required|date',
+                'gender' => 'required|in:male,female',
+            ]);
+
+        } else {
+
+            $request->validate([
+                'first_name_mineur' => 'required|string|max:255',
+                'last_name_mineur' => 'required|string|max:255',
+                'phone_responsable' => ['required','regex:/^(0[67]\d{8}|212[67]\d{8})$/'],
+                'birth_date_mineur' => 'required|date',
+                'gender_mineur' => 'required|in:Masculin,Féminin',
+                'type_responsable' => 'required',
+                'cin_responsable' => 'required',
+                'nom_responsable' => 'required',
+                'prenom_responsable' => 'required',
+            ]);
+        }
+
+        $data = $request->all();
+
+        if($request->hasFile('photo')){
+
+            $file = $request->file('photo');
+            $filename = time().'_'.$file->getClientOriginalName();
+            $file->move(public_path('uploads/patients'), $filename);
+
+            $data['photo'] = 'uploads/patients/'.$filename;
+        }
+
+        if ($is_majeur) {
+
+            $data['is_majeur'] = 1;
+
+        } else {
+
+            $data['is_majeur'] = 0;
+
+            $data['first_name'] = $request->first_name_mineur;
+            $data['last_name'] = $request->last_name_mineur;
+            $data['birth_date'] = $request->birth_date_mineur;
+
+            if ($request->gender_mineur == 'Masculin') {
+                $data['gender'] = 'male';
+            }
+
+            if ($request->gender_mineur == 'Féminin') {
+                $data['gender'] = 'female';
+            }
+
+            $data['type_responsable'] = $request->type_responsable;
+            $data['cin_responsable'] = $request->cin_responsable;
+            $data['nom_responsable'] = $request->nom_responsable;
+            $data['prenom_responsable'] = $request->prenom_responsable;
+            $data['phone_responsable'] = $request->phone_responsable;
+            $data['email_responsable'] = $request->email_responsable;
+            $data['profession_responsable'] = $request->profession_responsable;
+        }
+
+        $patient->update($data);
+
+        return redirect()->route('patients.index')
+            ->with('success','Patient modifié avec succès.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy($id)
     {
-        $patient = Patient::findorFail($id);
+        $patient = Patient::findOrFail($id);
+
         $patient->delete();
-        return redirect()->route('patients.index');
+
+        return redirect()->route('patients.index')
+            ->with('success','Patient supprimé.');
     }
 }

@@ -1,0 +1,304 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --accent:         #3a7d5c;
+    --accent-light:   #eaf3ee;
+    --accent-mid:     #c4ddd0;
+    --accent-glow:    rgba(58,125,92,.15);
+    --accent-dark:    #2a6048;
+    --text-primary:   #1a2b22;
+    --text-secondary: #4a6358;
+    --text-muted:     #8aad9c;
+    --text-label:     #6b8c7d;
+    --border:         #dce8e1;
+    --bg-field:       #f4f7f5;
+    --ease:           cubic-bezier(.4,0,.2,1);
+    --bg:             #f7fbf8;
+    --surface:        #ffffff;
+    --shadow-sm:      0 1px 3px rgba(26,43,34,.06), 0 1px 2px rgba(26,43,34,.04);
+    --shadow-md:      0 4px 16px rgba(26,43,34,.08), 0 1px 4px rgba(26,43,34,.05);
+    --radius-md:      14px;
+    --radius-lg:      20px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text-primary);
+  }
+
+  /* ─── Page wrapper ─── */
+  .patient-page {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 4rem;
+    animation: fadeUp .45s var(--ease) both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(18px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  /* ─── Page title ─── */
+  .page-title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+  .page-title-icon {
+    width: 48px; height: 48px;
+    background: var(--accent-light);
+    border-radius: 14px;
+    display: grid; place-items: center;
+    flex-shrink: 0;
+  }
+  .page-title-icon svg { width:24px; height:24px; color:var(--accent); }
+  .page-title h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.2;
+  }
+  .page-title span {
+    display: block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .85rem;
+    color: var(--text-muted);
+    font-weight: 400;
+    margin-top: 2px;
+  }
+
+  /* ─── Toggle majeur / mineur ─── */
+  .toggle-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 1.1rem 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: .9rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    transition: border-color .2s var(--ease), box-shadow .2s var(--ease);
+  }
+  .toggle-card:hover { border-color: var(--accent-mid); box-shadow: var(--shadow-md); }
+
+  /* pill toggle */
+  .toggle-pill {
+    position: relative;
+    width: 46px; height: 26px;
+    background: var(--accent-mid);
+    border-radius: 999px;
+    transition: background .25s var(--ease);
+    flex-shrink: 0;
+  }
+  .toggle-pill::after {
+    content:'';
+    position: absolute;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    top: 3px; left: 3px;
+    transition: transform .25s var(--ease);
+    box-shadow: 0 1px 4px rgba(0,0,0,.18);
+  }
+  #is_majeur { display: none; }
+  #is_majeur:checked ~ .toggle-card .toggle-pill { background: var(--accent); }
+  #is_majeur:checked ~ .toggle-card .toggle-pill::after { transform: translateX(20px); }
+
+  .toggle-label-text strong {
+    display: block;
+    font-size: .95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .toggle-label-text small {
+    font-size: .8rem;
+    color: var(--text-muted);
+  }
+
+  /* ─── Section card ─── */
+  .section-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    animation: fadeUp .4s var(--ease) both;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    margin-bottom: 1.6rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-icon {
+    width: 36px; height: 36px;
+    background: var(--accent-light);
+    border-radius: 10px;
+    display: grid; place-items: center;
+    flex-shrink: 0;
+  }
+  .section-icon svg { width: 18px; height: 18px; color: var(--accent); }
+  .section-header h3, .section-header h4 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .section-header h4 { font-size: 1rem; }
+
+  /* ─── Grid layout for fields ─── */
+  .fields-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+  }
+  .fields-grid .full-width { grid-column: 1 / -1; }
+  @media (max-width: 600px) {
+    .fields-grid { grid-template-columns: 1fr; }
+    .fields-grid .full-width { grid-column: 1; }
+  }
+
+  /* ─── Form group ─── */
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: .45rem;
+  }
+
+  .form-group label {
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--text-label);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+  }
+  .form-group label svg {
+    width: 14px; height: 14px;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+  .required-star { color: #e05a5a; margin-left: 2px; }
+
+  /* ─── Input / select / textarea ─── */
+  .form-control {
+    background: var(--bg-field);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: .65rem .9rem;
+    font-size: .92rem;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text-primary);
+    transition: border-color .2s var(--ease), box-shadow .2s var(--ease), background .2s var(--ease);
+    outline: none;
+    width: 100%;
+  }
+  .form-control::placeholder { color: var(--text-muted); }
+  .form-control:focus {
+    border-color: var(--accent);
+    background: var(--surface);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+  select.form-control { cursor: pointer; }
+  textarea.form-control { resize: vertical; min-height: 88px; }
+
+  .field-hint {
+    font-size: .75rem;
+    color: var(--text-muted);
+    margin-top: .1rem;
+  }
+
+  /* ─── File upload ─── */
+  .file-upload-wrapper {
+    position: relative;
+  }
+  .file-upload-label {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    background: var(--bg-field);
+    border: 1.5px dashed var(--accent-mid);
+    border-radius: 10px;
+    padding: .9rem 1rem;
+    cursor: pointer;
+    transition: border-color .2s var(--ease), background .2s var(--ease);
+  }
+  .file-upload-label:hover { border-color: var(--accent); background: var(--accent-light); }
+  .file-upload-label svg { width: 22px; height: 22px; color: var(--accent); flex-shrink: 0; }
+  .file-upload-label span { font-size: .88rem; color: var(--text-secondary); }
+  .file-upload-label small { font-size: .75rem; color: var(--text-muted); }
+  input[type="file"] { display: none; }
+
+  /* ─── Buttons ─── */
+  .form-actions {
+    display: flex;
+    gap: 1rem;
+    padding-top: .5rem;
+    flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .7rem 1.6rem;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .92rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: background .2s var(--ease), box-shadow .2s var(--ease), transform .15s var(--ease);
+  }
+  .btn svg { width: 17px; height: 17px; }
+  .btn:active { transform: scale(.97); }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(58,125,92,.3);
+  }
+  .btn-primary:hover {
+    background: var(--accent-dark);
+    box-shadow: 0 4px 16px rgba(58,125,92,.38);
+  }
+
+  .btn-secondary {
+    background: var(--bg-field);
+    color: var(--text-secondary);
+    border: 1.5px solid var(--border);
+  }
+  .btn-secondary:hover { background: var(--accent-light); border-color: var(--accent-mid); color: var(--accent-dark); }
+
+  /* ─── Separator ─── */
+  .section-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 1.5rem 0;
+  }
+
+  /* ─── Subsection label ─── */
+  .subsection-label {
+    font-family: 'Fraunces', serif;
+    font-size: .95rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+  .subsection-label svg { width: 16px; height: 16px; color: var(--accent); }

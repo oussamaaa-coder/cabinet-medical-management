@@ -9,14 +9,44 @@ class Patient extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
+     protected $fillable = [
         'first_name',
         'last_name',
         'phone',
-        'email',
         'birth_date',
         'gender',
-        'adress',
+        'nationality',
+        'cin',
+        'assurance',
+        'num_assurance',
+        'langue_parlee',
+        'photo',
+        'email',
+        'address',
+        'is_majeur',
+
+        // Responsable légal
+        'type_responsable',
+        'cin_responsable',
+        'nom_responsable',
+        'prenom_responsable',
+        'phone_responsable',
+        'email_responsable',
+        'profession_responsable',
+
+        // Données médicales
+        'groupe_sanguin',
+        'fratrie',
+        'voie_accouchement',
+        'apgar',
+        'allaitement',
+        'developpement_psychomoteur',
+        'antecedents_familiaux',
+        'allergies',
+        'maladies_chroniques',
+        'medicaments_cours',
+        'antecedents_personnels',
+        'hospitalisations',
     ];
 
     // Un patient appartient à un User

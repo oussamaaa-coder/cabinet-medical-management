@@ -7,10 +7,23 @@ use App\Models\Patient;
 
 class PatientController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Tous les patients
-        $patients = Patient::all();
+        $query = Patient::query();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('last_name', 'like', "%{$search}%")
+                  ->orWhere('first_name', 'like', "%{$search}%")
+                  ->orWhere('cin', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('phone', 'like', "%{$search}%");
+            });
+        }
+
+        // Tous les patients (paginés)
+        $patients = $query->latest()->paginate(5);
 
         // Total patients
         $totalPatients = Patient::count();
@@ -191,12 +204,25 @@ class PatientController extends Controller
             ->with('success', 'Patient modifié avec succès.');
     }
 
-    public function listAll()
-{
-    $patients = Patient::latest()->get();
+    public function listAll(Request $request)
+    {
+        $query = Patient::query();
 
-    return view('patients.dashboardPatient.listAll', compact('patients'));
-}
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('last_name', 'like', "%{$search}%")
+                  ->orWhere('first_name', 'like', "%{$search}%")
+                  ->orWhere('cin', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('phone', 'like', "%{$search}%");
+            });
+        }
+
+        $patients = $query->latest()->paginate(5);
+
+        return view('patients.dashboardPatient.listAll', compact('patients'));
+    }
 
     public function show($id)
     {

@@ -34,7 +34,7 @@ class AppointmentSeeder extends Seeder
             ],
             [
                 'patient_id' => 3,
-                'doctor_id' => 3,
+                'doctor_id' => 2,
                 'date' => now()->toDateString(),
                 'start_time' => '09:00:00',
                 'end_time' => '09:30:00',

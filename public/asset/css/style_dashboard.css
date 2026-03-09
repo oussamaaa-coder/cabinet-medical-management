@@ -38,7 +38,7 @@
 body,
 .content {
     font-family: 'Plus Jakarta Sans', sans-serif;
-    background: var(--bg);
+    background: #f7fbf8;
     color: var(--text);
 }
 

@@ -1,240 +1,555 @@
-/* ═══════════════════════════════════════════════
-   ADMIN USER CREATION — STYLE
-   Adheres to MediCal Premium Design System
-   ═══════════════════════════════════════════════ */
+/* ============================================================
+   style_create_user.css — Nouvel Utilisateur (no emojis, SVG icons)
+   Color palette: green-teal professional theme
+   ============================================================ */
 
-/* ── FORM CARD ── */
-.form-card {
-    background: var(--surface-2);
-    border-radius: var(--radius-xl);
-    border: 1px solid var(--border);
-    width: 100%;
-    max-width: 680px;
-    margin: 0 auto;
-    overflow: hidden;
-    box-shadow: var(--shadow);
-    animation: slideUp 0.5s ease both;
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+    --accent: #3a7d5c;
+    --accent-light: #eaf3ee;
+    --accent-mid: #c4ddd0;
+    --accent-glow: rgba(58, 125, 92, .15);
+    --accent-dark: #2a6048;
+    --text-primary: #1a2b22;
+    --text-secondary: #4a6358;
+    --text-muted: #8aad9c;
+    --text-label: #6b8c7d;
+    --border: #dce8e1;
+    --bg-field: #f4f7f5;
+    --error: #c0392b;
+    --error-bg: #fdf2f1;
+    --error-border: #f0b8b3;
+    --ease: cubic-bezier(.4, 0, .2, 1);
+
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-lg: 18px;
+    --radius-xl: 28px;
+    --shadow-sm: 0 1px 3px rgba(26, 43, 34, .06), 0 1px 2px rgba(26, 43, 34, .04);
+    --shadow-md: 0 4px 16px rgba(26, 43, 34, .08), 0 2px 6px rgba(26, 43, 34, .05);
+    --shadow-lg: 0 12px 40px rgba(26, 43, 34, .10), 0 4px 12px rgba(26, 43, 34, .06);
+    --transition: 200ms var(--ease);
 }
 
-.form-card-header {
-    padding: 32px 40px;
-    border-bottom: 1px solid var(--border);
+/* ── Reset ──────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* ── Layout ─────────────────────────────────────────────── */
+.main-user-admin {
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text-primary);
+    background: var(--bg-field);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ── Topbar ─────────────────────────────────────────────── */
+.topbar {
     display: flex;
     align-items: center;
-    gap: 20px;
-    background: var(--surface-3);
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 32px;
+    background: #ffffff;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.topbar-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -.02em;
+}
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: .78rem;
+    color: var(--text-muted);
+    margin-top: 3px;
+}
+
+.breadcrumb a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: color var(--transition);
+}
+
+.breadcrumb a:hover {
+    color: var(--accent-dark);
+}
+
+.breadcrumb span {
+    color: var(--text-muted);
+}
+
+/* ── Content ────────────────────────────────────────────── */
+.content {
+    flex: 1;
+    padding: 36px 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 72px);
+}
+
+/* ── Form card ──────────────────────────────────────────── */
+.form-card {
+    width: 100%;
+    max-width: 720px;
+    background: #ffffff;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    animation: cardIn .4s var(--ease) both;
+}
+
+@keyframes cardIn {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ── Card header ────────────────────────────────────────── */
+.form-card-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 28px 32px 24px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(135deg, var(--accent-light) 0%, #f0f8f4 100%);
 }
 
 .form-card-icon {
-    width: 56px;
-    height: 56px;
-    border-radius: 16px;
-    background: var(--white);
-    border: 1px solid var(--border);
+    width: 46px;
+    height: 46px;
+    border-radius: var(--radius-md);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
-    box-shadow: var(--shadow-sm);
+    flex-shrink: 0;
+    background: rgba(58, 125, 92, .10);
+    color: var(--accent);
+    border: 1px solid var(--accent-mid);
+}
+
+.form-card-icon svg {
+    width: 22px;
+    height: 22px;
 }
 
 .form-card-title {
-    font-family: var(--font-display);
-    font-size: 20px;
+    font-size: 1.05rem;
     font-weight: 700;
-    color: var(--text);
-    letter-spacing: -0.3px;
+    color: var(--text-primary);
+    letter-spacing: -.02em;
 }
 
 .form-card-subtitle {
-    font-size: 13px;
-    color: var(--text-muted);
+    font-size: .82rem;
+    color: var(--text-label);
     margin-top: 2px;
 }
 
+/* ── Card body ──────────────────────────────────────────── */
 .form-card-body {
-    padding: 40px;
-}
-
-.form-card-footer {
-    padding: 24px 40px;
-    border-top: 1px solid var(--border);
-    background: var(--surface-3);
+    padding: 28px 32px;
     display: flex;
-    justify-content: flex-end;
-    gap: 12px;
+    flex-direction: column;
+    gap: 22px;
 }
 
-/* ── FORM ELEMENTS ── */
+/* ── Alert errors ───────────────────────────────────────── */
+.alert-errors {
+    background: var(--error-bg);
+    border: 1px solid var(--error-border);
+    border-left: 3px solid var(--error);
+    border-radius: var(--radius-md);
+    padding: 14px 18px;
+}
+
+.alert-errors-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: .88rem;
+    font-weight: 600;
+    color: var(--error);
+    margin-bottom: 8px;
+}
+
+.alert-errors-title svg {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+}
+
+.alert-errors ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.alert-errors ul li {
+    font-size: .82rem;
+    color: #922b21;
+    padding-left: 12px;
+    position: relative;
+}
+
+.alert-errors ul li::before {
+    content: '–';
+    position: absolute;
+    left: 0;
+    color: var(--error);
+}
+
+/* ── Form group ─────────────────────────────────────────── */
 .form-group {
-    margin-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
 
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    gap: 18px;
 }
 
 .form-label {
-    display: block;
-    font-family: var(--font-display);
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--text-label);
+    font-size: .79rem;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 10px;
+    letter-spacing: .06em;
+    color: var(--text-label);
 }
 
-.form-input,
-.form-select {
-    width: 100%;
-    padding: 12px 16px;
+.form-input {
+    font-family: 'DM Sans', sans-serif;
+    font-size: .9rem;
+    color: var(--text-primary);
+    background: var(--bg-field);
     border: 1.5px solid var(--border);
-    border-radius: var(--radius);
-    font-family: var(--font-body);
-    font-size: 14px;
-    color: var(--text);
-    background: var(--surface-2);
-    transition: all var(--transition);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    width: 100%;
     outline: none;
+    transition: border-color var(--transition), box-shadow var(--transition),
+        background var(--transition);
 }
 
-.form-input:focus,
-.form-select:focus {
+.form-input::placeholder {
+    color: var(--text-muted);
+}
+
+.form-input:focus {
+    background: #ffffff;
     border-color: var(--accent);
-    background: white;
-    box-shadow: 0 0 0 4px var(--accent-glow);
+    box-shadow: 0 0 0 3px var(--accent-glow);
 }
 
 .form-input.error {
-    border-color: var(--red);
-    background: var(--red-bg);
+    border-color: var(--error);
+    background: var(--error-bg);
+}
+
+.form-input.error:focus {
+    box-shadow: 0 0 0 3px rgba(192, 57, 43, .12);
 }
 
 .form-error {
-    font-size: 12px;
-    color: var(--red);
-    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: .78rem;
+    color: var(--error);
     font-weight: 500;
 }
 
-.form-hint {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-top: 8px;
-    font-style: italic;
+.form-error svg {
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
 }
 
-/* ── ROLE OPTIONS ── */
+/* ── Role options ───────────────────────────────────────── */
 .role-options {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+    gap: 10px;
 }
 
 .role-option {
-    cursor: pointer;
-    position: relative;
+    display: contents;
 }
 
-.role-option input {
+.role-option input[type="radio"] {
     position: absolute;
     opacity: 0;
-    cursor: pointer;
-    height: 0;
-    width: 0;
+    pointer-events: none;
 }
 
 .role-option-card {
-    padding: 16px 20px;
-    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 13px 14px;
     border: 1.5px solid var(--border);
-    background: var(--surface-2);
-    transition: all var(--transition);
-    display: flex;
-    align-items: center;
-    gap: 14px;
+    border-radius: var(--radius-md);
+    background: var(--bg-field);
+    cursor: pointer;
+    transition: border-color var(--transition), background var(--transition),
+        box-shadow var(--transition), transform var(--transition);
+    user-select: none;
 }
 
-.role-option input:checked+.role-option-card {
-    border-color: var(--accent);
-    background: var(--accent-light);
-    box-shadow: 0 4px 12px var(--accent-glow);
-}
-
-.role-option:hover .role-option-card {
+.role-option-card:hover {
     border-color: var(--accent-mid);
-    background: var(--surface-3);
-    transform: translateY(-2px);
-}
-
-.role-option-icon {
-    font-size: 22px;
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    background: var(--white);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: var(--accent-light);
+    transform: translateY(-1px);
     box-shadow: var(--shadow-sm);
 }
 
+.role-option input[type="radio"]:checked+.role-option-card {
+    border-color: var(--accent);
+    background: var(--accent-light);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.role-option-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid var(--accent-mid);
+    transition: background var(--transition);
+}
+
+.role-option-icon svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Per-role tints */
+.role-option:has(input[value="admin"]) .role-option-icon {
+    background: rgba(42, 96, 72, .10);
+    color: #2a6048;
+    border-color: #b3d4c5;
+}
+
+.role-option:has(input[value="doctor"]) .role-option-icon {
+    background: rgba(30, 110, 138, .10);
+    color: #1a5e78;
+    border-color: #a8d4e0;
+}
+
+.role-option:has(input[value="nurse"]) .role-option-icon {
+    background: rgba(122, 63, 160, .10);
+    color: #5e2a80;
+    border-color: #cca8e0;
+}
+
+.role-option:has(input[value="secretary"]) .role-option-icon {
+    background: rgba(138, 90, 30, .10);
+    color: #7a4e10;
+    border-color: #dfc090;
+}
+
 .role-option-name {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 14px;
-    color: var(--text);
+    font-size: .85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -.01em;
 }
 
 .role-option-desc {
-    font-size: 11px;
+    font-size: .74rem;
     color: var(--text-muted);
+    margin-top: 1px;
 }
 
-/* ── ALERTS ── */
-.alert-errors {
-    background: var(--red-bg);
-    border: 1px solid var(--red-border);
-    border-radius: var(--radius);
-    padding: 16px 20px;
-    margin-bottom: 30px;
-    animation: slideUp 0.4s ease both;
-}
-
-.alert-errors-title {
-    font-family: var(--font-display);
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--red);
-    margin-bottom: 8px;
-}
-
-.alert-errors ul {
-    list-style: none;
-    padding-left: 0;
-}
-
-.alert-errors li {
-    font-size: 12.5px;
-    color: var(--red);
-    padding: 2px 0;
+/* ── Card footer ────────────────────────────────────────── */
+.form-card-footer {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 20px 32px;
+    border-top: 1px solid var(--border);
+    background: var(--bg-field);
+    flex-wrap: wrap;
+}
+
+/* ── Buttons ────────────────────────────────────────────── */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 20px;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: .85rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+    transition: background var(--transition), color var(--transition),
+        box-shadow var(--transition), transform var(--transition);
+    white-space: nowrap;
+}
+
+.btn:active {
+    transform: translateY(1px);
+}
+
+.btn svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(58, 125, 92, .25);
+}
+
+.btn-primary:hover {
+    background: var(--accent-dark);
+    box-shadow: 0 4px 14px rgba(58, 125, 92, .35);
+}
+
+.btn-outline {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1.5px solid var(--border);
+}
+
+.btn-outline:hover {
+    background: var(--accent-light);
+    border-color: var(--accent-mid);
+    color: var(--accent-dark);
+}
+
+/* ── btn-add (primary submit button) ───────────────────── */
+.btn-add {
+    display: inline-flex;
+    align-items: center;
     gap: 8px;
+    padding: 11px 24px;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: .88rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+    white-space: nowrap;
+    color: #ffffff;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+    box-shadow: 0 4px 16px rgba(58, 125, 92, .35);
+    position: relative;
+    overflow: hidden;
+    transition: transform var(--transition), box-shadow var(--transition), filter var(--transition);
 }
 
-.alert-errors li::before {
-    content: '•';
-    color: var(--red-lt);
+.btn-add::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,.10) 0%, transparent 100%);
+    pointer-events: none;
 }
 
-/* RESPONSIVE */
-@media (max-width: 768px) {
+.btn-add svg {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+    transition: transform var(--transition);
+}
 
-    .form-row,
+.btn-add span,
+.btn-add:not(:has(span)) {
+    position: relative;
+    z-index: 1;
+}
+
+.btn-add:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(58, 125, 92, .42);
+    filter: brightness(1.05);
+}
+
+.btn-add:hover svg {
+    transform: translateX(2px);
+}
+
+.btn-add:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 12px rgba(58, 125, 92, .30);
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 640px) {
+    .topbar {
+        padding: 14px 16px;
+    }
+
+    .content {
+        padding: 20px 12px;
+    }
+
+    .form-card-header,
+    .form-card-body {
+        padding: 20px 18px;
+    }
+
+    .form-card-footer {
+        padding: 16px 18px;
+        flex-direction: column;
+    }
+
+    .form-card-footer .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .role-options {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 400px) {
     .role-options {
         grid-template-columns: 1fr;
     }

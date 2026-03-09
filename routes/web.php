@@ -13,6 +13,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DossierController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\HelpController;
+use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\ContactController;
 use App\Http\Middleware\AdminOnly;
 use App\Models\User;
 
@@ -24,6 +26,18 @@ Route::get('/', function () {
 Route::get('/login', [AuthController::class , 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class , 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class , 'logout'])->name('logout');
+
+// Mot de passe oublié
+Route::get('/forgot-password', [ForgotPasswordController::class, 'showForm'])->name('password.request');
+Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink'])->name('password.email');
+
+// Réinitialisation du mot de passe (lien reçu par e-mail)
+Route::get('/reset-password/{token}', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])->name('password.update');
+
+// Contactez-nous
+Route::get('/contact', [ContactController::class, 'showForm'])->name('contact');
+Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
 
 // Routes protégées
 Route::middleware(['auth'])->group(function () {

@@ -147,14 +147,14 @@ autocomplete="current-password">
 Se souvenir de moi
 </label>
 
-<a href="#" class="forgot">
+<a href="{{ route('password.request') }}" class="forgot">
 Mot de passe oublié ?
 </a>
 
 </div>
 
 
-<button type="submit" class="btn">
+<button type="submit" class="btn-submit">
 
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
@@ -170,7 +170,7 @@ Mot de passe oublié ?
 
 <div class="form-footer">
 Vous êtes un nouveau docteur ?
-<a href="#">Contactez nous</a>
+<a href="{{ route('contact') }}">Contactez nous</a>
 </div>
 
 </div>

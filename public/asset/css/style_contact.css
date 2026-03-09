@@ -1,0 +1,227 @@
+/* ══════════════════════════════════════════════
+   Contact Page — Extra styles (extends style_login.css)
+   ══════════════════════════════════════════════ */
+
+/* Wide card variant */
+.card--wide {
+  max-width: 1060px;
+}
+
+/* Success alert */
+.alert-success {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 12px;
+  padding: 11px 15px;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 20px;
+  border: 1px solid #bbf7d0;
+  background: #f0fdf4;
+  color: #166534;
+}
+
+.alert-success svg {
+  width: 17px;
+  height: 17px;
+  stroke: #16a34a;
+  flex-shrink: 0;
+}
+
+/* Error alert */
+.alert {
+  display: flex;
+  align-items: center;
+  border-radius: 12px;
+  padding: 11px 15px;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 20px;
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+/* Row with two fields side by side */
+.fields-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* Select wrapper */
+.select-wrap {
+  position: relative;
+}
+
+.select-wrap select {
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 12.5px 44px 12.5px 15px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  color: var(--text-primary);
+  background: var(--bg-field);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  outline: none;
+  cursor: pointer;
+  transition: border-color .14s var(--ease), box-shadow .14s var(--ease), background .14s var(--ease);
+}
+
+.select-wrap select:hover {
+  border-color: var(--accent-mid);
+  background: #fff;
+}
+
+.select-wrap select:focus {
+  border-color: var(--accent);
+  background: #fff;
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.select-wrap select option[value=""][disabled] {
+  color: var(--text-muted);
+}
+
+.select-wrap svg {
+  position: absolute;
+  right: 13px;
+  top: 50%;
+  transform: translateY(-50%) rotate(90deg);
+  width: 16px;
+  height: 16px;
+  stroke: var(--text-muted);
+  pointer-events: none;
+  transition: stroke .14s var(--ease);
+}
+
+.select-wrap:focus-within svg {
+  stroke: var(--accent);
+}
+
+/* Textarea */
+.textarea-wrap textarea {
+  width: 100%;
+  padding: 13px 15px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  color: var(--text-primary);
+  background: var(--bg-field);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  outline: none;
+  resize: vertical;
+  min-height: 108px;
+  transition: border-color .14s var(--ease), box-shadow .14s var(--ease), background .14s var(--ease);
+  line-height: 1.65;
+}
+
+.textarea-wrap textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.textarea-wrap textarea:hover {
+  border-color: var(--accent-mid);
+  background: #fff;
+}
+
+.textarea-wrap textarea:focus {
+  border-color: var(--accent);
+  background: #fff;
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+/* Contact info items on left panel */
+.contact-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.contact-info-item {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 11px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .09);
+  border: 1px solid rgba(255, 255, 255, .13);
+  transition: background .15s var(--ease);
+}
+
+.contact-info-item:hover {
+  background: rgba(255, 255, 255, .16);
+}
+
+.contact-info-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .15);
+  border: 1px solid rgba(255, 255, 255, .2);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.contact-info-icon svg {
+  width: 16px;
+  height: 16px;
+  stroke: rgba(255, 255, 255, .9);
+}
+
+.contact-info-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.contact-info-text span {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, .9);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.contact-info-text small {
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, .65);
+  font-weight: 300;
+}
+
+/* Back link in footer */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--accent);
+  text-decoration: none;
+  transition: gap .15s var(--ease), opacity .14s var(--ease);
+}
+
+.back-link svg {
+  width: 15px;
+  height: 15px;
+  transition: transform .14s var(--ease);
+}
+
+.back-link:hover {
+  opacity: .75;
+}
+
+.back-link:hover svg {
+  transform: translateX(-3px);
+}
+
+/* Responsive */
+@media (max-width: 720px) {
+  .fields-row {
+    grid-template-columns: 1fr;
+  }
+}

@@ -85,7 +85,9 @@
                         </svg>
                     </span>
                     <span class="nav-label">Agenda</span>
-                    <span class="nav-badge">8</span>
+                    @if($todayAppointmentsCount > 0)
+                        <span class="nav-badge">{{ $todayAppointmentsCount }}</span>
+                    @endif
                 </a>
 
                 <a

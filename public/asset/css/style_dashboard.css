@@ -1,0 +1,215 @@
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.stat-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-icon.patients { background: #e3f2fd; }
+.stat-icon.doctors { background: #e8f5e9; }
+.stat-icon.appointments { background: #fff3e0; }
+.stat-icon.today { background: #fce4ec; }
+.stat-icon.week { background: #f3e5f5; }
+.stat-icon.month { background: #e0f7fa; }
+
+.stat-icon svg {
+    width: 28px;
+    height: 28px;
+}
+
+.stat-icon.patients svg { stroke: #1976d2; fill: none; }
+.stat-icon.doctors svg { stroke: #388e3c; fill: none; }
+.stat-icon.appointments svg { stroke: #f57c00; fill: none; }
+.stat-icon.today svg { stroke: #c2185b; fill: none; }
+.stat-icon.week svg { stroke: #7b1fa2; fill: none; }
+.stat-icon.month svg { stroke: #0097a7; fill: none; }
+
+.stat-content h3 {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.stat-content .value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #333;
+    margin: 0.25rem 0 0;
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.chart-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.chart-card h3 {
+    margin: 0 0 1rem;
+    font-size: 1rem;
+    color: #333;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.chart-card h3 svg {
+    width: 20px;
+    height: 20px;
+}
+
+.recent-section {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.recent-section h3 {
+    margin: 0 0 1rem;
+    font-size: 1rem;
+    color: #333;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.recent-section h3 svg {
+    width: 20px;
+    height: 20px;
+}
+
+.appointment-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.appointment-item:last-child {
+    border-bottom: none;
+}
+
+.appointment-time {
+    font-weight: 600;
+    color: #1976d2;
+    min-width: 70px;
+}
+
+.appointment-info {
+    flex: 1;
+    padding: 0 1rem;
+}
+
+.appointment-patient {
+    font-weight: 500;
+    color: #333;
+}
+
+.appointment-type {
+    font-size: 0.875rem;
+    color: #666;
+}
+
+.appointment-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.status-planned { background: #e3f2fd; color: #1976d2; }
+.status-completed { background: #e8f5e9; color: #388e3c; }
+.status-cancelled { background: #ffebee; color: #c62828; }
+.status-urgent { background: #fce4ec; color: #c2185b; }
+
+.percentage-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 2rem;
+    color: #999;
+}
+
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.quick-action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border: 2px solid #eee;
+    border-radius: 12px;
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.quick-action-btn:hover {
+    background: #fff;
+    border-color: #1976d2;
+    color: #1976d2;
+    transform: translateY(-2px);
+}
+
+.quick-action-btn svg {
+    width: 24px;
+    height: 24px;
+}
+
+.quick-action-btn:hover svg {
+    stroke: #1976d2;
+}
+

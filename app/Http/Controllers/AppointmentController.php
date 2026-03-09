@@ -12,14 +12,15 @@ class AppointmentController extends Controller
     public function index()
     {
         $patients = Patient::all();
-        return view('agenda.index', compact('patients'));
+        $doctors = \App\Models\Doctor::all();
+        return view('agenda.index', compact('patients', 'doctors'));
     }
 
     public function getAppointments(Request $request)
     {
         $date = $request->query('date', Carbon::today()->toDateString());
 
-        $appointments = Appointment::with('patient')
+        $appointments = Appointment::with(['patient', 'doctor'])
             ->whereDate('date', $date)
             ->orderBy('start_time')
             ->get();
@@ -49,6 +50,7 @@ class AppointmentController extends Controller
     {
         $validated = $request->validate([
             'patient_id' => 'required|exists:patients,id',
+            'doctor_id' => 'required|exists:doctors,id',
             'date' => 'required|date',
             'start_time' => 'required',
             'end_time' => 'required',
@@ -60,6 +62,7 @@ class AppointmentController extends Controller
         ]);
 
         $appointment = Appointment::create($validated);
+
 
         return response()->json([
             'success' => true,

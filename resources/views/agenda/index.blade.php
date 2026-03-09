@@ -140,15 +140,26 @@
             </div>
             
             <form @submit.prevent="createAppointment" class="p-8 space-y-6">
-                <!-- Patient -->
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Patient</label>
-                    <select x-model="newApt.patient_id" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-medical-blue focus:border-medical-blue outline-none transition-all">
-                        <option value="">Sélectionner un patient</option>
-                        @foreach($patients as $patient)
-                            <option value="{{ $patient->id }}">{{ $patient->name }}</option>
-                        @endforeach
-                    </select>
+                <!-- Patient & Doctor -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Patient</label>
+                        <select x-model="newApt.patient_id" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-medical-blue focus:border-medical-blue outline-none transition-all">
+                            <option value="">Sélectionner un patient</option>
+                            @foreach($patients as $patient)
+                                <option value="{{ $patient->id }}">{{ $patient->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Médecin</label>
+                        <select x-model="newApt.doctor_id" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-medical-blue focus:border-medical-blue outline-none transition-all">
+                            <option value="">Sélectionner un médecin</option>
+                            @foreach($doctors as $doctor)
+                                <option value="{{ $doctor->id }}">Dr. {{ $doctor->first_name }} {{ $doctor->last_name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
@@ -320,6 +331,7 @@
             
             newApt: {
                 patient_id: '',
+                doctor_id: '',
                 date: '',
                 start_time: '09:00',
                 end_time: '09:30',
@@ -512,14 +524,24 @@
                     },
                     body: JSON.stringify(this.newApt)
                 })
-                .then(res => res.json())
+                .then(res => {
+                    if (!res.ok) throw new Error('Erreur lors de la création');
+                    return res.json();
+                })
                 .then(data => {
                     if (data.success) {
                         this.showNewModal = false;
                         this.fetchDailyAppointments();
-                        this.fetchAppointments(); // Refresh calendar dots
+                        this.fetchAppointments();
                         this.resetNewApt();
+                        alert('Rendez-vous créé avec succès !');
+                    } else {
+                        alert(data.message || 'Erreur lors de la création');
                     }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Erreur: Impossible de créer le rendez-vous. Vérifiez tous les champs.');
                 });
             },
 
@@ -572,6 +594,7 @@
             resetNewApt() {
                 this.newApt = {
                     patient_id: '',
+                    doctor_id: '',
                     date: '',
                     start_time: '09:00',
                     end_time: '09:30',

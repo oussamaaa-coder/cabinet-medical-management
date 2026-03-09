@@ -239,7 +239,15 @@ class PatientController extends Controller
 
     public function show($id)
     {
-        $patient = Patient::findOrFail($id);
+        $patient = Patient::with([
+            'appointments' => function($q) {
+                $q->with('doctor')->latest('date');
+            },
+            'prescriptions' => function($q) {
+                $q->with(['doctor', 'items'])->latest('prescription_date');
+            }
+        ])->findOrFail($id);
+
         return view('patients.show', compact('patient'));
     }
 

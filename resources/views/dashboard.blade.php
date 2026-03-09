@@ -242,7 +242,7 @@
                     <line x1="12" y1="8" x2="12" y2="16"/>
                     <line x1="8" y1="12" x2="16" y2="12"/>
                 </svg>
-                Nouveau RDV
+                <span>Nouveau RDV</span>
             </a>
             <a href="{{ route('patients.create') }}" class="quick-action-btn">
                 <svg viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -251,14 +251,14 @@
                     <line x1="20" y1="8" x2="20" y2="14"/>
                     <line x1="23" y1="11" x2="17" y2="11"/>
                 </svg>
-                Nouveau Patient
+                <span>Nouveau Patient</span>
             </a>
             <a href="{{ route('agenda.index') }}" class="quick-action-btn">
                 <svg viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="3" y="4" width="18" height="18" rx="2"/>
                     <path d="M16 2v4M8 2v4M3 10h18"/>
                 </svg>
-                Voir l'Agenda
+                <span>Voir l'Agenda</span>
             </a>
             <a href="{{ route('patients.index') }}" class="quick-action-btn">
                 <svg viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -267,7 +267,7 @@
                     <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
                     <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
                 </svg>
-                Liste Patients
+                <span>Liste Patients</span>
             </a>
             <a href="{{ route('prescriptions.create') }}" class="quick-action-btn">
                 <svg viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -275,13 +275,13 @@
                     <rect x="9" y="3" width="6" height="4" rx="1"/>
                     <path d="M9 12h6M9 16h4"/>
                 </svg>
-                Nouvelle Ordonnance
+                <span>Nouvelle Ordonnance</span>
             </a>
             <a href="{{ route('chat.index') }}" class="quick-action-btn">
                 <svg viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                 </svg>
-                Discussion
+                <span>Discussion</span>
             </a>
         </div>
     </div>

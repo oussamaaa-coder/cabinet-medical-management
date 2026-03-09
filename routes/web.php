@@ -10,6 +10,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DossierController;
 use App\Http\Middleware\AdminOnly;
 use App\Models\User;
 
@@ -61,6 +62,9 @@ Route::middleware(['auth'])->group(function () {
         // Prescription Routes
         Route::resource('prescriptions', PrescriptionController::class);
         Route::get('/prescriptions/{id}/print', [PrescriptionController::class , 'print'])->name('prescriptions.print');
+
+        // Dossiers Routes
+        Route::get('/dossiers', [DossierController::class, 'index'])->name('dossiers.index');
 
         // Gestion des utilisateurs (admin only)
         Route::middleware([AdminOnly::class])->group(function () {

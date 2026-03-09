@@ -1,25 +1,40 @@
-!
-
-
 @extends('layouts.sidebar')
 
 @section('content')
 <div class="topbar">
     <div class="breadcrumb">
         <a href="{{ route('doctors.index') }}">Médecins</a>
-        <span class="sep">›</span>
+        <span class="sep">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </span>
         <span>Liste</span>
     </div>
+
+    <a href="{{ route('doctors.create') }}" class="btn-new">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        Nouveau Docteur
+    </a>
 </div>
 
 <div class="doctors-container">
     <div class="table-header">
-        <h3>Liste des Docteurs</h3>
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div class="settings-card-icon" style="width: 32px; height: 32px; background: var(--accent-light); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            </div>
+            <h3>Liste des Docteurs</h3>
+        </div>
         <form action="{{ route('doctors.index') }}" method="GET" class="search-form">
             <input type="text" name="search" id="doctor-search" class="search-input" placeholder="Nom, Email, Spécialité..." value="{{ request('search') }}">
-            <button type="submit" class="btn-search">Chercher</button>
+            <button type="submit" class="btn-search">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                Chercher
+            </button>
             @if(request('search'))
-                <a href="{{ route('doctors.index') }}" class="btn-reset">Réinitialiser</a>
+                <a href="{{ route('doctors.index') }}" class="btn-reset" title="Réinitialiser" style="display: flex; align-items: center; gap: 4px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                    Reset
+                </a>
             @endif
         </form>
     </div>
@@ -47,6 +62,16 @@
                             <a href="{{ route('doctors.show', $doctor->id) }}" class="btn-action view" title="Voir">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                             </a>
+                            <a href="{{ route('doctors.edit', $doctor->id) }}" class="btn-action edit" title="Éditer">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            </a>
+                            <form action="{{ route('doctors.destroy', $doctor->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce docteur ?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn-action delete" title="Supprimer">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                </button>
+                            </form>
                         </div>
                     </td>
                 </tr>

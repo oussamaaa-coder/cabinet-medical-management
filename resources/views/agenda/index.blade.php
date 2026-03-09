@@ -54,9 +54,14 @@
                     >
                         <div class="flex justify-between items-start">
                             <span class="text-sm font-semibold" :class="isSelected(date) ? 'text-white' : 'text-gray-700'" x-text="date"></span>
-                            <template x-if="isToday(date)">
-                                <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-green-500 text-white font-bold uppercase tracking-wider">Aujourd'hui</span>
-                            </template>
+                            <div class="flex flex-col items-end gap-1">
+                                <template x-if="isToday(date)">
+                                    <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-green-500 text-white font-bold uppercase tracking-wider">Aujourd'hui</span>
+                                </template>
+                                <template x-if="isHoliday(date)">
+                                    <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-red-100 text-red-600 font-bold uppercase tracking-wider">Férié</span>
+                                </template>
+                            </div>
                         </div>
                         
                         <!-- Appointment Indicators -->
@@ -79,6 +84,9 @@
             <div class="flex items-center justify-between">
                 <h3 class="text-xl font-bold text-gray-800">
                     Planning du <span x-text="formatFullDate(selectedDate)"></span>
+                    <template x-if="getHolidayNameForSelectedDate()">
+                        <span class="block text-sm text-red-500 font-semibold" x-text="getHolidayNameForSelectedDate()"></span>
+                    </template>
                 </h3>
                 <button @click="showNewModal = true" class="bg-medical-blue text-white px-4 py-2 rounded-xl font-semibold flex items-center gap-2 hover:bg-opacity-90 transition-all shadow-md shadow-green-100">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
@@ -325,6 +333,24 @@
             selectedDate: '', // Format: YYYY-MM-DD
             dailyAppointments: [],
             monthlyAppointments: {}, // Cache by date
+            holidays: {
+                '2026-01-01': "Jour de l'An",
+                '2026-01-11': "Manifeste de l'Indépendance",
+                '2026-03-20': "Aïd el-Fitr",
+                '2026-03-21': "Aïd el-Fitr",
+                '2026-05-01': "Fête du Travail",
+                '2026-05-27': "Aïd el-Adha",
+                '2026-05-28': "Aïd el-Adha",
+                '2026-06-17': "1er Moharram",
+                '2026-07-30': "Fête du Trône",
+                '2026-08-14': "Allégeance Oued Eddahab",
+                '2026-08-20': "Révolution du Roi et du Peuple",
+                '2026-08-21': "Fête de la Jeunesse",
+                '2026-08-26': "Aïd el-Mawlid",
+                '2026-08-27': "Aïd el-Mawlid",
+                '2026-11-06': "Marche Verte",
+                '2026-11-18': "Fête de l'Indépendance"
+            },
 
             showNewModal: false,
             showDetailModal: false,
@@ -447,6 +473,15 @@
                 // For now, let's say we only show dots if any exist for that day.
                 const dateStr = this.year + '-' + String(this.month + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
                 return this.monthlyAppointments[dateStr] ? [1] : []; // Dummy array for dots
+            },
+
+            isHoliday(day) {
+                const dateStr = this.year + '-' + String(this.month + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
+                return !!this.holidays[dateStr];
+            },
+
+            getHolidayNameForSelectedDate() {
+                return this.holidays[this.selectedDate] || null;
             },
 
             getStatusColor(status) {

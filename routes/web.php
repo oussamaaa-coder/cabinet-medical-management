@@ -43,6 +43,7 @@ Route::middleware(['auth'])->group(function () {
         // Routes pour les appointments
         // Routes pour les appointments (Agenda)
         Route::get('/agenda', [AppointmentController::class , 'index'])->name('agenda.index');
+        Route::get('/appointments/create', [AppointmentController::class , 'create'])->name('appointments.create');
         Route::get('/api/appointments', [AppointmentController::class , 'getAppointments'])->name('api.appointments');
         Route::get('/api/appointments/monthly-status', [AppointmentController::class , 'getMonthlyStatus'])->name('api.appointments.monthly-status');
         Route::post('/appointments/store', [AppointmentController::class , 'store'])->name('appointments.store');

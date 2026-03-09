@@ -10,7 +10,7 @@ class ProfileController extends Controller
 {
     public function edit()
     {
-        $user = Auth::user();
+        $user = Auth::user()->refresh();
         return view('profile.edit', compact('user'));
     }
 
@@ -41,6 +41,9 @@ class ProfileController extends Controller
         }
 
         $user->update($data);
+
+        // Refresh the authenticated user in session
+        auth()->login($user->fresh());
 
         return redirect()->back()->with('success', 'Profile updated successfully!');
     }

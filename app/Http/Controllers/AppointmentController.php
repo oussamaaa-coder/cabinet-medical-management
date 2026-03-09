@@ -93,4 +93,10 @@ class AppointmentController extends Controller
             'message' => 'Rendez-vous annulé.'
         ]);
     }
+
+    public function create()
+    {
+        $patients = Patient::all();
+        return view('appointments.create', compact('patients'));
+    }
 }

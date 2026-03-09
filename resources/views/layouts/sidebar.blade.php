@@ -125,17 +125,7 @@
 
                 <span class="nav-section-label">Gestion</span>
 
-                <a
-                    href="{{ url('/appointments/create') }}"
-                    class="nav-item {{ request()->is('appointments/create') ? 'active' : '' }}">
-                    <span class="nav-icon">
-                        <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="12" cy="12" r="9"/>
-                            <path d="M12 8v8M8 12h8"/>
-                        </svg>
-                    </span>
-                    <span class="nav-label">Nouveau RDV</span>
-                </a>
+                
 
                 <a
                     href="{{ route('prescriptions.index') }}"

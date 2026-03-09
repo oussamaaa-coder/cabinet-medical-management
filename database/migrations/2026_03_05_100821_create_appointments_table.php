@@ -7,13 +7,18 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
+        Schema::dropIfExists('appointments');
         Schema::create('appointments', function (Blueprint $table) {
-            $table->id(); // PK
-            $table->foreignId('doctor_id')->constrained('doctors')->onDelete('cascade');
+            $table->id();
             $table->foreignId('patient_id')->constrained('patients')->onDelete('cascade');
-            $table->date('appointment_date');
-            $table->time('appointment_time'); // obligatoire pour éviter l'erreur que tu avais
-            $table->enum('status', ['pending', 'confirmed', 'canceled'])->default('pending');
+            $table->date('date');
+            $table->time('start_time');
+            $table->time('end_time');
+            $table->string('type'); // Contrôle, Consultation, etc.
+            $table->enum('status', ['planned', 'completed', 'cancelled', 'urgent'])->default('planned');
+            $table->text('notes')->nullable();
+            $table->boolean('sms_reminder')->default(false);
+            $table->boolean('email_reminder')->default(false);
             $table->timestamps();
         });
     }

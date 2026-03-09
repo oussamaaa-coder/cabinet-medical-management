@@ -49,6 +49,8 @@ class Patient extends Model
         'hospitalisations',
     ];
 
+    protected $appends = ['name'];
+
     // Un patient appartient à un User
     public function user()
     {
@@ -64,5 +66,10 @@ class Patient extends Model
     public function prescriptions()
     {
         return $this->hasMany(Prescription::class);
+    }
+
+    public function getNameAttribute()
+    {
+        return "{$this->first_name} {$this->last_name}";
     }
 }

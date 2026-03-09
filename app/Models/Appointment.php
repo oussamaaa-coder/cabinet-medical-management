@@ -10,11 +10,15 @@ class Appointment extends Model
     use HasFactory;
 
     protected $fillable = [
-        'doctor_id',   // FK vers Doctor
-        'patient_id',  // FK vers Patient
-        'appointment_date',
-        'appointment_time',
+        'patient_id',
+        'date',
+        'start_time',
+        'end_time',
+        'type',
         'status',
+        'notes',
+        'sms_reminder',
+        'email_reminder',
     ];
 
     // Relation avec Doctor

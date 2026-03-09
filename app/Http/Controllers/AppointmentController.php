@@ -2,95 +2,95 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Appointment;
 use App\Models\Patient;
-use App\Models\Doctor;
+use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class AppointmentController extends Controller
 {
-    /**
-     * Display a listing of the appointments.
-     */
     public function index()
     {
-        // On récupère tous les rendez-vous avec les infos patient et doctor
-        $appointments = Appointment::with(['patient', 'doctor'])->get();
-        return view('appointments.index', compact('appointments'));
-    }
-
-    /**
-     * Show the form for creating a new appointment.
-     */
-    public function create()
-    {
         $patients = Patient::all();
-        $doctors = Doctor::all();
-        return view('appointments.create', compact('patients', 'doctors'));
+        return view('agenda.index', compact('patients'));
     }
 
-    /**
-     * Store a newly created appointment in storage.
-     */
+    public function getAppointments(Request $request)
+    {
+        $date = $request->query('date', Carbon::today()->toDateString());
+
+        $appointments = Appointment::with('patient')
+            ->whereDate('date', $date)
+            ->orderBy('start_time')
+            ->get();
+
+        return response()->json($appointments);
+    }
+
+    public function getMonthlyStatus(Request $request)
+    {
+        $month = $request->query('month', Carbon::now()->month);
+        $year = $request->query('year', Carbon::now()->year);
+
+        $appointments = Appointment::select('date')
+            ->whereMonth('date', $month)
+            ->whereYear('date', $year)
+            ->get()
+            ->groupBy('date');
+
+        $status = $appointments->map(function ($dayAppointments) {
+            return true; // Simple indicator for now
+        });
+
+        return response()->json($status);
+    }
+
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'patient_id' => 'required|exists:patients,id',
-            'doctor_id' => 'required|exists:doctors,id',
-            'appointment_date' => 'required|date|after_or_equal:today',
-            'appointment_time' => 'required',
-            'reason' => 'nullable|string|max:255',
+            'date' => 'required|date',
+            'start_time' => 'required',
+            'end_time' => 'required',
+            'type' => 'required|string',
+            'status' => 'required|in:planned,urgent',
+            'notes' => 'nullable|string',
+            'sms_reminder' => 'boolean',
+            'email_reminder' => 'boolean',
         ]);
 
-        Appointment::create($request->all());
-        return redirect()->route('appointments.index');
+        $appointment = Appointment::create($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Rendez-vous créé avec succès.',
+            'appointment' => $appointment->load('patient')
+        ]);
     }
 
-    /**
-     * Display the specified appointment.
-     */
-    public function show($id)
+    public function update(Request $request, Appointment $appointment)
     {
-        $appointment = Appointment::with(['patient', 'doctor'])->findOrFail($id);
-        return view('appointments.show', compact('appointment'));
-    }
-
-    /**
-     * Show the form for editing the specified appointment.
-     */
-    public function edit($id)
-    {
-        $appointment = Appointment::findOrFail($id);
-        $patients = Patient::all();
-        $doctors = Doctor::all();
-        return view('appointments.edit', compact('appointment', 'patients', 'doctors'));
-    }
-
-    /**
-     * Update the specified appointment in storage.
-     */
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'patient_id' => 'required|exists:patients,id',
-            'doctor_id' => 'required|exists:doctors,id',
-            'appointment_date' => 'required|date|after_or_equal:today',
-            'appointment_time' => 'required',
-            'reason' => 'nullable|string|max:255',
+        $validated = $request->validate([
+            'status' => 'required|in:planned,completed,cancelled,urgent',
+            'notes' => 'nullable|string',
         ]);
 
-        $appointment = Appointment::findOrFail($id);
-        $appointment->update($request->all());
-        return redirect()->route('appointments.index');
+        $appointment->update($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Rendez-vous mis à jour.',
+            'appointment' => $appointment->load('patient')
+        ]);
     }
 
-    /**
-     * Remove the specified appointment from storage.
-     */
-    public function destroy($id)
+    public function destroy(Appointment $appointment)
     {
-        $appointment = Appointment::findOrFail($id);
         $appointment->delete();
-        return redirect()->route('appointments.index');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Rendez-vous annulé.'
+        ]);
     }
 }

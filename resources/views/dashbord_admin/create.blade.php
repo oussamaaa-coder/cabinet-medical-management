@@ -118,7 +118,7 @@
 
         <div class="form-card-footer">
           <a href="{{ route('utilisateurs.index') }}" class="btn btn-outline">← Retour</a>
-          <button type="submit" class="btn btn-primary">✅ Créer l'utilisateur</button>
+          <button type="submit" class="btn btn-primary"> Créer l'utilisateur</button>
         </div>
       </form>
     </div>

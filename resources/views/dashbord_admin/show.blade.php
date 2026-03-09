@@ -18,7 +18,7 @@
       </div>
     </div>
     <div class="topbar-actions">
-      <a href="{{ route('utilisateurs.edit', $utilisateur) }}" class="btn btn-primary">✏️ Modifier</a>
+      <a href="{{ route('utilisateurs.edit', $utilisateur) }}" class="btn btn-primary">  Modifier</a>
     </div>
   </header>
 
@@ -26,9 +26,13 @@
     <div class="profile-card">
       <!-- Hero -->
       <div class="profile-hero">
-        <div class="profile-avatar avatar-{{ $utilisateur->role }}">
-          {{ strtoupper(substr($utilisateur->name, 0, 2)) }}
-        </div>
+        @if($utilisateur->profile_photo)
+          <img src="{{ asset('profiles/' . $utilisateur->profile_photo) }}" alt="Photo de profil" class="profile-avatar avatar-{{ $utilisateur->role }}">
+        @else
+          <div class="profile-avatar avatar-{{ $utilisateur->role }}">
+            {{ strtoupper(substr($utilisateur->name, 0, 2)) }}
+          </div>
+        @endif
         <div class="profile-name">{{ $utilisateur->name }}</div>
         <div class="profile-email">{{ $utilisateur->email }}</div>
         <span class="role-badge role-{{ $utilisateur->role }}">

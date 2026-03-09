@@ -25,7 +25,7 @@
         <input type="text" name="search" placeholder="Rechercher un utilisateur..." value="{{ request('search') }}" id="searchInput">
       </form>
       <a href="{{ route('utilisateurs.create') }}" class="btn btn-primary">
-        ➕ Nouvel Utilisateur
+        Nouvel Utilisateur
       </a>
     </div>
   </header>
@@ -82,6 +82,7 @@
               <th>Nom</th>
               <th>Email</th>
               <th>Rôle</th>
+              <th>Créé le</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -112,7 +113,6 @@
                   @endswitch
                 </span>
               </td>
-              <td>{{ $user->email }}</td>
               <td>{{ $user->created_at ? $user->created_at->format('d/m/Y H:i') : '—' }}</td>
               <td>
                 <a href="{{ route('utilisateurs.show', $user) }}" class="action-btn" title="Voir détails">👁</a>

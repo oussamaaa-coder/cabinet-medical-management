@@ -1,23 +1,22 @@
 /* ===================================================================
    style_settings.css — Page Configuration / Paramètres
-   Tokens hérités de style_sidebar.css
+   Tokens inherited from style_sidebar.css global theme
 =================================================================== */
 
 :root {
-    --bg-color: #f4f7f5;
-    --card-bg: #ffffff;
-    --accent: #3a7d5c;
-    --accent-hover: #2a6048;
-    --accent-light: #eaf3ee;
-    --accent-mid: #c4ddd0;
-    --text-primary: #1a2b22;
-    --text-secondary: #4a6358;
-    --text-muted: #8aad9c;
-    --border-color: #dce8e1;
+    --bg-color: var(--page-bg, #f4f7f5);
+    --border-color: var(--sidebar-border, #dce8e1);
     --shadow: 0 4px 20px rgba(26, 43, 34, .08);
     --radius-card: 16px;
     --radius-input: 10px;
     --transition: all .22s cubic-bezier(.4, 0, .2, 1);
+}
+
+/* Dark theme overrides for settings-specific tokens */
+[data-theme="dark"] {
+    --bg-color: var(--page-bg);
+    --border-color: var(--sidebar-border);
+    --shadow: 0 4px 20px rgba(0, 0, 0, .3);
 }
 
 /* ─── Layout ─────────────────────────────────────────────────── */
@@ -127,7 +126,7 @@
 
 /* ─── Card ───────────────────────────────────────────────────── */
 .settings-card {
-    background: var(--card-bg);
+    background: var(--card-bg, #ffffff);
     border-radius: var(--radius-card);
     border: 1px solid var(--border-color);
     box-shadow: var(--shadow);
@@ -141,7 +140,7 @@
     gap: .75rem;
     padding: 1.25rem 1.75rem;
     border-bottom: 1px solid var(--border-color);
-    background: var(--bg-color);
+    background: var(--sidebar-bg, #f4f7f5);
 }
 
 .settings-card-icon {
@@ -228,8 +227,8 @@
     border-radius: var(--radius-input);
     font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: .9rem;
-    color: var(--text-primary);
-    background: #fff;
+    color: var(--text-primary, #1a2b22);
+    background: var(--card-bg, #fff);
     transition: var(--transition);
     outline: none;
 }

@@ -56,6 +56,10 @@
             <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
             Sécurité
         </button>
+        <button type="button" class="tab-btn {{ $activeTab === 'theme' ? 'active' : '' }}" data-tab="theme">
+            <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+            Thème
+        </button>
     </div>
 
     {{-- ══════════════════════════════════════════════════ --}}
@@ -341,11 +345,161 @@
             </div>
         </form>
     </div>
+    {{-- ══════════════════════════════════════════════════ --}}
+    {{-- TAB 5 — Thème --}}
+    {{-- ══════════════════════════════════════════════════ --}}
+    <div class="tab-panel {{ $activeTab === 'theme' ? 'active' : '' }}" id="tab-theme">
+        <div class="settings-card">
+            <div class="settings-card-header">
+                <div class="settings-card-icon">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                </div>
+                <div>
+                    <div class="settings-card-title">Apparence &amp; Thème</div>
+                    <div class="settings-card-desc">Choisissez l'apparence de l'interface qui vous convient le mieux</div>
+                </div>
+            </div>
+            <div class="settings-card-body">
+
+                {{-- Theme Toggle --}}
+                <div class="toggle-row">
+                    <div class="toggle-info">
+                        <h4>Mode Sombre</h4>
+                        <p>Basculer entre le mode clair et le mode sombre</p>
+                    </div>
+                    <label class="toggle-switch" id="darkModeToggleLabel">
+                        <input type="checkbox" id="darkModeToggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                {{-- Visual Theme Cards --}}
+                <div style="margin-top: 1.5rem;">
+                    <p class="form-label" style="margin-bottom: 1rem;">Aperçu du thème</p>
+                    <div class="theme-cards-grid">
+
+                        {{-- Light Card --}}
+                        <div class="theme-card" id="themeCardLight">
+                            <div class="theme-card-preview theme-preview-light">
+                                <div class="tp-sidebar"></div>
+                                <div class="tp-content">
+                                    <div class="tp-bar"></div>
+                                    <div class="tp-bar tp-bar-short"></div>
+                                    <div class="tp-rect"></div>
+                                </div>
+                            </div>
+                            <div class="theme-card-info">
+                                <svg viewBox="0 0 24 24" width="16" height="16"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                                <span>Mode Clair</span>
+                                <span class="theme-check" id="checkLight">
+                                    <svg viewBox="0 0 24 24" width="14" height="14"><polyline points="20 6 9 17 4 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+                                </span>
+                            </div>
+                        </div>
+
+                        {{-- Dark Card --}}
+                        <div class="theme-card" id="themeCardDark">
+                            <div class="theme-card-preview theme-preview-dark">
+                                <div class="tp-sidebar"></div>
+                                <div class="tp-content">
+                                    <div class="tp-bar"></div>
+                                    <div class="tp-bar tp-bar-short"></div>
+                                    <div class="tp-rect"></div>
+                                </div>
+                            </div>
+                            <div class="theme-card-info">
+                                <svg viewBox="0 0 24 24" width="16" height="16"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                                <span>Mode Sombre</span>
+                                <span class="theme-check" id="checkDark">
+                                    <svg viewBox="0 0 24 24" width="14" height="14"><polyline points="20 6 9 17 4 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+                                </span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
 
 </div>
+<style>
+/* ─── Theme Picker Cards ─────────────────────────────────────── */
+.theme-cards-grid {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+.theme-card {
+    border: 2px solid var(--border-color);
+    border-radius: 14px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all .22s cubic-bezier(.4,0,.2,1);
+    flex: 1;
+    min-width: 150px;
+    max-width: 220px;
+}
+.theme-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-light);
+    transform: translateY(-2px);
+}
+.theme-card.selected {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-light);
+}
+.theme-card-preview {
+    display: flex;
+    height: 90px;
+    border-radius: 10px 10px 0 0;
+    overflow: hidden;
+}
+/* Light preview */
+.theme-preview-light { background: #e8ede9; }
+.theme-preview-light .tp-sidebar { width: 38px; background: #f4f7f5; border-right: 1px solid #dce8e1; }
+.theme-preview-light .tp-content { flex:1; padding: 8px; display:flex; flex-direction:column; gap:5px; }
+.theme-preview-light .tp-bar { height:6px; border-radius:4px; background:#c4ddd0; }
+.theme-preview-light .tp-bar-short { width:60%; }
+.theme-preview-light .tp-rect { flex:1; border-radius:6px; background:#ffffff; border:1px solid #dce8e1; margin-top:2px; }
+/* Dark preview */
+.theme-preview-dark { background: #0f1a14; }
+.theme-preview-dark .tp-sidebar { width: 38px; background: #151e1a; border-right: 1px solid #2a3d32; }
+.theme-preview-dark .tp-content { flex:1; padding: 8px; display:flex; flex-direction:column; gap:5px; }
+.theme-preview-dark .tp-bar { height:6px; border-radius:4px; background:#233629; }
+.theme-preview-dark .tp-bar-short { width:60%; }
+.theme-preview-dark .tp-rect { flex:1; border-radius:6px; background:#1a2620; border:1px solid #2a3d32; margin-top:2px; }
+/* Card info row */
+.theme-card-info {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .65rem 1rem;
+    font-size: .84rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background: var(--sidebar-bg);
+    border-top: 1px solid var(--border-color);
+}
+.theme-card-info svg { stroke: var(--accent); fill: none; flex-shrink:0; }
+.theme-check {
+    margin-left: auto;
+    display: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--accent);
+    align-items: center;
+    justify-content: center;
+}
+.theme-check svg { stroke: #fff; }
+.theme-card.selected .theme-check { display: flex; }
+</style>
 
 <script>
 (function () {
+    /* ── Tab switching ───────────────────────────────── */
     const tabs = document.querySelectorAll('.tab-btn');
     const panels = document.querySelectorAll('.tab-panel');
 
@@ -360,6 +514,43 @@
             document.getElementById('tab-' + target).classList.add('active');
         });
     });
+
+    /* ── Dark mode logic ─────────────────────────────── */
+    const STORAGE_KEY = 'medical_theme';
+    const htmlEl      = document.documentElement;
+    const toggle      = document.getElementById('darkModeToggle');
+    const cardLight   = document.getElementById('themeCardLight');
+    const cardDark    = document.getElementById('themeCardDark');
+
+    function applyTheme(theme) {
+        if (theme === 'dark') {
+            htmlEl.setAttribute('data-theme', 'dark');
+            if (toggle)  toggle.checked = true;
+            if (cardDark)  cardDark.classList.add('selected');
+            if (cardLight) cardLight.classList.remove('selected');
+        } else {
+            htmlEl.removeAttribute('data-theme');
+            if (toggle)  toggle.checked = false;
+            if (cardLight) cardLight.classList.add('selected');
+            if (cardDark)  cardDark.classList.remove('selected');
+        }
+        localStorage.setItem(STORAGE_KEY, theme);
+    }
+
+    /* Initialise from stored preference */
+    const stored = localStorage.getItem(STORAGE_KEY) || 'light';
+    applyTheme(stored);
+
+    /* Toggle switch */
+    if (toggle) {
+        toggle.addEventListener('change', () => {
+            applyTheme(toggle.checked ? 'dark' : 'light');
+        });
+    }
+
+    /* Click on preview cards */
+    if (cardLight) cardLight.addEventListener('click', () => applyTheme('light'));
+    if (cardDark)  cardDark.addEventListener('click',  () => applyTheme('dark'));
 })();
 </script>
 @endsection

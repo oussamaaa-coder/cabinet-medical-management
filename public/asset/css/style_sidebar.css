@@ -3,6 +3,7 @@
   --sidebar-bg: #f4f7f5;
   --sidebar-border: #dce8e1;
   --accent: #3a7d5c;
+  --accent-hover: #2a6048;
   --accent-light: #eaf3ee;
   --accent-mid: #c4ddd0;
   --accent-glow: rgba(58, 125, 92, 0.12);
@@ -22,6 +23,39 @@
   --dur-fast: 160ms;
   --dur-med: 260ms;
   --dur-slow: 400ms;
+  /* Global page background */
+  --page-bg: #e8ede9;
+  --card-bg: #ffffff;
+  --main-content-color: var(--text-primary);
+}
+
+/* ═══════════════════════════════════════════════════════
+   DARK THEME — applied when <html data-theme="dark">
+═══════════════════════════════════════════════════════ */
+[data-theme="dark"] {
+  --sidebar-bg: #151e1a;
+  --sidebar-border: #2a3d32;
+  --accent: #4ead7e;
+  --accent-hover: #3d9a6c;
+  --accent-light: #1a2d23;
+  --accent-mid: #233629;
+  --accent-glow: rgba(78, 173, 126, 0.15);
+  --text-primary: #e2ede7;
+  --text-secondary: #9fbfb0;
+  --text-muted: #5a7d6e;
+  --text-label: #5e8070;
+  --nav-hover-bg: #1e2e25;
+  --nav-active-bg: #1f3628;
+  --badge-bg: #4ead7e;
+  --badge-warn-bg: #e07054;
+  --logo-grad-a: #4ead7e;
+  --logo-grad-b: #3d9a6c;
+  --user-bg: #1a2d23;
+  --user-border: #2a3d32;
+  /* Global page background */
+  --page-bg: #0f1a14;
+  --card-bg: #1a2620;
+  --main-content-color: var(--text-primary);
 }
 
 *,
@@ -32,9 +66,16 @@
   padding: 0;
 }
 
+/* Theme transition for smooth switching */
+*, *::before, *::after {
+  transition-property: background-color, border-color, color, box-shadow;
+  transition-duration: 280ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 body {
   font-family: 'Plus Jakarta Sans', sans-serif;
-  background: #e8ede9;
+  background: var(--page-bg);
   display: flex;
   min-height: 100vh;
   color: var(--text-primary);
@@ -432,10 +473,11 @@ body {
   margin-left: var(--sidebar-width);
   flex: 1;
   padding: 40px;
+  color: var(--main-content-color);
 }
 
 .demo-content {
-  background: white;
+  background: var(--card-bg);
   border-radius: 16px;
   padding: 32px;
   box-shadow: 0 1px 3px rgba(26, 43, 34, .06);

@@ -17,6 +17,8 @@
     --text-label: #6b8c7d;
     --border: #dce8e1;
     --bg-field: #f4f7f5;
+    --card-bg: #ffffff;
+    --photo-bg: linear-gradient(160deg, var(--accent-light) 0%, #f0f8f4 100%);
     --error: #c0392b;
     --error-bg: #fdf2f1;
     --error-border: #f0b8b3;
@@ -33,6 +35,24 @@
     --shadow-md: 0 4px 16px rgba(26, 43, 34, .08), 0 2px 6px rgba(26, 43, 34, .05);
     --shadow-lg: 0 12px 40px rgba(26, 43, 34, .10), 0 4px 12px rgba(26, 43, 34, .06);
     --transition: 200ms var(--ease);
+}
+
+[data-theme="dark"] {
+    --text-primary: #e2ede7;
+    --text-secondary: #9fbfb0;
+    --text-muted: #5a7d6e;
+    --text-label: #5e8070;
+    --border: rgba(255, 255, 255, 0.1);
+    --bg-field: #0f1a14;
+    --card-bg: #1a2620;
+    --photo-bg: linear-gradient(160deg, #151e1a 0%, #1a2d23 100%);
+    --accent-light: #1a2d23;
+    --accent-mid: #233629;
+    --success-bg: #1a2d23;
+    --error-bg: #2d1a1a;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.5);
 }
 
 /* ── Reset ──────────────────────────────────────────────── */
@@ -118,7 +138,7 @@
 
 /* ── Main card ──────────────────────────────────────────── */
 .profile-card {
-    background: #ffffff;
+    background: var(--card-bg);
     border: 1px solid var(--border);
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-lg);
@@ -134,7 +154,7 @@
 /* ── Photo section (left column) ───────────────────────── */
 .photo-section {
     padding: 40px 32px;
-    background: linear-gradient(160deg, var(--accent-light) 0%, #f0f8f4 100%);
+    background: var(--photo-bg);
     border-right: 1px solid var(--border);
     display: flex;
     flex-direction: column;
@@ -175,7 +195,7 @@
     width: 120px;
     height: 120px;
     border-radius: 50%;
-    border: 3px solid #ffffff;
+    border: 3px solid var(--card-bg);
     box-shadow: 0 0 0 4px var(--accent-glow), var(--shadow-md);
     position: relative;
     z-index: 1;
@@ -316,7 +336,7 @@
 }
 
 .form-input:focus {
-    background: #ffffff;
+    background: var(--card-bg);
     border-color: var(--accent);
     box-shadow: 0 0 0 3px var(--accent-glow);
 }

@@ -14,9 +14,15 @@
 
 /* Dark theme overrides for settings-specific tokens */
 [data-theme="dark"] {
-    --bg-color: var(--page-bg);
-    --border-color: var(--sidebar-border);
-    --shadow: 0 4px 20px rgba(0, 0, 0, .3);
+    --bg-color: #0f1a14;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --shadow: 0 4px 20px rgba(0, 0, 0, .4);
+    --card-bg: #1a2620;
+    --sidebar-bg: #151e1a;
+    --text-primary: #e2ede7;
+    --text-secondary: #9fbfb0;
+    --text-muted: #5a7d6e;
+    --accent-light: #1a2d23;
 }
 
 /* ─── Layout ─────────────────────────────────────────────────── */

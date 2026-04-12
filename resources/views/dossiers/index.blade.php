@@ -144,6 +144,22 @@
       --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
+    [data-theme="dark"] {
+      --text-primary: #e2ede7;
+      --text-secondary: #9fbfb0;
+      --text-muted: #5a7d6e;
+      --border: rgba(255, 255, 255, 0.1);
+      --bg-field: #151e1a;
+      --bg-page: #0f1a14;
+      --bg-card: #1a2620;
+      --accent-light: #1a2d23;
+      --accent-mid: #233629;
+      --blood-bg: #2d1a1a;
+      --minor-light: #2d261a;
+      --shadow-sm: 0 4px 12px rgba(0,0,0,0.3);
+      --shadow-md: 0 12px 32px rgba(0,0,0,0.4);
+    }
+
     * { box-sizing: border-box; }
 
     .dossiers-page-wrapper {

@@ -516,7 +516,7 @@
     });
 
     /* ── Dark mode logic ─────────────────────────────── */
-    const STORAGE_KEY = 'medical_theme';
+    const STORAGE_KEY = 'theme';
     const htmlEl      = document.documentElement;
     const toggle      = document.getElementById('darkModeToggle');
     const cardLight   = document.getElementById('themeCardLight');
@@ -538,7 +538,7 @@
     }
 
     /* Initialise from stored preference */
-    const stored = localStorage.getItem(STORAGE_KEY) || 'light';
+    const stored = localStorage.getItem(STORAGE_KEY) || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
     applyTheme(stored);
 
     /* Toggle switch */

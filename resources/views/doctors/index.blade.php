@@ -104,7 +104,22 @@
   --text-label:     #6b8c7d;
   --border:         #dce8e1;
   --bg-field:       #f4f7f5;
+  --bg-card:        #ffffff;
+  --bg-page:        #f8faf9;
   --ease:           cubic-bezier(.4,0,.2,1);
+}
+
+[data-theme="dark"] {
+  --text-primary: #e2ede7;
+  --text-secondary: #9fbfb0;
+  --text-muted: #5a7d6e;
+  --text-label: #5e8070;
+  --border: rgba(255, 255, 255, 0.1);
+  --bg-field: #151e1a;
+  --bg-card: #1a2620;
+  --bg-page: #0f1a14;
+  --accent-light: #1a2d23;
+  --accent-mid: #233629;
 }
 
 *, *::before, *::after {
@@ -116,8 +131,9 @@
 body {
     font-family: 'Outfit', sans-serif;
     -webkit-font-smoothing: antialiased;
-    background-color: #f8faf9;
+    background-color: var(--bg-page);
     color: var(--text-primary);
+    transition: background-color 0.3s var(--ease), color 0.3s var(--ease);
 }
 
 .topbar {
@@ -167,7 +183,7 @@ body {
 }
 
 .doctors-container {
-    background: white;
+    background: var(--bg-card);
     border-radius: 16px;
     padding: 24px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.04);
@@ -348,7 +364,7 @@ body {
 .page-item .page-link {
     padding: 10px 16px;
     border-radius: 10px;
-    background: white;
+    background: var(--bg-card);
     border: 1px solid var(--border);
     color: var(--text-secondary);
     text-decoration: none;

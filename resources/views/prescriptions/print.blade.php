@@ -122,9 +122,11 @@
             <div style="font-size: 12px; color: #94a3b8;">
                 Réf: #ORD-{{ str_pad($prescription->id, 5, '0', STR_PAD_LEFT) }}
             </div>
-            <div class="signature">
+            <div class="signature" style="position: relative;">
                 Cachet et Signature
-                <div style="height: 80px;"></div>
+                <div style="height: 100px; display: flex; align-items: center; justify-content: center; margin-top: 10px;">
+                    <img src="{{ asset('asset/img/medical_stamp.png') }}" alt="Cachet" style="width: 110px; opacity: 0.85; transform: rotate(-15deg); filter: contrast(1.1) brightness(1.1);">
+                </div>
             </div>
         </div>
     </div>

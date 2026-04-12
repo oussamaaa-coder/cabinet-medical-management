@@ -16,9 +16,20 @@
             <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-        <link rel="icon" type="image/svg+xml" href="{{ asset('asset/img/logo.svg') }}">
-        @stack('styles')
+        <script>
+            // On page load, apply theme immediately from localStorage
+            // Default to 'light' instead of checking browser preference
+            const storedTheme = localStorage.getItem('theme');
+            if (storedTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+                document.documentElement.classList.remove('dark');
+            }
+        </script>
         <title>MediCal — @yield('title', 'Tableau de bord')</title>
+        @stack('styles')
     </head>
     <body>
 
@@ -221,6 +232,16 @@
                     <span class="nav-label">Aide</span>
                 </a>
 
+                <button
+                    id="theme-toggle"
+                    class="nav-item"
+                    style="width: 100%; border: none; background: transparent; cursor: pointer; text-align: left;">
+                    <span class="nav-icon" id="theme-icon">
+                        <!-- Sun/Moon icon will be set via JS -->
+                    </span>
+                    <span class="nav-label" id="theme-text">Mode Sombre</span>
+                </button>
+
             </nav>
 
             {{-- ── UTILISATEUR ── --}}
@@ -250,5 +271,36 @@
             @yield('content')
         </div>
 
+        <script>
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const themeIcon = document.getElementById('theme-icon');
+            const themeText = document.getElementById('theme-text');
+
+            function updateToggleUI() {
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                themeText.textContent = isDark ? 'Mode Clair' : 'Mode Sombre';
+                themeIcon.innerHTML = isDark 
+                    ? `<svg viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`
+                    : `<svg viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
+            }
+
+            themeToggleBtn.addEventListener('click', () => {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                document.documentElement.setAttribute('data-theme', newTheme);
+                if (newTheme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+                localStorage.setItem('theme', newTheme);
+                updateToggleUI();
+            });
+
+            // Initial UI state
+            updateToggleUI();
+        </script>
+        @stack('scripts')
     </body>
 </html>

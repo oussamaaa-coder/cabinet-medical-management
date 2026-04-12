@@ -8,13 +8,13 @@
 <link rel="stylesheet" href="{{ asset('asset/css/style_dashboard.css') }}">
 
 <div class="content">
-    <header class="topbar" style="background: linear-gradient(135deg, #2F6A4F 0%, #418968 100%); padding: 1.5rem 2rem; margin: -1.5rem -1.5rem 2rem -1.5rem; border-radius: 12px 12px 0 0;">
+    <header class="topbar">
         <div class="topbar-left">
-            <div class="topbar-title" style="color: white; font-size: 1.5rem; font-weight: 700;">Tableau de bord</div>
-            <div class="breadcrumb" style="color: rgba(255,255,255,0.8); margin-top: 0.25rem;">
-                <span style="color: white;">Bienvenue, <strong>{{ auth()->user()->name }}</strong></span>
-                <span style="margin: 0 0.5rem; color: rgba(255,255,255,0.5);">•</span>
-                <span style="color: rgba(255,255,255,0.8);">{{ \Carbon\Carbon::now()->locale('fr')->translatedFormat('l d F Y') }}</span>
+            <div class="topbar-title">Tableau de bord</div>
+            <div class="breadcrumb">
+                <span>Bienvenue, <strong>{{ auth()->user()->name }}</strong></span>
+                <span class="sep">•</span>
+                <span>{{ \Carbon\Carbon::now()->locale('fr')->translatedFormat('l d F Y') }}</span>
             </div>
         </div>
     </header>

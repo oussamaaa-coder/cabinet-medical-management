@@ -58,12 +58,23 @@
       --text-muted:     #8aad9c;
       --border:         #dce8e1;
       --bg-field:       #f4f7f5;
+      --bg-card:        #ffffff;
       --ease:           cubic-bezier(.4,0,.2,1);
+    }
+
+    [data-theme="dark"] {
+      --text-primary:   #e2ede7;
+      --text-secondary: #9fbfb0;
+      --text-muted:     #5a7d6e;
+      --border:         rgba(255, 255, 255, 0.1);
+      --bg-field:       #151e1a;
+      --bg-card:        #1a2620;
+      --accent-light:   #1a2d23;
     }
 
     .appointments-container {
         margin-top: 30px;
-        background: white;
+        background: var(--bg-card);
         padding: 24px;
         border-radius: 12px;
         box-shadow: 0 4px 20px rgba(0,0,0,0.03);

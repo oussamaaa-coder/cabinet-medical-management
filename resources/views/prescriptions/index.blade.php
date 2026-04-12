@@ -4,18 +4,41 @@
 
 @section('content')
 <link rel="stylesheet" href="{{ asset('asset/css/style_patient.css') }}">
-<style>
+    <style>
+    :root {
+        --text-primary: #111827;
+        --text-secondary: #374151;
+        --text-muted: #6b7280;
+        --bg-card: #ffffff;
+        --bg-page: #f9fafb;
+        --border: #f3f4f6;
+        --border-strong: #e5e7eb;
+        --accent: #3A7D5C;
+    }
+
+    [data-theme="dark"] {
+        --text-primary: #e2ede7;
+        --text-secondary: #9fbfb0;
+        --text-muted: #5a7d6e;
+        --bg-card: #1a2620;
+        --bg-page: #0f1a14;
+        --border: rgba(255, 255, 255, 0.1);
+        --border-strong: rgba(255, 255, 255, 0.15);
+    }
+
     .list-container { padding: 20px; }
-    .prescription-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
-    .prescription-table th, .prescription-table td { padding: 15px; text-align: left; border-bottom: 1px solid #f3f4f6; }
-    .prescription-table th { background: #f9fafb; font-weight: 600; color: #374151; }
+    .prescription-table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+    .prescription-table th, .prescription-table td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border); }
+    .prescription-table th { background: var(--bg-page); font-weight: 600; color: var(--text-secondary); }
     .action-btns { display: flex; gap: 8px; }
-    .btn-icon { padding: 6px; border-radius: 6px; border: 1px solid #e5e7eb; background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; text-decoration: none; }
-</style>
+    .btn-icon { padding: 6px; border-radius: 6px; border: 1px solid var(--border-strong); background: var(--bg-card); cursor: pointer; display: flex; align-items: center; justify-content: center; text-decoration: none; }
+    .section-title { font-size: 24px; font-weight: 700; color: var(--text-primary); }
+    .patient-name { font-weight: 600; color: var(--text-primary); }
+    </style>
 
 <div class="list-container">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-        <h2 style="font-size: 24px; font-weight: 700; color: #111827;">Registre des Ordonnances</h2>
+        <h2 class="section-title">Registre des Ordonnances</h2>
         <a href="{{ route('prescriptions.create') }}" class="btn-new" style="background: #3A7D5C; color: #fff; padding: 10px 20px; border-radius: 8px; text-decoration: none; display: flex; align-items: center; gap: 8px;">
              <span>Nouvelle Ordonnance</span>
         </a>
@@ -43,7 +66,7 @@
             <tr>
                 <td>#ORD-{{ str_pad($prescription->id, 5, '0', STR_PAD_LEFT) }}</td>
                 <td>
-                    <div style="font-weight: 600; color: #111827;">{{ $prescription->patient->first_name }} {{ $prescription->patient->last_name }}</div>
+                    <div class="patient-name">{{ $prescription->patient->first_name }} {{ $prescription->patient->last_name }}</div>
                 </td>
                 <td>Dr. {{ $prescription->doctor->name }}</td>
                 <td>{{ \Carbon\Carbon::parse($prescription->prescription_date)->format('d/m/Y') }}</td>

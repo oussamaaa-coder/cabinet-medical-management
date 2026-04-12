@@ -61,8 +61,43 @@ class AppointmentController extends Controller
             'email_reminder' => 'boolean',
         ]);
 
-        $appointment = Appointment::create($validated);
+        // Check for doctor conflict
+        $doctorConflict = Appointment::where('doctor_id', $validated['doctor_id'])
+            ->where('date', $validated['date'])
+            ->where(function ($query) use ($validated) {
+                $query->where(function ($q) use ($validated) {
+                    $q->where('start_time', '<', $validated['end_time'])
+                        ->where('end_time', '>', $validated['start_time']);
+                });
+            })
+            ->exists();
 
+        if ($doctorConflict) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Le médecin a déjà un rendez-vous sur ce créneau horaire.'
+            ], 422);
+        }
+
+        // Check for patient conflict
+        $patientConflict = Appointment::where('patient_id', $validated['patient_id'])
+            ->where('date', $validated['date'])
+            ->where(function ($query) use ($validated) {
+                $query->where(function ($q) use ($validated) {
+                    $q->where('start_time', '<', $validated['end_time'])
+                        ->where('end_time', '>', $validated['start_time']);
+                });
+            })
+            ->exists();
+
+        if ($patientConflict) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Le patient a déjà un rendez-vous sur ce créneau horaire.'
+            ], 422);
+        }
+
+        $appointment = Appointment::create($validated);
 
         return response()->json([
             'success' => true,

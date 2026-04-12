@@ -269,9 +269,23 @@
       --border: #dce8e1;
       --bg-field: #f4f7f5;
       --bg-page: #f8faf9;
+      --card-bg: #ffffff;
       --shadow-sm: 0 2px 4px rgba(0,0,0,0.02);
       --shadow-md: 0 10px 15px -3px rgba(0,0,0,0.05);
       --ease: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    [data-theme="dark"] {
+      --text-primary: #e2ede7;
+      --text-secondary: #9fbfb0;
+      --text-muted: #5a7d6e;
+      --border: rgba(255, 255, 255, 0.1);
+      --bg-field: #151e1a;
+      --bg-page: #0f1a14;
+      --card-bg: #1a2620;
+      --accent-light: #1a2d23;
+      --accent-mid: #233629;
+      --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
 
     .patients-page-wrapper {
@@ -335,7 +349,7 @@
     }
 
     .stat-card {
-        background: white;
+        background: var(--card-bg);
         padding: 24px;
         border-radius: 16px;
         border: 2px solid transparent;
@@ -375,7 +389,7 @@
     .card_arrow svg { width: 20px; height: 20px; fill: none; stroke: var(--accent); stroke-width: 2; }
 
     /* Panels */
-    .content-panel { display: none; background: white; border-radius: 20px; border: 1px solid var(--border); overflow: hidden; box-shadow: var(--shadow-sm); }
+    .content-panel { display: none; background: var(--card-bg); border-radius: 20px; border: 1px solid var(--border); overflow: hidden; box-shadow: var(--shadow-sm); }
     .content-panel.active { display: block; animation: slideUp 0.4s var(--ease); }
 
     @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -403,7 +417,7 @@
     .modern-table th { text-align: left; padding: 16px 24px; background: var(--bg-field); color: var(--text-secondary); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; }
     .modern-table td { padding: 16px 24px; border-bottom: 1px solid var(--border); vertical-align: middle; }
     .modern-table tbody tr { transition: background 0.2s; }
-    .modern-table tbody tr:hover { background: #fbfcfb; }
+    .modern-table tbody tr:hover { background: var(--accent-light); opacity: 0.9; }
     
     .patient-name-cell { display: flex; align-items: center; gap: 12px; font-weight: 600; color: var(--text-primary); }
     .initials-avatar { width: 36px; height: 36px; border-radius: 10px; background: var(--accent-light); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; }
@@ -468,7 +482,7 @@
         padding: 0 12px;
         border-radius: 10px;
         border: 1px solid var(--border);
-        background: white;
+        background: var(--card-bg);
         color: var(--text-secondary);
         text-decoration: none;
         font-weight: 600;

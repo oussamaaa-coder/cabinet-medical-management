@@ -3,7 +3,6 @@
    Tokens hérités de style_sidebar.css
 =================================================================== */
 
-:root {
     --bg-color: #f4f7f5;
     --card-bg: #ffffff;
     --accent: #3a7d5c;
@@ -17,6 +16,18 @@
     --shadow: 0 4px 20px rgba(26, 43, 34, .08);
     --radius-card: 16px;
     --transition: all .3s cubic-bezier(.4, 0, .2, 1);
+}
+
+[data-theme="dark"] {
+    --bg-color: #0d1b14;
+    --card-bg: #1a2620;
+    --text-primary: #e2ede7;
+    --text-secondary: #9fbfb0;
+    --text-muted: #5a7d6e;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --accent-light: #152b21;
+    --accent-mid: #233629;
+    --shadow: 0 4px 20px rgba(0, 0, 0, .4);
 }
 
 .help-container {
@@ -230,7 +241,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 1.25rem 1.5rem;
-    background: #fff;
+    background: var(--card-bg);
     border: none;
     cursor: pointer;
     text-align: left;
@@ -269,7 +280,7 @@
     max-height: 0;
     overflow: hidden;
     transition: max-height .3s cubic-bezier(0.4, 0, 0.2, 1);
-    background: #fff;
+    background: var(--card-bg);
 }
 
 .accordion-item.active .accordion-content {

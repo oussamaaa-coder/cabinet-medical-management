@@ -6,7 +6,7 @@
 
 {{-- Page Header --}}
 <div class="pt-page-header">
-    <h1>Bonjour, <em>{{ explode(' ', auth()->user()->name)[0] }}</em> 👋</h1>
+    <h1>Bonjour, <em>{{ explode(' ', auth()->user()->name)[0] }}</em></h1>
     <p class="pt-page-subtitle">Voici un aperçu de votre santé et de vos prochains rendez-vous.</p>
 </div>
 
@@ -59,13 +59,18 @@
     <div>
         @if($nextAppointment)
         <div class="pt-next-appt" style="animation-delay:80ms">
-            <span class="pt-next-tag">✦ Prochain Rendez-vous</span>
+            <span class="pt-next-tag">
+                <svg viewBox="0 0 24 24" style="width:10px;height:10px;fill:currentColor;margin-right:4px;"><path d="m12 3-1.91 5.81L4 10.74l4.99 3.64L7.09 21 12 17.31 16.91 21l-1.9-6.62L20 10.74l-6.09-1.93Z"/></svg>
+                Prochain Rendez-vous
+            </span>
             <h3>Dr. {{ $nextAppointment->doctor->first_name ?? '' }} {{ $nextAppointment->doctor->last_name ?? '' }}</h3>
             <p class="pt-next-meta">{{ $nextAppointment->type ?? 'Consultation' }}</p>
             <p class="pt-next-time">
-                📅 {{ \Carbon\Carbon::parse($nextAppointment->date)->isoFormat('dddd D MMMM YYYY') }}
+                <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;margin-right:4px;vertical-align:text-bottom;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                {{ \Carbon\Carbon::parse($nextAppointment->date)->isoFormat('dddd D MMMM YYYY') }}
                 &nbsp;·&nbsp;
-                🕐 {{ \Carbon\Carbon::parse($nextAppointment->start_time)->format('H:i') }}
+                <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;margin-right:4px;vertical-align:text-bottom;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                {{ \Carbon\Carbon::parse($nextAppointment->start_time)->format('H:i') }}
             </p>
             <div style="margin-top:20px;">
                 <form method="POST" action="{{ route('patient.appointments.cancel', $nextAppointment->id) }}" style="display:inline;">

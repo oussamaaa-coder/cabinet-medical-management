@@ -17,7 +17,21 @@ class PatientPortalController extends Controller
      */
     private function getPatient(): ?Patient
     {
-        return Patient::where('user_id', Auth::id())->first();
+        $patient = Patient::where('user_id', Auth::id())->first();
+
+        // Auto-heal: If user has 'patient' role but no Patient record, create one.
+        if (!$patient && Auth::check() && Auth::user()->role === 'patient') {
+            $nameParts = explode(' ', Auth::user()->name, 2);
+            $patient = Patient::create([
+                'user_id'    => Auth::id(),
+                'first_name' => $nameParts[0],
+                'last_name'  => $nameParts[1] ?? '',
+                'email'      => Auth::user()->email,
+                'phone'      => Auth::user()->phone,
+            ]);
+        }
+
+        return $patient;
     }
 
     // ── Dashboard ──────────────────────────────────────────────
@@ -39,14 +53,14 @@ class PatientPortalController extends Controller
         $nextAppointment = Appointment::with('doctor')
             ->where('patient_id', $patient->id)
             ->where('date', '>=', $now->toDateString())
-            ->where('status', '!=', 'cancelled')
+            ->whereIn('status', ['planned', 'urgent'])
             ->orderBy('date')
             ->orderBy('start_time')
             ->first();
 
         $upcomingCount = Appointment::where('patient_id', $patient->id)
             ->where('date', '>=', $now->toDateString())
-            ->where('status', '!=', 'cancelled')
+            ->whereIn('status', ['planned', 'urgent'])
             ->count();
 
         $prescriptions = Prescription::with(['doctor', 'items'])
@@ -111,6 +125,7 @@ class PatientPortalController extends Controller
         // Check for doctor conflict
         $conflict = Appointment::where('doctor_id', $validated['doctor_id'])
             ->where('date', $validated['date'])
+            ->where('status', '!=', 'cancelled')
             ->where(function ($q) use ($validated) {
                 $q->where('start_time', '<', $validated['end_time'])
                   ->where('end_time', '>', $validated['start_time']);
@@ -120,6 +135,22 @@ class PatientPortalController extends Controller
         if ($conflict) {
             return back()->withErrors([
                 'start_time' => 'Ce médecin est déjà occupé sur ce créneau horaire.'
+            ])->withInput();
+        }
+
+        // Check for patient conflict
+        $patientConflict = Appointment::where('patient_id', $patient->id)
+            ->where('date', $validated['date'])
+            ->where('status', '!=', 'cancelled')
+            ->where(function ($q) use ($validated) {
+                $q->where('start_time', '<', $validated['end_time'])
+                  ->where('end_time', '>', $validated['start_time']);
+            })
+            ->exists();
+
+        if ($patientConflict) {
+            return back()->withErrors([
+                'start_time' => 'Vous avez déjà un rendez-vous prévu sur ce créneau horaire.'
             ])->withInput();
         }
 

@@ -48,29 +48,7 @@
         <div id="page-transition-overlay">
             <div class="transition-logo">
                 <div class="logo-icon-svg">
-                    <svg
-                        width="80"
-                        height="80"
-                        viewbox="0 0 18 18"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <rect
-                            x="7"
-                            y="2"
-                            width="4"
-                            height="14"
-                            rx="1.5"
-                            fill="#3A7D5C"
-                            fill-opacity="0.9"/>
-                        <rect
-                            x="2"
-                            y="7"
-                            width="14"
-                            height="4"
-                            rx="1.5"
-                            fill="#3A7D5C"
-                            fill-opacity="0.9"/>
-                    </svg>
+                    <img src="{{ asset('asset/img/logo.svg') }}" alt="Logo" style="width:80px;height:80px;">
                 </div>
                 <div class="logo-text" style="color: #3A7D5C">MediCal</div>
             </div>
@@ -82,29 +60,7 @@
             <div class="sidebar-logo">
                 <div class="logo-mark">
                     <div class="logo-icon">
-                        <svg
-                            width="18"
-                            height="18"
-                            viewbox="0 0 18 18"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <rect
-                                x="7"
-                                y="2"
-                                width="4"
-                                height="14"
-                                rx="1.5"
-                                fill="white"
-                                fill-opacity="0.9"/>
-                            <rect
-                                x="2"
-                                y="7"
-                                width="14"
-                                height="4"
-                                rx="1.5"
-                                fill="white"
-                                fill-opacity="0.9"/>
-                        </svg>
+                        <img src="{{ asset('asset/img/logo.svg') }}" alt="Logo" style="width:24px;height:24px;filter:brightness(0) invert(1);">
                     </div>
                     <div>
                         <div class="logo-text" style="color: #3A7D5C">MediCal</div>

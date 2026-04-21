@@ -54,10 +54,10 @@
                     <td>
                         <span class="pt-badge pt-badge-{{ $appt->status }}">
                             @switch($appt->status)
-                                @case('planned')   ● Planifié @break
-                                @case('completed') ✓ Terminé @break
-                                @case('cancelled') ✕ Annulé @break
-                                @case('urgent')    ⚡ Urgent @break
+                                @case('planned')   <svg viewBox="0 0 24 24" style="width:10px;height:10px;fill:currentColor;margin-right:4px;"><circle cx="12" cy="12" r="10"/></svg> Planifié @break
+                                @case('completed') <svg viewBox="0 0 24 24" style="width:10px;height:10px;fill:none;stroke:currentColor;stroke-width:3;margin-right:4px;"><polyline points="20 6 9 17 4 12"/></svg> Terminé @break
+                                @case('cancelled') <svg viewBox="0 0 24 24" style="width:10px;height:10px;fill:none;stroke:currentColor;stroke-width:3;margin-right:4px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Annulé @break
+                                @case('urgent')    <svg viewBox="0 0 24 24" style="width:10px;height:10px;fill:currentColor;margin-right:2px;"><path d="M13 2 L3 14 L12 14 L11 22 L21 10 L12 10 Z"/></svg> Urgent @break
                             @endswitch
                         </span>
                     </td>

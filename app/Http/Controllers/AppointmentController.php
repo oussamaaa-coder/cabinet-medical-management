@@ -108,6 +108,7 @@ class AppointmentController extends Controller
         // Check for doctor conflict
         $doctorConflict = Appointment::where('doctor_id', $validated['doctor_id'])
             ->where('date', $validated['date'])
+            ->where('status', '!=', 'cancelled')
             ->where(function ($query) use ($validated) {
                 $query->where(function ($q) use ($validated) {
                     $q->where('start_time', '<', $validated['end_time'])
@@ -127,6 +128,7 @@ class AppointmentController extends Controller
         // Check for patient conflict
         $patientConflict = Appointment::where('patient_id', $validated['patient_id'])
             ->where('date', $validated['date'])
+            ->where('status', '!=', 'cancelled')
             ->where(function ($query) use ($validated) {
                 $query->where(function ($q) use ($validated) {
                     $q->where('start_time', '<', $validated['end_time'])

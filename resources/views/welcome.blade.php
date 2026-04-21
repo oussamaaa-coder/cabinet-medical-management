@@ -288,8 +288,8 @@ footer{background:var(--bark);padding:60px clamp(20px,5vw,72px) 28px}
   </ul>
   <div class="nav-right">
     <button class="theme-btn" id="themeBtn"><svg id="themeIcon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
-    <a href="{{ route('login') }}" class="btn-soft"><svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>Connexion</a>
-    <a href="{{ route('register.patient') }}" class="btn-warm"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>Espace Patient</a>
+    <a href="{{ route('login') }}" class="btn-soft"><svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>Connexion Équipe</a>
+    <a href="{{ route('patient.dashboard') }}" class="btn-warm"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Espace Patient</a>
     <button class="ham-btn" id="ham"><span></span><span></span><span></span></button>
   </div>
 </nav>
@@ -301,7 +301,7 @@ footer{background:var(--bark);padding:60px clamp(20px,5vw,72px) 28px}
   <a href="{{ route('contact') }}">Contact</a>
   <div class="mob-cta">
     <a href="{{ route('login') }}" class="btn-soft">Connexion Équipe</a>
-    <a href="{{ route('register.patient') }}" class="btn-warm">Créer mon espace patient</a>
+    <a href="{{ route('patient.dashboard') }}" class="btn-warm">Mon Espace Patient</a>
   </div>
 </div>
 
@@ -480,7 +480,7 @@ footer{background:var(--bark);padding:60px clamp(20px,5vw,72px) 28px}
     </div>
     <div class="footer-col">
       <h5>Portails</h5>
-      <ul><li><a href="{{ route('register.patient') }}">Créer un compte</a></li><li><a href="{{ route('login') }}">Espace Patient</a></li><li><a href="{{ route('login') }}">Connexion Équipe</a></li><li><a href="{{ route('password.request') }}">Mot de passe oublié</a></li></ul>
+      <ul><li><a href="{{ route('patient.dashboard') }}">Accès Portail Patient</a></li><li><a href="{{ route('register.patient') }}">Créer mon compte</a></li><li><a href="{{ route('login') }}">Connexion Équipe</a></li><li><a href="{{ route('password.request') }}">Mot de passe oublié</a></li></ul>
     </div>
   </div>
   <div class="footer-bottom">

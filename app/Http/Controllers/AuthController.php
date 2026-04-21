@@ -34,10 +34,10 @@ class AuthController extends Controller
 
             // Redirect patient to patient portal
             if (auth()->user()->role === 'patient') {
-                return redirect()->route('patient.dashboard');
+                return redirect()->intended(route('patient.dashboard'));
             }
 
-            return redirect()->route('dashboard');
+            return redirect()->intended(route('dashboard'));
         }
 
         return back()->withErrors([

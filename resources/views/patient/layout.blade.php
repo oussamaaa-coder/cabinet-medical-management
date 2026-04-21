@@ -30,7 +30,7 @@
     {{-- Logo --}}
     <div class="pt-logo">
         <div class="pt-logo-icon">
-            <svg viewBox="0 0 24 24"><rect x="7" y="2" width="4" height="14" rx="1.5" fill="white"/><rect x="2" y="7" width="14" height="4" rx="1.5" fill="white"/></svg>
+            <img src="{{ asset('asset/img/logo.svg') }}" alt="Logo" style="width:24px;height:24px;filter:brightness(0) invert(1);">
         </div>
         <div>
             <div class="pt-logo-text">MediCal</div>

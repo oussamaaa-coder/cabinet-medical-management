@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->time('start_time');
             $table->time('end_time');
             $table->string('type'); // Contrôle, Consultation, etc.
-            $table->enum('status', ['planned', 'completed', 'cancelled', 'urgent'])->default('planned');
+            $table->enum('status', ['planned', 'in_progress', 'completed', 'cancelled', 'urgent'])->default('planned');
             $table->text('notes')->nullable();
             $table->boolean('sms_reminder')->default(false);
             $table->boolean('email_reminder')->default(false);

@@ -93,6 +93,16 @@
                     </select>
                 </div>
                 <div class="form-group">
+                    <label>Médecin <span class="required-star">*</span></label>
+                    <select name="doctor_id" class="form-control" required {{ Auth::user()->role === 'doctor' ? 'readonly style=pointer-events:none;background:#f8fafc;' : '' }}>
+                        @foreach($doctors as $doc)
+                            <option value="{{ $doc->id }}" {{ Auth::id() == $doc->id ? 'selected' : '' }}>
+                                Dr. {{ $doc->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="form-group">
                     <label>Date de l'ordonnance <span class="required-star">*</span></label>
                     <input type="date" name="prescription_date" class="form-control" value="{{ date('Y-m-d') }}" required>
                 </div>

@@ -19,6 +19,7 @@ class User extends Authenticatable
         'phone',
         'address',
         'profile_photo',
+        'doctor_id',
     ];
 
     protected $hidden = [
@@ -42,10 +43,16 @@ class User extends Authenticatable
         return $this->role === 'admin';
     }
 
-    // Relation avec Doctor
+    // Relation avec Doctor (le User est un médecin)
     public function doctor()
     {
         return $this->hasOne(Doctor::class);
+    }
+
+    // Relation avec un Doctor (le User est assigné à un médecin, ex: infirmier)
+    public function associatedDoctor()
+    {
+        return $this->belongsTo(Doctor::class, 'doctor_id');
     }
 
     // Relation avec Patient

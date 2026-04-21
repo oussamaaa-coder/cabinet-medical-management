@@ -2,263 +2,209 @@
 
 @section('title', 'Gestion des Utilisateurs')
 
-@push('styles')
-    <link rel="stylesheet" href="{{ asset('asset/css/style_dashboard_admin.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
-@endpush
-
 @section('content')
-<!-- MAIN CONTENT -->
-<div class="main-user-admin">
-  <header class="topbar">
-    <div class="topbar-left">
-      <div class="topbar-title">Gestion des Utilisateurs</div>
-      <div class="breadcrumb">
-        <a href="{{ route('dashboard') }}">Dashboard</a>
-        <span>›</span>
-        <span>Utilisateurs</span>
-      </div>
-    </div>
-    <div class="topbar-actions">
-      <form method="GET" action="{{ route('utilisateurs.index') }}" class="search-input-wrapper" id="searchForm">
-        <input type="text" name="search" placeholder="Rechercher un utilisateur..." value="{{ request('search') }}" id="searchInput">
-      </form>
-      <a href="{{ route('utilisateurs.create') }}" class="btn btn-primary">
-        Nouvel Utilisateur
-      </a>
-    </div>
-  </header>
-  <div class="content">
-    <!-- STATS -->
-    <div class="stats-row">
-      <div class="stat-card teal">
-        <div class="stat-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+<div class="doctors-page-wrapper">
+    <!-- Unified Topbar -->
+    <div class="app-topbar">
+        <div class="app-breadcrumb">
+            <a href="{{ route('utilisateurs.index') }}">Gestion des Utilisateurs</a>
+            <span class="sep">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </span>
+            <span class="current">Aperçu global</span>
         </div>
-        <div class="stat-value">{{ $totalUsers }}</div>
-        <div class="stat-label">Total Utilisateurs</div>
-      </div>
-      <div class="stat-card purple">
-        <div class="stat-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        </div>
-        <div class="stat-value">{{ $totalAdmins }}</div>
-        <div class="stat-label">Administrateurs</div>
-      </div>
-      <div class="stat-card blue">
-        <div class="stat-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-        </div>
-        <div class="stat-value">{{ $totalDoctors }}</div>
-        <div class="stat-label">Médecins</div>
-      </div>
-      <div class="stat-card amber">
-        <div class="stat-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        </div>
-        <div class="stat-value">{{ $totalNurses }}</div>
-        <div class="stat-label">Infirmiers</div>
-      </div>
-      <div class="stat-card rose">
-        <div class="stat-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-        </div>
-        <div class="stat-value">{{ $totalSecretaries }}</div>
-        <div class="stat-label">Secrétaires</div>
-      </div>
+
+        <a href="{{ route('utilisateurs.create') }}" class="app-btn app-btn-primary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/>
+            </svg>
+            Nouvel Utilisateur
+        </a>
     </div>
 
-    <!-- USER TABLE -->
-    <div class="card">
-      <div class="card-header">
-        <div class="card-title">Liste des Utilisateurs</div>
-        <div class="card-actions">
-          <div class="filter-tabs">
-            <a href="{{ route('utilisateurs.index', request()->except('role')) }}" class="filter-tab {{ !request('role') ? 'active' : '' }}">Tous</a>
-            <a href="{{ route('utilisateurs.index', array_merge(request()->except('role'), ['role' => 'admin'])) }}" class="filter-tab {{ request('role') === 'admin' ? 'active' : '' }}">Admins</a>
-            <a href="{{ route('utilisateurs.index', array_merge(request()->except('role'), ['role' => 'doctor'])) }}" class="filter-tab {{ request('role') === 'doctor' ? 'active' : '' }}">Médecins</a>
-            <a href="{{ route('utilisateurs.index', array_merge(request()->except('role'), ['role' => 'nurse'])) }}" class="filter-tab {{ request('role') === 'nurse' ? 'active' : '' }}">Infirmiers</a>
-            <a href="{{ route('utilisateurs.index', array_merge(request()->except('role'), ['role' => 'secretary'])) }}" class="filter-tab {{ request('role') === 'secretary' ? 'active' : '' }}">Secrétaires</a>
-          </div>
+    <!-- Key Metrics Grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
+        <div style="background: var(--bg-card); border-radius: 16px; padding: 20px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 15px;">
+            <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(13, 148, 136, 0.1); color: #0d9488; display: flex; align-items: center; justify-content: center;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div>
+                <div style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary); line-height: 1;">{{ $totalUsers }}</div>
+                <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-top: 4px;">Total</div>
+            </div>
         </div>
-      </div>
-      <div class="table-container">
-        @if($users->count() > 0)
-        <table>
-          <thead>
-            <tr>
-              <th style="width: 60px;">Photo</th>
-              <th>Nom</th>
-              <th>Email</th>
-              <th>Rôle</th>
-              <th>Créé le</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            @foreach($users as $user)
-            <tr>
-              <td>
-                @if($user->profile_photo)
-                  <img src="{{ asset('profiles/' . $user->profile_photo) }}" alt="Avatar" style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover; border: 1px solid #dce8e1;">
-                @else
-                  <div style="width: 40px; height: 40px; border-radius: 8px; background: #eaf3ee; color: #3a7d5c; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; border: 1px solid #dce8e1;">
-                    {{ strtoupper(substr($user->name, 0, 2)) }}
-                  </div>
-                @endif
-              </td>
-              <td>
-                <div class="user-name-text">{{ $user->name }}</div>
-                <div class="user-email-text">#U-{{ str_pad($user->id, 4, '0', STR_PAD_LEFT) }}</div>
-              </td>
-              <td>{{ $user->email }}</td>
-              <td>
-                <span class="role-badge role-{{ $user->role }}">
-                  @switch($user->role)
-                    @case('admin') <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Admin @break
-                    @case('doctor') <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg> Médecin @break
-                    @case('nurse') <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Infirmier @break
-                    @case('secretary') <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Secrétaire @break
-                  @endswitch
-                </span>
-              </td>
-              <td>{{ $user->created_at ? $user->created_at->format('d/m/Y H:i') : '—' }}</td>
-              <td>
-                <a href="{{ route('utilisateurs.show', $user) }}" class="action-btn" title="Voir détails">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                </a>
-                <a href="{{ route('utilisateurs.edit', $user) }}" class="action-btn" title="Modifier">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2-2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                </a>
-                @if($user->id !== auth()->id())
-                  <button class="action-btn danger" title="Supprimer" onclick="confirmDelete({{ $user->id }}, '{{ addslashes($user->name) }}')">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
-                  </button>
-                @endif
-              </td>
-            </tr>
-            @endforeach
-          </tbody>
-        </table>
-        @else
-        <div class="empty-state">
-          <div class="empty-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          </div>
-          <div class="empty-title">Aucun utilisateur trouvé</div>
-          <div class="empty-text">
-            @if(request('search') || request('role'))
-              Essayez de modifier vos critères de recherche.
-            @else
-              Commencez par ajouter un nouvel utilisateur.
-            @endif
-          </div>
+        <div style="background: var(--bg-card); border-radius: 16px; padding: 20px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 15px;">
+            <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(147, 51, 234, 0.1); color: #9333ea; display: flex; align-items: center; justify-content: center;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+            <div>
+                <div style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary); line-height: 1;">{{ $totalAdmins }}</div>
+                <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-top: 4px;">Admins</div>
+            </div>
+        </div>
+        <div style="background: var(--bg-card); border-radius: 16px; padding: 20px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 15px;">
+            <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(59, 130, 246, 0.1); color: #3b82f6; display: flex; align-items: center; justify-content: center;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            </div>
+            <div>
+                <div style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary); line-height: 1;">{{ $totalDoctors }}</div>
+                <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-top: 4px;">Médecins</div>
+            </div>
+        </div>
+        <div style="background: var(--bg-card); border-radius: 16px; padding: 20px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 15px;">
+            <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(245, 158, 11, 0.1); color: #f59e0b; display: flex; align-items: center; justify-content: center;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <div>
+                <div style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary); line-height: 1;">{{ $totalNurses }}</div>
+                <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-top: 4px;">Infirmiers</div>
+            </div>
+        </div>
+        <div style="background: var(--bg-card); border-radius: 16px; padding: 20px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 15px;">
+            <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(244, 63, 94, 0.1); color: #f43f5e; display: flex; align-items: center; justify-content: center;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            </div>
+            <div>
+                <div style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary); line-height: 1;">{{ $totalSecretaries }}</div>
+                <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-top: 4px;">Secrétaires</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Card -->
+    <div class="app-card">
+        <div class="app-topbar" style="padding-top: 0; margin-bottom: 25px; border-bottom: 1px solid var(--border); padding-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+            <div class="header-left">
+                <h3 style="margin: 0; font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">Comptes Utilisateurs</h3>
+            </div>
+            
+            <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                <div style="display: flex; background: var(--bg-field); border: 1px solid var(--border); border-radius: 8px; padding: 4px;">
+                    <a href="{{ route('utilisateurs.index', request()->except('role')) }}" style="padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-decoration: none; color: {{ !request('role') ? 'var(--accent)' : 'var(--text-secondary)' }}; background: {{ !request('role') ? 'var(--bg-card)' : 'transparent' }}; box-shadow: {{ !request('role') ? '0 1px 2px rgba(0,0,0,0.05)' : 'none' }}; transition: all 0.2s;">Tous</a>
+                    <a href="{{ route('utilisateurs.index', array_merge(request()->except('role'), ['role' => 'admin'])) }}" style="padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-decoration: none; color: {{ request('role') == 'admin' ? 'var(--accent)' : 'var(--text-secondary)' }}; background: {{ request('role') == 'admin' ? 'var(--bg-card)' : 'transparent' }}; box-shadow: {{ request('role') == 'admin' ? '0 1px 2px rgba(0,0,0,0.05)' : 'none' }}; transition: all 0.2s;">Admins</a>
+                    <a href="{{ route('utilisateurs.index', array_merge(request()->except('role'), ['role' => 'doctor'])) }}" style="padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-decoration: none; color: {{ request('role') == 'doctor' ? 'var(--accent)' : 'var(--text-secondary)' }}; background: {{ request('role') == 'doctor' ? 'var(--bg-card)' : 'transparent' }}; box-shadow: {{ request('role') == 'doctor' ? '0 1px 2px rgba(0,0,0,0.05)' : 'none' }}; transition: all 0.2s;">Médecins</a>
+                    <a href="{{ route('utilisateurs.index', array_merge(request()->except('role'), ['role' => 'nurse'])) }}" style="padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-decoration: none; color: {{ request('role') == 'nurse' ? 'var(--accent)' : 'var(--text-secondary)' }}; background: {{ request('role') == 'nurse' ? 'var(--bg-card)' : 'transparent' }}; box-shadow: {{ request('role') == 'nurse' ? '0 1px 2px rgba(0,0,0,0.05)' : 'none' }}; transition: all 0.2s;">Infirmiers</a>
+                    <a href="{{ route('utilisateurs.index', array_merge(request()->except('role'), ['role' => 'secretary'])) }}" style="padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-decoration: none; color: {{ request('role') == 'secretary' ? 'var(--accent)' : 'var(--text-secondary)' }}; background: {{ request('role') == 'secretary' ? 'var(--bg-card)' : 'transparent' }}; box-shadow: {{ request('role') == 'secretary' ? '0 1px 2px rgba(0,0,0,0.05)' : 'none' }}; transition: all 0.2s;">Secrétaires</a>
+                </div>
+
+                <form action="{{ route('utilisateurs.index') }}" method="GET" class="app-search-bar" id="searchForm" style="margin: 0;">
+                    @if(request('role'))
+                        <input type="hidden" name="role" value="{{ request('role') }}">
+                    @endif
+                    <div style="position: relative;">
+                        <svg style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; fill: none; stroke: var(--text-muted); stroke-width: 2;" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input type="text" name="search" class="app-form-control app-search-input" style="padding-left: 44px; width: 250px;" placeholder="Rechercher..." value="{{ request('search') }}" id="searchInput">
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="app-table-wrapper">
+            <table class="app-table">
+                <thead>
+                    <tr>
+                        <th>Identité</th>
+                        <th>Coordonnées</th>
+                        <th>Rôle</th>
+                        <th>Adhésion</th>
+                        <th style="text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($users as $user)
+                    <tr style="transition: all 0.2s; border-bottom: 1px solid var(--border);">
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                @if($user->profile_photo)
+                                    <img src="{{ asset('profiles/' . $user->profile_photo) }}" alt="Avatar" style="width: 40px; height: 40px; border-radius: 12px; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                @else
+                                    <div style="width: 40px; height: 40px; border-radius: 12px; background: var(--accent-light); color: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                        {{ strtoupper(substr($user->name, 0, 2)) }}
+                                    </div>
+                                @endif
+                                <div>
+                                    <div style="font-weight: 600; color: var(--text-primary);">{{ $user->name }}</div>
+                                    <div style="font-size: 0.75rem; color: var(--text-muted);">#USR-{{ str_pad($user->id, 4, '0', STR_PAD_LEFT) }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="display: flex; flex-direction: column; gap: 2px;">
+                                <span style="font-size: 0.85rem; color: var(--text-secondary);">{{ $user->email }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge app-badge-pill" style="border: 1px solid var(--border); background: var(--bg-field); color: var(--text-secondary); display: inline-flex; align-items: center; gap: 6px;">
+                                @switch($user->role)
+                                    @case('admin') 
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:#9333ea"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> 
+                                        Admin 
+                                    @break
+                                    @case('doctor') 
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:#3b82f6"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg> 
+                                        Médecin 
+                                    @break
+                                    @case('nurse') 
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:#f59e0b"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> 
+                                        Infirmier 
+                                    @break
+                                    @case('secretary') 
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:#f43f5e"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> 
+                                        Secrétaire 
+                                    @break
+                                @endswitch
+                            </span>
+                        </td>
+                        <td>
+                            <span style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 500;">
+                                {{ $user->created_at ? $user->created_at->format('d M Y') : '—' }}
+                            </span>
+                        </td>
+                        <td>
+                            <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                                <a href="{{ route('utilisateurs.show', $user) }}" class="app-btn-action" title="Consulter">
+                                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                </a>
+                                <a href="{{ route('utilisateurs.edit', $user) }}" class="app-btn-action" title="Modifier">
+                                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                </a>
+                                @if($user->id !== auth()->id())
+                                <form action="{{ route('utilisateurs.destroy', $user->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Confirmer la suppression de cet utilisateur ?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="app-btn-action delete" title="Supprimer">
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                                    </button>
+                                </form>
+                                @endif
+                            </div>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-light);"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                                <span>Aucun utilisateur trouvé.</span>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        @if($users->hasPages())
+        <div class="app-pagination" style="margin-top: 20px;">
+            {{ $users->appends(request()->query())->links() }}
         </div>
         @endif
-      </div>
-
-      @if($users->hasPages())
-      <div class="pagination-wrapper">
-        <div class="pagination-info">
-          Affichage de {{ $users->firstItem() }} à {{ $users->lastItem() }} sur {{ $users->total() }} utilisateurs
-        </div>
-        <div class="pagination-links">
-          @if($users->onFirstPage())
-            <span class="disabled">‹ Préc.</span>
-          @else
-            <a href="{{ $users->previousPageUrl() }}">‹ Préc.</a>
-          @endif
-
-          @foreach($users->getUrlRange(1, $users->lastPage()) as $page => $url)
-            @if($page == $users->currentPage())
-              <span class="current">{{ $page }}</span>
-            @else
-              <a href="{{ $url }}">{{ $page }}</a>
-            @endif
-          @endforeach
-
-          @if($users->hasMorePages())
-            <a href="{{ $users->nextPageUrl() }}">Suiv. ›</a>
-          @else
-            <span class="disabled">Suiv. ›</span>
-          @endif
-        </div>
-      </div>
-      @endif
     </div>
-  </div>
-</div>
-
-<!-- DELETE CONFIRMATION MODAL -->
-<div class="modal-overlay" id="deleteModal">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; color:#b91c1c;"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        Confirmer la suppression
-      </div>
-      <button class="modal-close" onclick="closeDeleteModal()">✕</button>
-    </div>
-    <div class="modal-body">
-      <p>Êtes-vous sûr de vouloir supprimer l'utilisateur <span class="user-delete-name" id="deleteUserName"></span> ? Cette action est irréversible.</p>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeDeleteModal()">Annuler</button>
-      <form id="deleteForm" method="POST" style="display:inline;">
-        @csrf
-        @method('DELETE')
-        <button type="submit" class="btn btn-danger">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
-          Supprimer
-        </button>
-      </form>
-    </div>
-  </div>
-</div>
-
-<!-- TOAST NOTIFICATIONS -->
-<div class="toast success" id="successToast">
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px;"><polyline points="20 6 9 17 4 12"/></svg>
-  <span id="successMsg"></span>
-</div>
-<div class="toast error" id="errorToast">
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px;"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-  <span id="errorMsg"></span>
 </div>
 
 <script>
-  // Delete confirmation
-  function confirmDelete(userId, userName) {
-    document.getElementById('deleteUserName').textContent = userName;
-    document.getElementById('deleteForm').action = '/utilisateurs/' + userId;
-    document.getElementById('deleteModal').classList.add('open');
-  }
-
-  function closeDeleteModal() {
-    document.getElementById('deleteModal').classList.remove('open');
-  }
-
-  document.getElementById('deleteModal').addEventListener('click', function(e) {
-    if (e.target === this) closeDeleteModal();
-  });
-
-  // Toast notifications
-  @if(session('success'))
-    showToast('success', @json(session('success')));
-  @endif
-
-  @if(session('error'))
-    showToast('error', @json(session('error')));
-  @endif
-
-  function showToast(type, message) {
-    const toast = document.getElementById(type + 'Toast');
-    document.getElementById(type + 'Msg').textContent = message;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 4000);
-  }
-
-  // Search debounce
   let searchTimeout;
   document.getElementById('searchInput').addEventListener('input', function() {
     clearTimeout(searchTimeout);

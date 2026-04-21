@@ -42,8 +42,9 @@ class UtilisateursController extends Controller
     public function create(): View
     {
         $roles = ['admin', 'doctor', 'nurse', 'secretary'];
+        $doctors = Doctor::all();
 
-        return view('dashbord_admin.create', compact('roles'));
+        return view('dashbord_admin.create', compact('roles', 'doctors'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -55,6 +56,7 @@ class UtilisateursController extends Controller
             'role' => ['required', 'in:admin,doctor,nurse,secretary'],
             'phone' => ['nullable', 'string', 'max:20'],
             'specialty' => ['required_if:role,doctor', 'nullable', 'string', 'max:255'],
+            'doctor_id' => ['nullable', 'exists:doctors,id'],
         ]);
 
         $user = User::create($validated);
@@ -86,12 +88,14 @@ class UtilisateursController extends Controller
     public function edit(User $utilisateur): View
     {
         $roles = ['admin', 'doctor', 'nurse', 'secretary'];
+        $doctors = Doctor::all();
+
         if ($utilisateur->role === 'doctor') {
             $doctor = Doctor::where('email', $utilisateur->email)->first();
             $utilisateur->specialty = $doctor?->specialty;
         }
 
-        return view('dashbord_admin.edit', compact('utilisateur', 'roles'));
+        return view('dashbord_admin.edit', compact('utilisateur', 'roles', 'doctors'));
     }
 
     public function update(Request $request, User $utilisateur): RedirectResponse
@@ -103,6 +107,7 @@ class UtilisateursController extends Controller
             'role' => ['required', 'in:admin,doctor,nurse,secretary'],
             'phone' => ['nullable', 'string', 'max:20'],
             'specialty' => ['required_if:role,doctor', 'nullable', 'string', 'max:255'],
+            'doctor_id' => ['nullable', 'exists:doctors,id'],
         ]);
 
         if (empty($validated['password'])) {

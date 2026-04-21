@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Appointment;
 use App\Models\Patient;
+use App\Models\Doctor;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -12,18 +13,37 @@ class AppointmentController extends Controller
     public function index()
     {
         $patients = Patient::all();
-        $doctors = \App\Models\Doctor::all();
-        return view('agenda.index', compact('patients', 'doctors'));
+        if (\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user()->role === 'doctor') {
+            $doctors = \App\Models\Doctor::where('user_id', \Illuminate\Support\Facades\Auth::id())->get();
+            $doctorIds = $doctors->pluck('id')->toArray();
+            $nurses = \App\Models\User::where('role', 'nurse')
+                ->where(function($q) use ($doctorIds) {
+                    $q->whereIn('doctor_id', $doctorIds)
+                      ->orWhereNull('doctor_id');
+                })->get();
+        } else {
+            $doctors = \App\Models\Doctor::all();
+            $nurses = \App\Models\User::where('role', 'nurse')->get();
+        }
+        return view('agenda.index', compact('patients', 'doctors', 'nurses'));
     }
 
     public function getAppointments(Request $request)
     {
         $date = $request->query('date', Carbon::today()->toDateString());
 
-        $appointments = Appointment::with(['patient', 'doctor'])
+        $query = Appointment::with(['patient', 'doctor'])
             ->whereDate('date', $date)
-            ->orderBy('start_time')
-            ->get();
+            ->orderBy('start_time');
+
+        if (\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user()->role === 'doctor') {
+            $doctor = \App\Models\Doctor::where('user_id', \Illuminate\Support\Facades\Auth::id())->first();
+            if ($doctor) {
+                $query->where('doctor_id', $doctor->id);
+            }
+        }
+
+        $appointments = $query->get();
 
         return response()->json($appointments);
     }
@@ -33,11 +53,18 @@ class AppointmentController extends Controller
         $month = $request->query('month', Carbon::now()->month);
         $year = $request->query('year', Carbon::now()->year);
 
-        $appointments = Appointment::select('date')
+        $query = Appointment::select('date')
             ->whereMonth('date', $month)
-            ->whereYear('date', $year)
-            ->get()
-            ->groupBy('date');
+            ->whereYear('date', $year);
+
+        if (\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user()->role === 'doctor') {
+            $doctor = \App\Models\Doctor::where('user_id', \Illuminate\Support\Facades\Auth::id())->first();
+            if ($doctor) {
+                $query->where('doctor_id', $doctor->id);
+            }
+        }
+
+        $appointments = $query->get()->groupBy('date');
 
         $status = $appointments->map(function ($dayAppointments) {
             return true; // Simple indicator for now
@@ -48,18 +75,35 @@ class AppointmentController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $rules = [
             'patient_id' => 'required|exists:patients,id',
             'doctor_id' => 'required|exists:doctors,id',
-            'date' => 'required|date',
+            'date' => 'required|date|after_or_equal:today',
             'start_time' => 'required',
-            'end_time' => 'required',
-            'type' => 'required|string',
-            'status' => 'required|in:planned,urgent',
+            'end_time' => 'nullable', // Will be calculated if null
+            'type' => 'nullable|string',
+            'status' => 'nullable|in:planned,urgent',
             'notes' => 'nullable|string',
             'sms_reminder' => 'boolean',
             'email_reminder' => 'boolean',
-        ]);
+        ];
+
+        $messages = [
+            'date.after_or_equal' => 'Impossible de prendre un rendez-vous pour une date passée.',
+        ];
+
+        if ($request->wantsJson()) {
+            $validated = $request->validate($rules, $messages);
+        } else {
+            $validated = $request->validate($rules, $messages);
+        }
+
+        // Defaults
+        if (empty($validated['end_time'])) {
+            $validated['end_time'] = Carbon::parse($validated['start_time'])->addMinutes(30)->format('H:i');
+        }
+        $validated['type'] = $validated['type'] ?? 'Consultation';
+        $validated['status'] = $validated['status'] ?? 'planned';
 
         // Check for doctor conflict
         $doctorConflict = Appointment::where('doctor_id', $validated['doctor_id'])
@@ -73,10 +117,11 @@ class AppointmentController extends Controller
             ->exists();
 
         if ($doctorConflict) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Le médecin a déjà un rendez-vous sur ce créneau horaire.'
-            ], 422);
+            $msg = 'Le médecin a déjà un rendez-vous sur ce créneau horaire.';
+            if ($request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => $msg], 422);
+            }
+            return back()->withInput()->with('error', $msg);
         }
 
         // Check for patient conflict
@@ -91,19 +136,24 @@ class AppointmentController extends Controller
             ->exists();
 
         if ($patientConflict) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Le patient a déjà un rendez-vous sur ce créneau horaire.'
-            ], 422);
+            $msg = 'Le patient a déjà un rendez-vous sur ce créneau horaire.';
+            if ($request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => $msg], 422);
+            }
+            return back()->withInput()->with('error', $msg);
         }
 
         $appointment = Appointment::create($validated);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Rendez-vous créé avec succès.',
-            'appointment' => $appointment->load('patient')
-        ]);
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Rendez-vous créé avec succès.',
+                'appointment' => $appointment->load('patient')
+            ]);
+        }
+
+        return redirect()->route('agenda.index')->with('success', 'Rendez-vous créé avec succès.');
     }
 
     public function update(Request $request, Appointment $appointment)
@@ -111,7 +161,12 @@ class AppointmentController extends Controller
         $validated = $request->validate([
             'status' => 'required|in:planned,completed,cancelled,urgent',
             'notes' => 'nullable|string',
+            'nurse_id' => 'nullable|exists:users,id',
         ]);
+
+        if ($validated['status'] !== 'completed') {
+            $validated['nurse_id'] = null;
+        }
 
         $appointment->update($validated);
 
@@ -135,6 +190,11 @@ class AppointmentController extends Controller
     public function create()
     {
         $patients = Patient::all();
-        return view('appointments.create', compact('patients'));
+        if (\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user()->role === 'doctor') {
+            $doctors = \App\Models\Doctor::where('user_id', \Illuminate\Support\Facades\Auth::id())->get();
+        } else {
+            $doctors = \App\Models\Doctor::all();
+        }
+        return view('appointments.create', compact('patients', 'doctors'));
     }
 }

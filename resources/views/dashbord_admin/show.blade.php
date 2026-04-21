@@ -1,6 +1,7 @@
 @extends('layouts.sidebar')
 @section('title', 'Détails Utilisateur')
 @section('content')
+<link rel="icon" type="image/svg+xml" href="{{ asset('asset/img/logo.svg') }}">
 <link rel="stylesheet" href="{{ asset('asset/css/style_dashboard_admin.css') }}">
 <link rel="stylesheet" href="{{ asset('asset/css/style_show_user.css') }}">
 

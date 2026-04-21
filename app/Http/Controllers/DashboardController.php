@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Appointment;
 use App\Models\Patient;
 use App\Models\User;
+use App\Models\Doctor;
 use App\Models\Prescription;
 use Carbon\Carbon;
 
@@ -12,42 +13,56 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        $appointmentBaseQuery = Appointment::query();
+        $patientBaseQuery = Patient::query();
+        $doctorBaseQuery = Doctor::query();
+
+        if (\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user()->role === 'doctor') {
+            $doctorId = \App\Models\Doctor::where('user_id', \Illuminate\Support\Facades\Auth::id())->value('id');
+            if ($doctorId) {
+                $appointmentBaseQuery->where('doctor_id', $doctorId);
+                $patientBaseQuery->whereHas('appointments', function($q) use ($doctorId) {
+                    $q->where('doctor_id', $doctorId);
+                });
+                $doctorBaseQuery->where('id', $doctorId);
+            }
+        }
+
         // Get counts for stats cards
-        $totalPatients = Patient::count();
-        $totalDoctors = User::where('role', 'doctor')->count();
-        $totalAppointments = Appointment::count();
+        $totalPatients = (clone $patientBaseQuery)->count();
+        $totalDoctors = (clone $doctorBaseQuery)->count();
+        $totalAppointments = (clone $appointmentBaseQuery)->count();
         
         // Today's appointments
-        $todayAppointments = Appointment::whereDate('date', Carbon::today())->count();
+        $todayAppointments = (clone $appointmentBaseQuery)->whereDate('date', Carbon::today())->count();
         
         // This week's appointments
-        $weekAppointments = Appointment::whereBetween('date', [
+        $weekAppointments = (clone $appointmentBaseQuery)->whereBetween('date', [
             Carbon::now()->startOfWeek(),
             Carbon::now()->endOfWeek()
         ])->count();
         
         // Monthly appointments
-        $monthAppointments = Appointment::whereMonth('date', Carbon::now()->month)
+        $monthAppointments = (clone $appointmentBaseQuery)->whereMonth('date', Carbon::now()->month)
             ->whereYear('date', Carbon::now()->year)
             ->count();
         
         // Recent appointments (last 5)
-        $recentAppointments = Appointment::with('patient')
+        $recentAppointments = (clone $appointmentBaseQuery)->with(['patient', 'doctor'])
             ->orderBy('date', 'desc')
             ->orderBy('start_time', 'desc')
             ->limit(5)
             ->get();
         
-        // Upcoming appointments for today
-        $upcomingToday = Appointment::with('patient')
+        // Upcoming appointments for today (Show all today)
+        $upcomingToday = (clone $appointmentBaseQuery)->with(['patient', 'doctor'])
             ->whereDate('date', Carbon::today())
-            ->where('start_time', '>=', Carbon::now()->format('H:i:s'))
             ->orderBy('start_time')
-            ->limit(5)
+            ->limit(10)
             ->get();
         
         // Appointments by status
-        $appointmentsByStatus = Appointment::select('status')
+        $appointmentsByStatus = (clone $appointmentBaseQuery)->select('status')
             ->get()
             ->groupBy('status')
             ->map(function ($items) {
@@ -58,7 +73,7 @@ class DashboardController extends Controller
         $last7DaysAppointments = [];
         for ($i = 6; $i >= 0; $i--) {
             $date = Carbon::today()->subDays($i);
-            $count = Appointment::whereDate('date', $date)->count();
+            $count = (clone $appointmentBaseQuery)->whereDate('date', $date)->count();
             $last7DaysAppointments[] = [
                 'date' => $date->format('d/m'),
                 'count' => $count
@@ -74,7 +89,7 @@ class DashboardController extends Controller
             });
         
         // Completed appointments this month
-        $completedThisMonth = Appointment::whereMonth('date', Carbon::now()->month)
+        $completedThisMonth = (clone $appointmentBaseQuery)->whereMonth('date', Carbon::now()->month)
             ->whereYear('date', Carbon::now()->year)
             ->where('status', 'completed')
             ->count();

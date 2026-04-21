@@ -5,6 +5,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <link rel="stylesheet" href="{{ asset('asset/css/style_sidebar.css') }}">
+        <link rel="stylesheet" href="{{ asset('asset/css/style_global.css') }}">
+        <link rel="stylesheet" href="{{ asset('asset/css/style_transitions.css') }}">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link
             rel="preconnect"
@@ -29,9 +32,49 @@
             }
         </script>
         <title>MediCal — @yield('title', 'Tableau de bord')</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+            @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+            
+            body {
+                font-family: 'Plus Jakarta Sans', 'Outfit', sans-serif;
+            }
+        </style>
         @stack('styles')
     </head>
-    <body>
+    <body class="is-transitioning">
+        {{-- Overlay de transition --}}
+        <div id="page-transition-overlay">
+            <div class="transition-logo">
+                <div class="logo-icon-svg">
+                    <svg
+                        width="80"
+                        height="80"
+                        viewbox="0 0 18 18"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <rect
+                            x="7"
+                            y="2"
+                            width="4"
+                            height="14"
+                            rx="1.5"
+                            fill="#3A7D5C"
+                            fill-opacity="0.9"/>
+                        <rect
+                            x="2"
+                            y="7"
+                            width="14"
+                            height="4"
+                            rx="1.5"
+                            fill="#3A7D5C"
+                            fill-opacity="0.9"/>
+                    </svg>
+                </div>
+                <div class="logo-text" style="color: #3A7D5C">MediCal</div>
+            </div>
+        </div>
 
         <aside class="sidebar">
 
@@ -134,6 +177,21 @@
                     </span>
                     <span class="nav-label">Médecins</span>
                 </a>
+
+                @if(auth()->check() && auth()->user()->role === 'doctor')
+                <a
+                    href="{{ route('mes-infirmieres.index') }}"
+                    class="nav-item {{ request()->is('mes-infirmieres*') ? 'active' : '' }}">
+                    <span class="nav-icon">
+                        <svg viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                            <circle cx="12" cy="12" r="10"/>
+                        </svg>
+                    </span>
+                    <span class="nav-label">Mes infirmières</span>
+                </a>
+                @endif
 
                 <span class="nav-section-label">Gestion</span>
 
@@ -301,6 +359,7 @@
             // Initial UI state
             updateToggleUI();
         </script>
+        <script src="{{ asset('asset/js/transitions.js') }}"></script>
         @stack('scripts')
     </body>
 </html>

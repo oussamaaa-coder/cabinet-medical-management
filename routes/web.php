@@ -82,6 +82,9 @@ Route::middleware(['auth'])->group(function () {
     // Dossiers Routes
     Route::get('/dossiers', [DossierController::class , 'index'])->name('dossiers.index');
 
+    // Doctor nurses
+    Route::resource('mes-infirmieres', App\Http\Controllers\DoctorNurseController::class);
+
     // Settings Routes
     Route::get('/settings', [SettingsController::class , 'index'])->name('settings.index');
     Route::post('/settings', [SettingsController::class , 'update'])->name('settings.update');

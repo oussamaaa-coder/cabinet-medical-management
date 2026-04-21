@@ -3,6 +3,8 @@
 @section('title', 'Modifier Utilisateur')
 
 @section('content')
+<link rel="icon" type="image/svg+xml" href="{{ asset('asset/img/logo.svg') }}">
+
 <link rel="stylesheet" href="{{ asset('asset/css/style_dashboard_admin.css') }}">
 <link rel="stylesheet" href="{{ asset('asset/css/style_edit_user.css') }}">
 
@@ -203,7 +205,6 @@
             @enderror
           </div>
 
-          {{-- ── Specialty (doctor only) ── --}}
           <div class="form-group" id="specialty-group" style="display: none;">
             <label class="form-label">Spécialité</label>
             <input
@@ -217,6 +218,22 @@
                 <svg><use href="#icon-warning"/></svg>
                 {{ $message }}
               </div>
+            @enderror
+          </div>
+
+          <div class="form-group" id="doctor-assign-group" style="display: none;">
+            <label class="form-label">Médecin Assigné (Optionnel)</label>
+            <select name="doctor_id" id="doctor_id" class="form-input {{ $errors->has('doctor_id') ? 'error' : '' }}">
+              <option value="">-- Aucun médecin assigné spécifiquement --</option>
+              @foreach($doctors as $doc)
+                  <option value="{{ $doc->id }}" {{ old('doctor_id', $utilisateur->doctor_id) == $doc->id ? 'selected' : '' }}>
+                      Dr. {{ $doc->first_name }} {{ $doc->last_name }}
+                  </option>
+              @endforeach
+            </select>
+            <div class="form-help" style="font-size: 0.8rem; color: #6b7280; margin-top: 4px;">Permet d'associer cet utilisateur exclusivement à un médecin.</div>
+            @error('doctor_id')
+              <div class="form-error"><svg><use href="#icon-warning"/></svg>{{ $message }}</div>
             @enderror
           </div>
 
@@ -296,12 +313,13 @@
 
         </div><!-- /.form-card-body -->
 
-        {{-- JS: toggle specialty field --}}
         <script>
           function toggleDoctorFields() {
             const role = document.querySelector('input[name="role"]:checked').value;
             document.getElementById('specialty-group').style.display =
               (role === 'doctor') ? 'block' : 'none';
+            document.getElementById('doctor-assign-group').style.display =
+              (role === 'nurse' || role === 'secretary') ? 'block' : 'none';
           }
           document.addEventListener('DOMContentLoaded', toggleDoctorFields);
         </script>

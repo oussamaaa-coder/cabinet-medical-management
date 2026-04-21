@@ -1,251 +1,108 @@
 @extends('layouts.sidebar')
 
 @section('content')
-<div class="topbar">
-    <div class="breadcrumb">
-        <a href="{{ route('doctors.index') }}">Médecins</a>
-        <span class="sep">›</span>
-        <span>Détails du Docteur</span>
-    </div>
-    <a href="{{ route('doctors.index') }}" class="btn-back">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-        Retour à la liste
-    </a>
-</div>
-
-<div class="doctor-details-container">
-    <div class="details-card">
-        <div class="card-header">
-            <div class="doctor-avatar">
-                <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
+<div class="doctor-profile-wrapper">
+    <!-- Topbar -->
+    <div class="app-topbar">
+        <div class="app-breadcrumb">
+            <a href="{{ route('doctors.index') }}">Médecins</a>
+            <span class="sep">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
                 </svg>
+            </span>
+            <span class="current">Profil du Docteur</span>
+        </div>
+
+        <div style="display: flex; gap: 12px;">
+            <a href="{{ route('doctors.index') }}" class="app-btn app-btn-secondary">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                Retour à la liste
+            </a>
+            @if(auth()->user()->isAdmin())
+            <a href="{{ route('doctors.edit', $doctor->id) }}" class="app-btn app-btn-primary">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                Modifier le profil
+            </a>
+            @endif
+        </div>
+    </div>
+
+    <!-- Doctor Header Card -->
+    <div class="app-profile-header">
+        <div class="app-profile-main">
+            <div class="app-avatar-lg" style="box-shadow: 0 10px 25px var(--accent-glow);">
+                <svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
             </div>
-            <div class="header-info">
-                <h2>{{ $doctor->name }}</h2>
-                <span class="badge-specialty">{{ $doctor->specialty }}</span>
+            <div class="app-identity">
+                <h1>Dr. {{ $doctor->last_name }} {{ $doctor->first_name }}</h1>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span class="badge app-badge-pill" style="background: var(--accent); color: white;">
+                        {{ $doctor->speciality ?? 'Médecine Générale' }}
+                    </span>
+                    <span style="color: var(--text-muted); font-size: 0.9rem;">Expert Medox</span>
+                </div>
+            </div>
+        </div>
+        <div style="text-align: right;">
+            <div style="font-size: 0.75rem; color: var(--text-label); font-weight: 700; text-transform: uppercase;">Disponibilité</div>
+            <div style="display: flex; align-items: center; gap: 8px; justify-content: flex-end; margin-top: 4px;">
+                <span style="width: 10px; height: 10px; border-radius: 50%; background: #34d399; box-shadow: 0 0 8px #34d39966;"></span>
+                <span style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">Disponible</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px;">
+        <!-- Professional Info -->
+        <div class="app-info-panel">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 24px; color: var(--accent);">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+                <h3 style="margin:0; font-size: 1.1rem; font-weight: 700;">Informations Professionnelles</h3>
+            </div>
+            
+            <div class="app-info-item">
+                <span class="app-info-label">Spécialité</span>
+                <span class="app-info-value">{{ $doctor->speciality ?? 'Non spécifiée' }}</span>
+            </div>
+            <div class="app-info-item">
+                <span class="app-info-label">Email professionnel</span>
+                <span class="app-info-value accent">{{ $doctor->email }}</span>
+            </div>
+            <div class="app-info-item">
+                <span class="app-info-label">Numéro de téléphone</span>
+                <span class="app-info-value">{{ $doctor->phone ?? '—' }}</span>
+            </div>
+            <div class="app-info-item">
+                <span class="app-info-label">Membre depuis</span>
+                <span class="app-info-value">{{ $doctor->created_at->format('d/m/Y') }}</span>
+            </div>
+            <div class="app-info-item">
+                <span class="app-info-label">Mot de passe de connexion</span>
+                <span class="app-info-value" style="font-family: monospace; letter-spacing: 1px; color: var(--accent);">{{ $doctor->plain_password ?? '—' }}</span>
             </div>
         </div>
 
-        <div class="card-body">
-            <div class="info-grid">
-                <div class="info-item">
-                    <label>Email professionnel</label>
-                    <div class="value">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-                        {{ $doctor->email }}
-                    </div>
-                </div>
-
-                <div class="info-item">
-                    <label>Téléphone</label>
-                    <div class="value">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                        {{ $doctor->phone ?? 'Non renseigné' }}
-                    </div>
-                </div>
-
-                <div class="info-item">
-                    <label>Spécialité</label>
-                    <div class="value">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
-                        {{ $doctor->specialty }}
-                    </div>
-                </div>
-
-                <div class="info-item">
-                    <label>Date d'inscription</label>
-                    <div class="value">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                        {{ $doctor->created_at->format('d/m/Y') }}
-                    </div>
-                </div>
+        <!-- Working Location -->
+        <div class="app-info-panel">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 24px; color: var(--accent);">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                <h3 style="margin:0; font-size: 1.1rem; font-weight: 700;">Lieu d'exercice</h3>
             </div>
             
-            @if($doctor->address)
-            <div class="info-item full-width">
-                <label>Adresse professionnelle</label>
-                <div class="value">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                    {{ $doctor->address }}
-                </div>
+            <div style="padding: 20px; background: var(--bg-field); border-radius: var(--radius-md); border: 1px solid var(--border);">
+                 <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 8px;">Centre Médical Medox Main</div>
+                 <div style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.6;">
+                    {{ $doctor->address ?? 'Adresse principale du centre' }}
+                 </div>
+                 <div style="margin-top: 16px; font-size: 0.85rem; color: var(--accent); font-weight: 600;">Cabinet #{{ $doctor->id + 100 }}</div>
             </div>
-            @endif
         </div>
     </div>
 </div>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
-
-:root {
-  --accent:         #3a7d5c;
-  --accent-light:   #eaf3ee;
-  --accent-mid:     #c4ddd0;
-  --accent-glow:    rgba(58,125,92,.15);
-  --accent-dark:    #2a6048;
-  --text-primary:   #1a2b22;
-  --text-secondary: #4a6358;
-  --text-muted:     #8aad9c;
-  --border:         #dce8e1;
-  --bg-field:       #f4f7f5;
-  --ease:           cubic-bezier(.4,0,.2,1);
-}
-
-body {
-    font-family: 'Outfit', sans-serif;
-    background-color: #f8faf9;
-    color: var(--text-primary);
-}
-
-.topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 0;
-    margin-bottom: 30px;
-}
-
-.breadcrumb {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.95rem;
-    color: var(--text-muted);
-}
-
-.breadcrumb a {
-    color: var(--accent);
-    text-decoration: none;
-    font-weight: 500;
-}
-
-.btn-back {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: white;
-    color: var(--text-secondary);
-    padding: 10px 18px;
-    border-radius: 12px;
-    text-decoration: none;
-    font-weight: 500;
-    border: 1px solid var(--border);
-    transition: all var(--ease);
-}
-
-.btn-back:hover {
-    background: var(--bg-field);
-    color: var(--accent);
-    border-color: var(--accent-mid);
-    transform: translateX(-4px);
-}
-
-.doctor-details-container {
-    max-width: 900px;
-    margin: 0 auto;
-}
-
-.details-card {
-    background: white;
-    border-radius: 24px;
-    overflow: hidden;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.04);
-    border: 1px solid var(--border);
-}
-
-.card-header {
-    background: linear-gradient(135deg, var(--accent-light) 0%, #f8faf9 100%);
-    padding: 40px;
-    display: flex;
-    align-items: center;
-    gap: 30px;
-    border-bottom: 1px solid var(--border);
-}
-
-.doctor-avatar {
-    width: 100px;
-    height: 100px;
-    background: white;
-    border-radius: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--accent);
-    box-shadow: 0 10px 25px var(--accent-glow);
-    border: 1px solid var(--accent-mid);
-}
-
-.header-info h2 {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 8px;
-    color: var(--text-primary);
-}
-
-.badge-specialty {
-    background: var(--accent);
-    color: white;
-    padding: 6px 16px;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    display: inline-block;
-}
-
-.card-body {
-    padding: 40px;
-}
-
-.info-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 30px;
-}
-
-.info-item label {
-    display: block;
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--text-muted);
-    margin-bottom: 10px;
-}
-
-.info-item .value {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 1.1rem;
-    color: var(--text-secondary);
-    font-weight: 500;
-}
-
-.info-item .value svg {
-    color: var(--accent);
-}
-
-.full-width {
-    grid-column: 1 / -1;
-    margin-top: 20px;
-    padding-top: 30px;
-    border-top: 1px solid var(--bg-field);
-}
-
-@media (max-width: 640px) {
-    .card-header {
-        flex-direction: column;
-        text-align: center;
-        padding: 30px;
-    }
-    .info-grid {
-        grid-template-columns: 1fr;
-    }
-    .header-info h2 {
-        font-size: 1.5rem;
-    }
-}
+    .doctor-profile-wrapper { min-h: 100vh; }
 </style>
 @endsection

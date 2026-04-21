@@ -20,6 +20,7 @@ class Appointment extends Model
         'notes',
         'sms_reminder',
         'email_reminder',
+        'nurse_id',
     ];
 
     // Relation avec Doctor
@@ -32,5 +33,11 @@ class Appointment extends Model
     public function patient()
     {
         return $this->belongsTo(Patient::class);
+    }
+
+    // Relation avec Nurse (User de type nurse)
+    public function nurse()
+    {
+        return $this->belongsTo(User::class, 'nurse_id');
     }
 }

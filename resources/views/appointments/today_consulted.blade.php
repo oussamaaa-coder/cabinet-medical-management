@@ -1,156 +1,63 @@
 @extends('layouts.sidebar')
 
 @section('content')
-<div class="topbar">
-    <div class="breadcrumb">
-        <a href="{{ route('patients.index') }}">Patients</a>
-        <span class="sep">›</span>
-        <span>Consultés aujourd'hui</span>
+<div class="appointments-page-wrapper">
+    <div class="app-topbar">
+        <div class="app-breadcrumb">
+            <a href="{{ route('patients.index') }}">Patients</a>
+            <span class="sep">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </span>
+            <span class="current">Consultés aujourd'hui</span>
+        </div>
+    </div>
+
+    <div class="app-card">
+        <div class="app-section-title">
+            <h3>Patients consultés aujourd'hui</h3>
+        </div>
+
+        <div class="app-table-wrapper">
+            <table class="app-table">
+                <thead>
+                    <tr>
+                        <th>Patient</th>
+                        <th>Médecin</th>
+                        <th>Heure</th>
+                        <th style="text-align: right;">Statut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($appointments as $appointment)
+                        <tr>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 12px; font-weight: 600; color: var(--text-primary);">
+                                    <div style="width: 32px; height: 32px; border-radius: 8px; background: #e0f2fe; color: #0369a1; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700;">{{ strtoupper(substr($appointment->patient->first_name, 0, 1) . substr($appointment->patient->last_name, 0, 1)) }}</div>
+                                    <span>{{ $appointment->patient->first_name }} {{ $appointment->patient->last_name }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="font-size: 0.85rem; padding: 4px 10px; background: #fff5eb; color: #9a3412; border-radius: 6px; font-weight: 600;">Dr. {{ $appointment->doctor->first_name }} {{ $appointment->doctor->last_name }}</span>
+                                </div>
+                            </td>
+                            <td><span style="font-weight: 600; color: var(--text-primary);">{{ \Carbon\Carbon::parse($appointment->start_time)->format('H:i') }}</span></td>
+                            <td style="text-align: right;">
+                                <span class="badge app-badge" style="background: #f0f9ff; color: #0284c7;">
+                                    Consulté
+                                </span>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" style="text-align: center; padding: 48px; color: var(--text-muted); font-style: italic;">Aucun patient n'a été consulté aujourd'hui.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
-
-<div class="appointments-container">
-    <div class="table-header">
-        <h3>Patients consultés aujourd'hui</h3>
-    </div>
-    
-    <div style="overflow-x: auto;">
-        <table class="appointments-table">
-            <thead>
-                <tr>
-                    <th>Patient</th>
-                    <th>Médecin</th>
-                    <th>Heure</th>
-                    <th>Statut</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($appointments as $appointment)
-                <tr>
-                    <td class="font-medium text-primary">{{ $appointment->patient->first_name }} {{ $appointment->patient->last_name }}</td>
-                    <td>Dr. {{ $appointment->doctor->first_name }} {{ $appointment->doctor->last_name }}</td>
-                    <td>{{ \Carbon\Carbon::parse($appointment->start_time)->format('H:i') }}</td>
-                    <td>
-                        <span class="status-badge completed">
-                            Consulté
-                        </span>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="4" class="empty-message">Aucun patient n'a été consulté aujourd'hui.</td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<style>
-    :root {
-      --accent:         #3a7d5c;
-      --accent-light:   #eaf3ee;
-      --accent-mid:     #c4ddd0;
-      --accent-glow:    rgba(58,125,92,.15);
-      --accent-dark:    #2a6048;
-      --text-primary:   #1a2b22;
-      --text-secondary: #4a6358;
-      --text-muted:     #8aad9c;
-      --border:         #dce8e1;
-      --bg-field:       #f4f7f5;
-      --bg-card:        #ffffff;
-      --ease:           cubic-bezier(.4,0,.2,1);
-    }
-
-    [data-theme="dark"] {
-      --text-primary:   #e2ede7;
-      --text-secondary: #9fbfb0;
-      --text-muted:     #5a7d6e;
-      --border:         rgba(255, 255, 255, 0.1);
-      --bg-field:       #151e1a;
-      --bg-card:        #1a2620;
-      --accent-light:   #1a2d23;
-    }
-
-    .appointments-container {
-        margin-top: 30px;
-        background: var(--bg-card);
-        padding: 24px;
-        border-radius: 12px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-        border: 1px solid var(--border);
-    }
-
-    .table-header h3 {
-        margin: 0 0 20px 0;
-        color: var(--text-primary);
-        font-size: 1.25rem;
-    }
-
-    .appointments-table {
-        width: 100%;
-        text-align: left;
-        border-collapse: collapse;
-        min-width: 600px;
-    }
-
-    .appointments-table th {
-        background-color: var(--bg-field);
-        color: var(--text-muted);
-        font-weight: 600;
-        padding: 14px 16px;
-        border-bottom: 1px solid var(--border);
-        text-transform: uppercase;
-        font-size: 0.85rem;
-        letter-spacing: 0.05em;
-    }
-
-    .appointments-table td {
-        padding: 16px;
-        border-bottom: 1px solid var(--border);
-        color: var(--text-secondary);
-        vertical-align: middle;
-    }
-
-    .font-medium { font-weight: 500; }
-    .text-primary { color: var(--text-primary); }
-
-    .status-badge {
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 500;
-    }
-    .status-badge.completed { background: var(--accent-light); color: var(--accent); }
-
-    .empty-message {
-        text-align: center;
-        color: var(--text-muted);
-        padding: 40px !important;
-    }
-
-    .topbar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-    }
-
-    .breadcrumb {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: var(--text-muted);
-        font-size: 0.9rem;
-    }
-
-    .breadcrumb a {
-        color: var(--accent);
-        text-decoration: none;
-    }
-
-    .breadcrumb .sep {
-        color: var(--border);
-    }
-</style>
 @endsection

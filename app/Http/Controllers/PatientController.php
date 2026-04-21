@@ -11,6 +11,15 @@ class PatientController extends Controller
     {
         $query = Patient::query();
 
+        if (\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user()->role === 'doctor') {
+            $doctorId = \App\Models\Doctor::where('user_id', \Illuminate\Support\Facades\Auth::id())->value('id');
+            if ($doctorId) {
+                $query->whereHas('appointments', function($q) use ($doctorId) {
+                    $q->where('doctor_id', $doctorId);
+                });
+            }
+        }
+
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
@@ -26,21 +35,27 @@ class PatientController extends Controller
         $patients = $query->latest()->paginate(5);
 
         // Total patients
-        $totalPatients = Patient::count();
+        $totalPatients = $query->count();
 
         // Rendez-vous planifiés aujourd'hui (liste complète pour affichage inline)
-        $appointmentsPlanned = \App\Models\Appointment::with(['patient', 'doctor'])
+        $appointmentsPlannedQuery = \App\Models\Appointment::with(['patient', 'doctor'])
             ->whereDate('date', today()->toDateString())
             ->where('status', 'planned')
-            ->orderBy('start_time')
-            ->get();
+            ->orderBy('start_time');
 
         // Rendez-vous consultés aujourd'hui (liste complète pour affichage inline)
-        $appointmentsConsulted = \App\Models\Appointment::with(['patient', 'doctor'])
+        $appointmentsConsultedQuery = \App\Models\Appointment::with(['patient', 'doctor'])
             ->whereDate('date', today()->toDateString())
             ->where('status', 'completed')
-            ->orderBy('start_time')
-            ->get();
+            ->orderBy('start_time');
+
+        if (isset($doctorId) && $doctorId) {
+            $appointmentsPlannedQuery->where('doctor_id', $doctorId);
+            $appointmentsConsultedQuery->where('doctor_id', $doctorId);
+        }
+
+        $appointmentsPlanned = $appointmentsPlannedQuery->get();
+        $appointmentsConsulted = $appointmentsConsultedQuery->get();
 
         $patientsPlannedToday = $appointmentsPlanned->count();
         $patientsConsultedToday = $appointmentsConsulted->count();
@@ -220,6 +235,15 @@ class PatientController extends Controller
     public function listAll(Request $request)
     {
         $query = Patient::query();
+
+        if (\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user()->role === 'doctor') {
+            $doctorId = \App\Models\Doctor::where('user_id', \Illuminate\Support\Facades\Auth::id())->value('id');
+            if ($doctorId) {
+                $query->whereHas('appointments', function($q) use ($doctorId) {
+                    $q->where('doctor_id', $doctorId);
+                });
+            }
+        }
 
         if ($request->filled('search')) {
             $search = $request->search;

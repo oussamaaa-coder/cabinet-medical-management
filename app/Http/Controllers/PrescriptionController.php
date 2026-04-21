@@ -11,7 +11,11 @@ class PrescriptionController extends Controller
 {
     public function index()
     {
-        $prescriptions = Prescription::with('patient', 'doctor')->latest()->get();
+        $query = Prescription::with('patient', 'doctor')->orderBy('id', 'desc');
+        if (\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user()->role === 'doctor') {
+            $query->where('doctor_id', \Illuminate\Support\Facades\Auth::id());
+        }
+        $prescriptions = $query->get();
         return view('prescriptions.index', compact('prescriptions'));
     }
 
@@ -19,13 +23,21 @@ class PrescriptionController extends Controller
     {
         $patients = Patient::all();
         $selectedPatientId = $request->patient_id;
-        return view('prescriptions.create', compact('patients', 'selectedPatientId'));
+        
+        if (\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user()->role === 'admin') {
+            $doctors = \App\Models\User::where('role', 'doctor')->get();
+        } else {
+            $doctors = [\Illuminate\Support\Facades\Auth::user()];
+        }
+        
+        return view('prescriptions.create', compact('patients', 'selectedPatientId', 'doctors'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'patient_id' => 'required|exists:patients,id',
+            'doctor_id' => 'nullable|exists:users,id',
             'diagnosis' => 'nullable|string',
             'notes' => 'nullable|string',
             'prescription_date' => 'required|date',
@@ -35,9 +47,14 @@ class PrescriptionController extends Controller
             'medicines.*.duration' => 'nullable|string',
         ]);
 
+        $doctorId = \Illuminate\Support\Facades\Auth::id();
+        if (\Illuminate\Support\Facades\Auth::user()->role === 'admin' && $request->filled('doctor_id')) {
+            $doctorId = $request->doctor_id;
+        }
+
         $prescription = Prescription::create([
             'patient_id' => $request->patient_id,
-            'doctor_id' => Auth::id(),
+            'doctor_id' => $doctorId,
             'diagnosis' => $request->diagnosis,
             'notes' => $request->notes,
             'prescription_date' => $request->prescription_date,

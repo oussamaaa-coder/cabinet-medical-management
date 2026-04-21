@@ -173,6 +173,10 @@ Vous êtes un nouveau docteur ?
 <a href="{{ route('contact') }}">Contactez nous</a>
 </div>
 
+<div class="form-footer" style="margin-top:10px;">
+Patient ? <a href="{{ route('register.patient') }}">Créer votre espace patient</a>
+</div>
+
 </div>
 
 </div>

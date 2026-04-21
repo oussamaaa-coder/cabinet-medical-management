@@ -15,17 +15,23 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\HelpController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\PatientPortalController;
 use App\Http\Middleware\AdminOnly;
+use App\Http\Middleware\PatientOnly;
 use App\Models\User;
 
 Route::get('/', function () {
-    return redirect()->route('login');
-});
+    return view('welcome');
+})->name('home');
 
 // Auth
 Route::get('/login', [AuthController::class , 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class , 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class , 'logout'])->name('logout');
+
+// Patient Registration
+Route::get('/register', [AuthController::class, 'showRegisterPatient'])->name('register.patient');
+Route::post('/register', [AuthController::class, 'registerPatient'])->name('register.patient.post');
 
 // Mot de passe oublié
 Route::get('/forgot-password', [ForgotPasswordController::class, 'showForm'])->name('password.request');
@@ -38,6 +44,18 @@ Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'
 // Contactez-nous
 Route::get('/contact', [ContactController::class, 'showForm'])->name('contact');
 Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
+
+// ── Patient Portal ─────────────────────────────────────────────────────────
+Route::middleware(['auth', PatientOnly::class])->prefix('patient')->name('patient.')->group(function () {
+    Route::get('/dashboard', [PatientPortalController::class, 'dashboard'])->name('dashboard');
+    Route::get('/appointments', [PatientPortalController::class, 'appointments'])->name('appointments');
+    Route::get('/appointments/book', [PatientPortalController::class, 'createAppointment'])->name('appointments.book');
+    Route::post('/appointments/book', [PatientPortalController::class, 'storeAppointment'])->name('appointments.store');
+    Route::post('/appointments/{appointment}/cancel', [PatientPortalController::class, 'cancelAppointment'])->name('appointments.cancel');
+    Route::get('/prescriptions', [PatientPortalController::class, 'prescriptions'])->name('prescriptions');
+    Route::get('/prescriptions/{prescription}', [PatientPortalController::class, 'showPrescription'])->name('prescriptions.show');
+    Route::get('/dossier', [PatientPortalController::class, 'dossier'])->name('dossier');
+});
 
 // Routes protégées
 Route::middleware(['auth'])->group(function () {

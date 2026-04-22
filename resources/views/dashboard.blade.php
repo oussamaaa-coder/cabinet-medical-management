@@ -162,7 +162,7 @@
     </div>
 
     <!-- Appointments Lists -->
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+    <div class="appointments-activity-grid">
         <div class="recent-section">
             <h3>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

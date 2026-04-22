@@ -44,6 +44,24 @@
         @stack('styles')
     </head>
     <body class="is-transitioning">
+        {{-- Mobile Header --}}
+        <div class="mobile-top-nav lg:hidden flex items-center justify-between px-4 py-3 bg-white border-b sticky top-0 z-[80] shadow-sm">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center">
+                    <img src="{{ asset('asset/img/logo.svg') }}" alt="Logo" style="width:16px;height:16px;filter:brightness(0) invert(1);">
+                </div>
+                <span class="font-bold text-emerald-600 font-serif">MediCal</span>
+            </div>
+            <button id="sidebar-toggle-btn" class="p-2 rounded-lg bg-slate-50 text-slate-600 border">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+
+        <div id="sidebar-overlay" class="sidebar-overlay lg:hidden"></div>
         {{-- Overlay de transition --}}
         <div id="page-transition-overlay">
             <div class="transition-logo">
@@ -57,8 +75,8 @@
         <aside class="sidebar">
 
             {{-- ── LOGO ── --}}
-            <div class="sidebar-logo">
-                <div class="logo-mark">
+            <div class="sidebar-logo flex items-center justify-between">
+                <div class="logo-mark flex items-center gap-3">
                     <div class="logo-icon">
                         <img src="{{ asset('asset/img/logo.svg') }}" alt="Logo" style="width:24px;height:24px;filter:brightness(0) invert(1);">
                     </div>
@@ -67,6 +85,13 @@
                         <div class="logo-sub">Gestion de Rendez-vous</div>
                     </div>
                 </div>
+                {{-- Close button for mobile inside sidebar --}}
+                <button id="sidebar-close-btn" class="lg:hidden p-2 text-slate-400 hover:text-emerald-500 transition-colors">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
             </div>
 
             {{-- ── NAVIGATION ── --}}
@@ -314,6 +339,30 @@
 
             // Initial UI state
             updateToggleUI();
+
+            // Mobile Sidebar Toggle
+            const sidebarToggle = document.getElementById('sidebar-toggle-btn');
+            const sidebarClose = document.getElementById('sidebar-close-btn');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+            const sidebar = document.querySelector('.sidebar');
+
+            if (sidebar && sidebarOverlay) {
+                const openSidebar = () => {
+                    sidebar.classList.add('active');
+                    sidebarOverlay.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                };
+
+                const closeSidebar = () => {
+                    sidebar.classList.remove('active');
+                    sidebarOverlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                };
+
+                if (sidebarToggle) sidebarToggle.addEventListener('click', openSidebar);
+                if (sidebarClose) sidebarClose.addEventListener('click', closeSidebar);
+                sidebarOverlay.addEventListener('click', closeSidebar);
+            }
         </script>
         <script src="{{ asset('asset/js/transitions.js') }}"></script>
         @stack('scripts')

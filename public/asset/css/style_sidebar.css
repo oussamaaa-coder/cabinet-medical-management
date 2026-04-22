@@ -101,6 +101,12 @@ body {
   box-shadow: 2px 0 8px rgba(26, 43, 34, .06), 6px 0 24px rgba(26, 43, 34, .04);
 }
 
+@media (max-width: 1023px) {
+  .sidebar {
+    animation: none; /* Disable entry animation on mobile to prevent transform conflicts */
+  }
+}
+
 @keyframes slideInLeft {
   from {
     opacity: 0;
@@ -476,6 +482,58 @@ body {
   flex: 1;
   padding: 40px;
   color: var(--main-content-color);
+  transition: margin-left var(--dur-med) var(--ease-smooth), padding var(--dur-med) var(--ease-smooth);
+}
+
+/* ═══════════════════════════════════════════════════════
+   RESPONSIVE DESIGN
+   ═══════════════════════════════════════════════════════ */
+
+@media (max-width: 1023px) {
+  :root {
+    --sidebar-width: 265px;
+  }
+
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform var(--dur-med) var(--ease-smooth) !important;
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.15);
+    visibility: hidden;
+  }
+
+  .sidebar.active {
+    transform: translateX(0);
+    visibility: visible;
+  }
+
+  .main-content {
+    margin-left: 0;
+    padding: 24px 16px;
+    width: 100%;
+  }
+
+  /* Overlay for mobile sidebar */
+  .sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 90;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .sidebar-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+@media (max-width: 640px) {
+  .main-content {
+    padding: 16px 12px;
+  }
 }
 
 .demo-content {

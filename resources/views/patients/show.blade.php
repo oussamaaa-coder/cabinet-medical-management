@@ -27,7 +27,7 @@
     </div>
 
     <!-- Profile Header Card -->
-    <div class="app-profile-header">
+    <div class="app-profile-header responsive-header">
         <div class="app-profile-main">
             <div class="app-avatar-lg">
                 @if($patient->photo)
@@ -38,7 +38,7 @@
             </div>
             <div class="app-identity">
                 <h1>{{ $patient->first_name }} {{ $patient->last_name }}</h1>
-                <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
                     <span class="badge {{ $patient->is_majeur ? 'app-badge-pill' : 'badge-warning' }}" style="background: {{ $patient->is_majeur ? 'var(--accent-light)' : '#fef9c3' }}; color: {{ $patient->is_majeur ? 'var(--accent)' : '#a16207' }};">
                         {{ $patient->is_majeur ? 'Patient Majeur' : 'Patient Mineur' }}
                     </span>
@@ -46,14 +46,14 @@
                 </div>
             </div>
         </div>
-        <div style="display: flex; gap: 32px; text-align: right;">
+        <div class="header-stats">
             <div>
-                <div style="font-size: 0.75rem; color: var(--text-label); font-weight: 700; text-transform: uppercase;">Groupe Sanguin</div>
-                <div style="font-size: 1.25rem; font-weight: 800; color: var(--danger);">{{ $patient->groupe_sanguin ?? '—' }}</div>
+                <div class="stat-label">Groupe Sanguin</div>
+                <div class="stat-value blood">{{ $patient->groupe_sanguin ?? '—' }}</div>
             </div>
             <div>
-                <div style="font-size: 0.75rem; color: var(--text-label); font-weight: 700; text-transform: uppercase;">Assurance</div>
-                <div style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">{{ $patient->assurance ?? 'Aucune' }}</div>
+                <div class="stat-label">Assurance</div>
+                <div class="stat-value">{{ $patient->assurance ?? 'Aucune' }}</div>
             </div>
         </div>
     </div>
@@ -155,13 +155,13 @@
                             <tbody>
                                 @forelse($patient->appointments as $appointment)
                                     <tr>
-                                        <td>
+                                        <td data-label="Date & Heure">
                                             <div style="font-weight: 600; color: var(--text-primary);">{{ \Carbon\Carbon::parse($appointment->date)->format('d/m/Y') }}</div>
                                             <div style="font-size: 0.8rem; color: var(--text-muted);">{{ \Carbon\Carbon::parse($appointment->start_time)->format('H:i') }}</div>
                                         </td>
-                                        <td><span class="badge app-badge-pill" style="background: var(--bg-field); color: var(--text-secondary);">{{ $appointment->type }}</span></td>
-                                        <td><span style="font-weight: 500; color: var(--text-primary);">Dr. {{ $appointment->doctor->last_name ?? '—' }}</span></td>
-                                        <td>
+                                        <td data-label="Type / Motif"><span class="badge app-badge-pill" style="background: var(--bg-field); color: var(--text-secondary);">{{ $appointment->type }}</span></td>
+                                        <td data-label="Médecin consultant"><span style="font-weight: 500; color: var(--text-primary);">Dr. {{ $appointment->doctor->last_name ?? '—' }}</span></td>
+                                        <td data-label="Statut">
                                             @php
                                                 $statusColors = [
                                                     'planned' => ['bg' => '#eff6ff', 'text' => '#1d4ed8'],
@@ -173,7 +173,7 @@
                                             @endphp
                                             <span class="badge app-badge" style="background: {{ $col['bg'] }}; color: {{ $col['text'] }};">{{ ucfirst($appointment->status) }}</span>
                                         </td>
-                                        <td style="text-align: right; font-size: 0.85rem; color: var(--text-muted);">{{ Str::limit($appointment->notes, 40) }}</td>
+                                        <td data-label="Observations" style="text-align: right; font-size: 0.85rem; color: var(--text-muted);">{{ Str::limit($appointment->notes, 40) }}</td>
                                     </tr>
                                 @empty
                                     <tr><td colspan="5" style="text-align: center; padding: 48px; color: var(--text-muted);">Aucun historique de rendez-vous.</td></tr>
@@ -227,6 +227,66 @@
 
 <style>
     @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    .patient-dossier-wrapper { min-h: 100vh; }
+    .patient-dossier-wrapper { min-height: 100vh; }
+
+    .app-tabs {
+        overflow-x: auto;
+        white-space: nowrap;
+        scrollbar-width: none;
+    }
+    .app-tabs::-webkit-scrollbar { display: none; }
+
+    .header-stats {
+        display: flex;
+        gap: 32px;
+        text-align: right;
+    }
+
+    .stat-label { font-size: 0.75rem; color: var(--text-label); font-weight: 700; text-transform: uppercase; }
+    .stat-value { font-size: 1.1rem; font-weight: 700; color: var(--text-primary); }
+    .stat-value.blood { font-size: 1.25rem; font-weight: 800; color: var(--danger); }
+
+    @media (max-width: 768px) {
+        .responsive-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 24px;
+            padding: 24px;
+        }
+
+        .header-stats {
+            text-align: left;
+            width: 100%;
+            justify-content: flex-start;
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
+            gap: 40px;
+        }
+
+        .app-topbar {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 16px;
+        }
+
+        .app-topbar > div {
+            width: 100%;
+            flex-direction: column;
+            display: flex;
+            gap: 10px;
+        }
+
+        .app-topbar .app-btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* Table to Cards */
+        .app-table thead { display: none; }
+        .app-table tr { display: block; margin-bottom: 16px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg-card); padding: 8px; }
+        .app-table td { display: flex; justify-content: space-between; align-items: center; text-align: right; padding: 10px 12px; border-bottom: 1px dashed var(--border); }
+        .app-table td:last-child { border-bottom: none; }
+        .app-table td::before { content: attr(data-label); font-weight: 700; text-transform: uppercase; font-size: 0.7rem; color: var(--text-label); text-align: left; }
+    }
 </style>
 @endsection

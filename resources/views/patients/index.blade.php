@@ -29,7 +29,7 @@
         <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em;">Statistiques & Filtres</h3>
     </div>
 
-    <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 40px;">
+    <div class="stats-grid">
         <!-- Card 1 : Total Patients -->
         <div id="card-total-patients" class="stat-card active">
             <div class="card_icon">
@@ -97,7 +97,7 @@
                 <form action="{{ route('patients.index') }}" method="GET" class="app-search-bar">
                     <div style="position: relative;">
                         <svg style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; fill: none; stroke: var(--text-muted); stroke-width: 2;" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                        <input type="text" name="search" id="search-input" class="app-form-control" style="padding-left: 44px; width: 280px;" placeholder="Rechercher un patient..." value="{{ request('search') }}">
+                        <input type="text" name="search" id="search-input" class="app-form-control search-input-responsive" placeholder="Rechercher un patient..." value="{{ request('search') }}">
                     </div>
                     <button type="submit" class="app-btn app-btn-primary">Chercher</button>
                     @if(request('search'))
@@ -120,20 +120,20 @@
                     <tbody id="patients-tbody">
                         @forelse($patients as $patient)
                         <tr>
-                            <td>
+                            <td data-label="Nom & Prénom">
                                 <div style="display: flex; align-items: center; gap: 12px; font-weight: 600; color: var(--text-primary);">
                                     <div style="width: 36px; height: 36px; border-radius: 10px; background: var(--accent-light); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700;">{{ strtoupper(substr($patient->first_name, 0, 1) . substr($patient->last_name, 0, 1)) }}</div>
                                     <span>{{ $patient->last_name }} {{ $patient->first_name }}</span>
                                 </div>
                             </td>
-                            <td><span style="font-family: 'Outfit', monospace; font-size: 0.85rem; color: var(--text-secondary);">{{ $patient->cin ?? '—' }}</span></td>
-                            <td>
+                            <td data-label="CIN"><span style="font-family: 'Outfit', monospace; font-size: 0.85rem; color: var(--text-secondary);">{{ $patient->cin ?? '—' }}</span></td>
+                            <td data-label="Coordonnées">
                                 <div class="coord-cell">
                                     <span style="font-size: 0.85rem; color: var(--text-secondary);">{{ $patient->email ?? 'N/A' }}</span>
                                 </div>
                             </td>
-                            <td>{{ $patient->phone }}</td>
-                            <td>
+                            <td data-label="Téléphone">{{ $patient->phone }}</td>
+                            <td data-label="Actions">
                                 <div style="display: flex; gap: 8px; justify-content: flex-end;">
                                     <a href="{{ route('patients.show', $patient->id) }}" class="app-btn-action" title="Voir détails">
                                         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -170,6 +170,97 @@
 
 <style>
     /* Specific styles for statistics cards that are unique to this page */
+    /* Statistics Grid Responsiveness */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+
+    @media (max-width: 640px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+        
+        .stat-card {
+            padding: 16px;
+            gap: 12px;
+        }
+
+        .card_value {
+            font-size: 1.5rem;
+        }
+
+        .card_icon {
+            width: 44px;
+            height: 44px;
+        }
+
+        .card_icon svg {
+            width: 20px;
+            height: 20px;
+        }
+    }
+
+    /* Table Responsiveness */
+    @media (max-width: 768px) {
+        .app-table thead {
+            display: none;
+        }
+
+        .app-table tr {
+            display: block;
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--bg-card);
+            padding: 8px;
+        }
+
+        .app-table td {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: right;
+            padding: 10px 12px;
+            border-bottom: 1px dashed var(--border);
+        }
+
+        .app-table td:last-child {
+            border-bottom: none;
+        }
+
+        .app-table td::before {
+            content: attr(data-label);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            color: var(--text-label);
+            text-align: left;
+        }
+
+        .coord-cell {
+            text-align: right;
+        }
+    }
+
+    .search-input-responsive {
+        padding-left: 44px;
+        width: 280px;
+    }
+
+    @media (max-width: 1024px) {
+        .search-input-responsive {
+            width: 100%;
+        }
+        
+        .app-search-bar {
+            width: 100%;
+        }
+    }
+
     .stat-card {
         background: var(--bg-card);
         padding: 24px;

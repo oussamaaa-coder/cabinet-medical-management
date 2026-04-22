@@ -20,7 +20,7 @@
 </div>
 @endif
 
-<div style="display:grid;grid-template-columns:1.6fr 1fr;gap:24px;align-items:start;">
+<div class="pt-booking-layout">
 
     {{-- Booking Form --}}
     <div class="pt-card">
@@ -67,9 +67,9 @@
                 {{-- Time range --}}
                 <div class="pt-field">
                     <label class="pt-label">Créneau horaire</label>
-                    <div style="display:flex;gap:8px;align-items:center;">
+                    <div class="pt-time-range">
                         <input type="time" name="start_time" class="pt-input" value="{{ old('start_time', '09:00') }}" required>
-                        <span style="color:var(--pt-text-muted);font-size:13px;flex-shrink:0;">→</span>
+                        <span class="pt-time-sep">→</span>
                         <input type="time" name="end_time" class="pt-input" value="{{ old('end_time', '09:30') }}" required>
                     </div>
                 </div>
@@ -83,7 +83,7 @@
 
             </div>
 
-            <div style="margin-top:24px;display:flex;gap:12px;">
+            <div class="pt-form-actions">
                 <button type="submit" class="pt-btn pt-btn-primary">
                     <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
                     Confirmer le rendez-vous
@@ -190,6 +190,59 @@
     .dot { width:7px; height:7px; border-radius:50%; display:inline-block; }
     .dot.holiday { background:#c0593a; }
     .dot.weekend { background:rgba(0,0,0,0.1); }
+
+    /* Responsive Booking Layout */
+    .pt-booking-layout {
+        display: grid;
+        grid-template-columns: 1.6fr 1fr;
+        gap: 24px;
+        align-items: start;
+    }
+
+    .pt-time-range {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .pt-time-sep {
+        color: var(--pt-text-muted);
+        font-size: 13px;
+        flex-shrink: 0;
+    }
+
+    .pt-form-actions {
+        margin-top: 24px;
+        display: flex;
+        gap: 12px;
+    }
+
+    @media (max-width: 1100px) {
+        .pt-booking-layout { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+        .pt-time-range {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 10px;
+        }
+        .pt-time-sep {
+            text-align: center;
+            transform: rotate(90deg);
+            height: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .pt-form-actions {
+            flex-direction: column;
+        }
+        .pt-form-actions .pt-btn {
+            justify-content: center;
+            width: 100%;
+        }
+    }
 </style>
 @endpush
 

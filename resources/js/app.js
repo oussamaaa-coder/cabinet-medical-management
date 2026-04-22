@@ -13,19 +13,31 @@ gsap.registerPlugin(ScrollTrigger);
 
 // 1. Smooth Scroll (Lenis)
 const lenis = new Lenis({
-    duration: 1.2,
+    duration: 1.5,
     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-    smoothWheel: true
+    smoothWheel: true,
+    wheelMultiplier: 1.1,
+    touchMultiplier: 1.5,
+});
+
+// Anchor Links Smooth Scroll
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            lenis.scrollTo(target, { offset: -80 });
+        }
+    });
 });
 
 // Sync Lenis with ScrollTrigger
 lenis.on('scroll', ScrollTrigger.update);
-
 gsap.ticker.add((time) => {
     lenis.raf(time * 1000);
 });
-
 gsap.ticker.lagSmoothing(0);
+
 
 // Scroll Progress Bar
 const progressBar = document.querySelector('#scroll-progress');
@@ -75,34 +87,31 @@ const initThree = () => {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     container.appendChild(renderer.domElement);
 
-    // Geometry: Abstract Medical Shape (Heart)
+    // Geometry: Mathematically Perfect Heart
     const heartShape = new THREE.Shape();
-    heartShape.moveTo(0, 0.5);
-    heartShape.bezierCurveTo(0, 0.5, 0.05, 1.2, 0.5, 1.2);
-    heartShape.bezierCurveTo(1, 1.2, 1, 0.45, 1, 0.45);
-    heartShape.bezierCurveTo(1, 0, 0.5, -0.4, 0, -1);
-    heartShape.bezierCurveTo(-0.5, -0.4, -1, 0, -1, 0.45);
-    heartShape.bezierCurveTo(-1, 0.45, -1, 1.2, -0.5, 1.2);
-    heartShape.bezierCurveTo(-0.1, 1.2, 0, 0.5, 0, 0.5);
+    const t_step = 0.1;
+    for (let t = 0; t <= Math.PI * 2; t += t_step) {
+        const x_pos = 16 * Math.pow(Math.sin(t), 3);
+        const y_pos = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
+        if (t === 0) heartShape.moveTo(x_pos / 20, y_pos / 20);
+        else heartShape.lineTo(x_pos / 20, y_pos / 20);
+    }
 
-    const extrudeSettings = { depth: 0.4, bevelEnabled: true, bevelSegments: 3, steps: 2, bevelSize: 0.1, bevelThickness: 0.1 };
+    const extrudeSettings = { depth: 0.4, bevelEnabled: true, bevelSegments: 5, steps: 2, bevelSize: 0.1, bevelThickness: 0.1 };
     const geometry = new THREE.ExtrudeGeometry(heartShape, extrudeSettings);
     geometry.center();
     
     // Responsive Scaling
     const isMobile = window.innerWidth < 768;
-    const scale = isMobile ? 0.8 : 1.5;
+    const scale = isMobile ? 0.6 : 1.0; // Reduced for a smaller heart
     geometry.scale(scale, scale, scale);
-    geometry.rotateZ(Math.PI);
 
-    const material = new THREE.MeshPhongMaterial({ 
-        color: 0x10b981, 
-        wireframe: true,
-        transparent: true,
-        opacity: 0.2
-    });
-    const sphere = new THREE.LineSegments(new THREE.EdgesGeometry(geometry), new THREE.LineBasicMaterial({ color: 0x10b981, transparent: true, opacity: 0.3 }));
+    const sphere = new THREE.LineSegments(
+        new THREE.EdgesGeometry(geometry), 
+        new THREE.LineBasicMaterial({ color: 0x059669, transparent: true, opacity: 0.5 }) // Slightly darker emerald
+    );
     scene.add(sphere);
+
 
     // Floating Particles
     const particlesGeometry = new THREE.BufferGeometry();
@@ -112,9 +121,10 @@ const initThree = () => {
         posArray[i] = (Math.random() - 0.5) * (isMobile ? 10 : 15);
     }
     particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-    const particlesMaterial = new THREE.PointsMaterial({ size: 0.005, color: 0x10b981 });
+    const particlesMaterial = new THREE.PointsMaterial({ size: 0.006, color: 0x10b981, transparent: true, opacity: 0.6 });
     const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
     scene.add(particlesMesh);
+
 
     const light = new THREE.PointLight(0xffffff, 1, 100);
     light.position.set(10, 10, 10);
@@ -162,12 +172,12 @@ window.addEventListener('DOMContentLoaded', () => {
             opacity: 0,
             y: 50,
             rotateX: -90,
-            duration: 1.5,
+            duration: 1.0,
             stagger: 0.02,
             ease: 'expo.out',
             scrollTrigger: {
                 trigger: char,
-                start: 'top 85%',
+                start: 'top 98%',
                 toggleActions: 'play none none reverse'
             }
         });
@@ -176,12 +186,12 @@ window.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('[data-gsap="reveal"]').forEach((el) => {
         gsap.from(el, {
             opacity: 0,
-            y: 60,
-            duration: 1.5,
+            y: 40,
+            duration: 1.0,
             ease: 'power4.out',
             scrollTrigger: {
                 trigger: el,
-                start: 'top 90%'
+                start: 'top 98%'
             }
         });
     });

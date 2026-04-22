@@ -574,6 +574,12 @@ input[type="checkbox"]:checked + .app-toggle-card {
         flex-direction: column;
         align-items: stretch;
         gap: 15px;
+        padding: 15px 0;
+    }
+
+    .app-topbar .app-btn {
+        width: 100%;
+        justify-content: center;
     }
     
     .app-search-bar {
@@ -581,8 +587,16 @@ input[type="checkbox"]:checked + .app-toggle-card {
         align-items: stretch;
     }
     
-    .app-search-input {
-        width: 100%;
+    .app-search-input, .app-form-control {
+        width: 100% !important;
+    }
+
+    .app-breadcrumb {
+        font-size: 0.85rem;
+    }
+
+    .app-card {
+        padding: 16px;
     }
 }
 

@@ -64,11 +64,12 @@ class UtilisateursController extends Controller
         if ($user->role === 'doctor') {
             $nameParts = explode(' ', $user->name, 2);
             Doctor::create([
+                'user_id'    => $user->id,
                 'first_name' => $nameParts[0],
-                'last_name' => $nameParts[1] ?? '',
-                'specialty' => $request->specialty,
-                'phone' => $request->phone ?? '',
-                'email' => $user->email,
+                'last_name'  => $nameParts[1] ?? '',
+                'specialty'  => $request->specialty,
+                'phone'      => $request->phone ?? '',
+                'email'      => $user->email,
             ]);
         }
 
@@ -122,11 +123,12 @@ class UtilisateursController extends Controller
             Doctor::updateOrCreate(
                 ['email' => $oldEmail],
                 [
+                    'user_id'    => $utilisateur->id,
                     'first_name' => $nameParts[0],
-                    'last_name' => $nameParts[1] ?? '',
-                    'specialty' => $request->specialty,
-                    'phone' => $utilisateur->phone ?? '',
-                    'email' => $utilisateur->email,
+                    'last_name'  => $nameParts[1] ?? '',
+                    'specialty'  => $request->specialty,
+                    'phone'      => $utilisateur->phone ?? '',
+                    'email'      => $utilisateur->email,
                 ]
             );
         } else {

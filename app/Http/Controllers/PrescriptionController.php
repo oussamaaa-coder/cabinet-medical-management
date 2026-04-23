@@ -75,12 +75,22 @@ class PrescriptionController extends Controller
     public function show($id)
     {
         $prescription = Prescription::with('patient', 'doctor', 'items')->findOrFail($id);
+
+        if (Auth::user()->role === 'doctor' && $prescription->doctor_id !== Auth::id()) {
+            return redirect()->route('prescriptions.index')->with('error', 'Accès non autorisé.');
+        }
+
         return view('prescriptions.show', compact('prescription'));
     }
 
     public function print($id)
     {
         $prescription = Prescription::with('patient', 'doctor', 'items')->findOrFail($id);
+
+        if (Auth::user()->role === 'doctor' && $prescription->doctor_id !== Auth::id()) {
+            return redirect()->route('prescriptions.index')->with('error', 'Accès non autorisé.');
+        }
+
         return view('prescriptions.print', compact('prescription'));
     }
 }

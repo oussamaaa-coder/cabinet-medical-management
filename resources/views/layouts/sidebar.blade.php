@@ -138,6 +138,7 @@
                     </span>
                     <span class="nav-label">Patients</span>
                 </a>
+                @if(auth()->check() && auth()->user()->role === 'admin')
                 <a
                     href="{{ url('/doctors') }}"
                     class="nav-item {{ request()->is('doctors') ? 'active' : '' }}">
@@ -158,6 +159,7 @@
                     </span>
                     <span class="nav-label">Médecins</span>
                 </a>
+                @endif
 
                 @if(auth()->check() && auth()->user()->role === 'doctor')
                 <a

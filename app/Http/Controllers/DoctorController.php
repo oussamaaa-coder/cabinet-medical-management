@@ -57,20 +57,29 @@ class DoctorController extends Controller implements HasMiddleware
             'password'   => 'required|string|min:6',
         ]);
 
-        $user = \App\Models\User::create([
-            'name' => $data['first_name'] . ' ' . $data['last_name'],
-            'email' => $data['email'],
-            'password' => $data['password'],
-            'role' => 'doctor',
-            'phone' => $data['phone'],
-        ]);
+        $doctor = \Illuminate\Support\Facades\DB::transaction(function () use ($data) {
+            // 1. Create the User account
+            $user = \App\Models\User::create([
+                'name'     => $data['first_name'] . ' ' . $data['last_name'],
+                'email'    => $data['email'],
+                'password' => $data['password'],
+                'role'     => 'doctor',
+                'phone'    => $data['phone'],
+            ]);
 
-        $doctorData = $data;
-        $doctorData['user_id'] = $user->id;
-        $doctorData['plain_password'] = $data['password'];
-        unset($doctorData['password']);
+            // 2. Create the Doctor profile, explicitly linking to the User
+            $doctor = Doctor::create([
+                'user_id'        => $user->id,   // ← critical link
+                'first_name'     => $data['first_name'],
+                'last_name'      => $data['last_name'],
+                'specialty'      => $data['specialty'],
+                'phone'          => $data['phone'],
+                'email'          => $data['email'],
+                'plain_password' => $data['password'],
+            ]);
 
-        $doctor = Doctor::create($doctorData);
+            return $doctor;
+        });
 
         return redirect()->route('doctors.show', $doctor->id)
             ->with('success', 'Médecin ajouté avec succès.');

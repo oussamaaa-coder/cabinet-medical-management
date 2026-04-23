@@ -11,12 +11,18 @@ class PatientController extends Controller
     {
         $query = Patient::query();
 
+        // ── Role-based scoping ──────────────────────────────────────────
+        $doctorId = null;
         if (\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user()->role === 'doctor') {
             $doctorId = \App\Models\Doctor::where('user_id', \Illuminate\Support\Facades\Auth::id())->value('id');
             if ($doctorId) {
+                // Doctor with a valid profile: show only their patients
                 $query->whereHas('appointments', function($q) use ($doctorId) {
                     $q->where('doctor_id', $doctorId);
                 });
+            } else {
+                // Doctor role but NO linked Doctor record → show nothing (security)
+                $query->whereRaw('0 = 1');
             }
         }
 
@@ -37,19 +43,19 @@ class PatientController extends Controller
         // Total patients
         $totalPatients = $query->count();
 
-        // Rendez-vous planifiés aujourd'hui (liste complète pour affichage inline)
+        // Rendez-vous planifiés aujourd'hui
         $appointmentsPlannedQuery = \App\Models\Appointment::with(['patient', 'doctor'])
             ->whereDate('date', today()->toDateString())
             ->where('status', 'planned')
             ->orderBy('start_time');
 
-        // Rendez-vous consultés aujourd'hui (liste complète pour affichage inline)
+        // Rendez-vous consultés aujourd'hui
         $appointmentsConsultedQuery = \App\Models\Appointment::with(['patient', 'doctor'])
             ->whereDate('date', today()->toDateString())
             ->where('status', 'completed')
             ->orderBy('start_time');
 
-        if (isset($doctorId) && $doctorId) {
+        if ($doctorId) {
             $appointmentsPlannedQuery->where('doctor_id', $doctorId);
             $appointmentsConsultedQuery->where('doctor_id', $doctorId);
         }
@@ -147,14 +153,37 @@ class PatientController extends Controller
             ->with('success', 'Patient ajouté avec succès.');
     }
 
+    private function checkAccess($id)
+    {
+        if (auth()->user()->role === 'doctor') {
+            $doctorId = \App\Models\Doctor::where('user_id', auth()->id())->value('id');
+            if (!$doctorId) return false;
+
+            // Check if patient exists and has at least one appointment with this doctor
+            return Patient::where('id', $id)
+                ->whereHas('appointments', function($q) use ($doctorId) {
+                    $q->where('doctor_id', $doctorId);
+                })->exists();
+        }
+        return true; // Admin has access
+    }
+
     public function edit($id)
     {
+        if (!$this->checkAccess($id)) {
+            return redirect()->route('patients.index')->with('error', 'Accès non autorisé à ce patient.');
+        }
+
         $patient = Patient::findOrFail($id);
         return view('patients.edit', compact('patient'));
     }
 
     public function update(Request $request, $id)
     {
+        if (!$this->checkAccess($id)) {
+            return redirect()->route('patients.index')->with('error', 'Accès non autorisé à ce patient.');
+        }
+
         $patient = Patient::findOrFail($id);
 
         $is_majeur = $request->has('is_majeur');
@@ -236,12 +265,16 @@ class PatientController extends Controller
     {
         $query = Patient::query();
 
+        $doctorId = null;
         if (\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user()->role === 'doctor') {
             $doctorId = \App\Models\Doctor::where('user_id', \Illuminate\Support\Facades\Auth::id())->value('id');
             if ($doctorId) {
                 $query->whereHas('appointments', function($q) use ($doctorId) {
                     $q->where('doctor_id', $doctorId);
                 });
+            } else {
+                // Doctor role but NO linked Doctor record → show nothing
+                $query->whereRaw('0 = 1');
             }
         }
 
@@ -263,6 +296,10 @@ class PatientController extends Controller
 
     public function show($id)
     {
+        if (!$this->checkAccess($id)) {
+            return redirect()->route('patients.index')->with('error', 'Accès non autorisé à ce patient.');
+        }
+
         $patient = Patient::with([
             'appointments' => function($q) {
                 $q->with('doctor')->latest('date');
@@ -277,6 +314,10 @@ class PatientController extends Controller
 
     public function destroy($id)
     {
+        if (!$this->checkAccess($id)) {
+            return redirect()->route('patients.index')->with('error', 'Accès non autorisé à ce patient.');
+        }
+
         $patient = Patient::findOrFail($id);
 
         $patient->delete();

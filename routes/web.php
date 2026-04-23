@@ -66,8 +66,10 @@ Route::middleware(['auth'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class , 'index'])->name('dashboard');
 
-    // Routes pour les doctors
-    Route::resource('doctors', DoctorController::class);
+    // Routes pour les doctors (admin seulement)
+    Route::middleware([AdminOnly::class])->group(function () {
+        Route::resource('doctors', DoctorController::class);
+    });
 
     // Routes pour les patients
     Route::post('/patients/store', [PatientController::class , 'store'])->name('patients.store');

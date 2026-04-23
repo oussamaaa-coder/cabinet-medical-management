@@ -245,14 +245,23 @@
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Médecin</label>
-                            <select x-model="newApt.doctor_id" required
-                                class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f1714] text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-medical-blue outline-none transition-all">
-                                <option value="">Sélectionner un médecin</option>
-                                @foreach($doctors as $doctor)
-                                    <option value="{{ $doctor->id }}">Dr. {{ $doctor->first_name }} {{ $doctor->last_name }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            @if(auth()->check() && auth()->user()->role === 'doctor')
+                                {{-- Doctor: auto-assigned, read-only display --}}
+                                @php $myDoctor = $doctors->first(); @endphp
+                                <div class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-[#0f1714] text-gray-600 dark:text-gray-400">
+                                    Dr. {{ $myDoctor ? $myDoctor->first_name . ' ' . $myDoctor->last_name : auth()->user()->name }}
+                                </div>
+                            @else
+                                {{-- Admin: full doctor selector --}}
+                                <select x-model="newApt.doctor_id" required
+                                    class="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f1714] text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-medical-blue outline-none transition-all">
+                                    <option value="">Sélectionner un médecin</option>
+                                    @foreach($doctors as $doctor)
+                                        <option value="{{ $doctor->id }}">Dr. {{ $doctor->first_name }} {{ $doctor->last_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            @endif
                         </div>
                     </div>
 
@@ -491,7 +500,8 @@
 
                 newApt: {
                     patient_id: '',
-                    doctor_id: '',
+                    {{-- Pre-assign doctor_id for doctor users so no manual selection is needed --}}
+                    doctor_id: '{{ auth()->check() && auth()->user()->role === "doctor" && ($doctors->first() ?? null) ? $doctors->first()->id : "" }}',
                     date: '',
                     start_time: '09:00',
                     end_time: '09:30',
@@ -782,7 +792,8 @@
                 resetNewApt() {
                     this.newApt = {
                         patient_id: '',
-                        doctor_id: '',
+                        {{-- Restore pre-assigned doctor_id after reset --}}
+                        doctor_id: '{{ auth()->check() && auth()->user()->role === "doctor" && ($doctors->first() ?? null) ? $doctors->first()->id : "" }}',
                         date: '',
                         start_time: '09:00',
                         end_time: '09:30',

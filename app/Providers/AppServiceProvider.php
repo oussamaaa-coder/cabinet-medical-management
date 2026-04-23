@@ -4,7 +4,10 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 use App\Models\Appointment;
+use App\Models\Doctor;
 use Carbon\Carbon;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,40 +26,44 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         \Illuminate\Pagination\Paginator::useBootstrapFive();
-        
-        // Share today's appointment count with all views
+
+        /**
+         * Share the role-scoped "today's appointment count" with every view.
+         * → Doctor : only THEIR appointments today
+         * → Admin  : ALL appointments today
+         * → Others : 0
+         */
         View::composer('*', function ($view) {
             try {
-                if (\Illuminate\Support\Facades\Auth::check() && \Schema::hasTable('appointments')) {
-                    $user = \Illuminate\Support\Facades\Auth::user();
-                    
-                    // Base query: today's appointments that are not completed/cancelled
-                    $query = Appointment::whereDate('date', Carbon::today())
-                        ->whereIn('status', ['planned', 'in_progress', 'urgent']);
-
-                    // Role-based filtering
-                    if ($user->role === 'doctor') {
-                        // Filter by doctor_id associated with the user
-                        $doctorId = $user->doctor ? $user->doctor->id : \App\Models\Doctor::where('user_id', $user->id)->value('id');
-                        if ($doctorId) {
-                            $query->where('doctor_id', $doctorId);
-                        } else {
-                            $query->whereRaw('1 = 0'); // No doctor profile, show 0
-                        }
-                    } elseif ($user->role === 'admin') {
-                        // Admin sees all today's pending/active appointments
-                    } else {
-                        // Default to 0 for other roles in the sidebar context
-                        $query->whereRaw('1 = 0');
-                    }
-
-                    $todayAppointmentsCount = $query->count();
-                    $view->with('todayAppointmentsCount', $todayAppointmentsCount);
-                } else {
+                if (!Auth::check() || !Schema::hasTable('appointments')) {
                     $view->with('todayAppointmentsCount', 0);
+                    return;
                 }
+
+                $user  = Auth::user();
+                $query = Appointment::whereDate('date', Carbon::today());
+
+                if ($user->role === 'doctor') {
+                    // Resolve the Doctor record linked to this user
+                    $doctorId = Doctor::where('user_id', $user->id)->value('id');
+
+                    if ($doctorId) {
+                        $query->where('doctor_id', $doctorId);
+                    } else {
+                        // No linked doctor profile → show 0
+                        $view->with('todayAppointmentsCount', 0);
+                        return;
+                    }
+                } elseif ($user->role !== 'admin') {
+                    // Any other role (secretary, patient, nurse…) gets 0
+                    $view->with('todayAppointmentsCount', 0);
+                    return;
+                }
+
+                $view->with('todayAppointmentsCount', $query->count());
+
             } catch (\Exception $e) {
-                // Ignore errors to allow the app to boot even without DB
+                // DB not ready yet (migrations, tests, etc.)
                 $view->with('todayAppointmentsCount', 0);
             }
         });

@@ -6,97 +6,120 @@ use App\Models\Appointment;
 use App\Models\Patient;
 use App\Models\User;
 use App\Models\Doctor;
-use App\Models\Prescription;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        $appointmentBaseQuery = Appointment::query();
-        $patientBaseQuery = Patient::query();
-        $doctorBaseQuery = Doctor::query();
+        $user     = Auth::user();
+        $isDoctor = $user && $user->role === 'doctor';
+        $doctorId = null;
 
-        if (\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user()->role === 'doctor') {
-            $doctorId = \App\Models\Doctor::where('user_id', \Illuminate\Support\Facades\Auth::id())->value('id');
-            if ($doctorId) {
-                $appointmentBaseQuery->where('doctor_id', $doctorId);
-                $patientBaseQuery->whereHas('appointments', function($q) use ($doctorId) {
-                    $q->where('doctor_id', $doctorId);
-                });
-                $doctorBaseQuery->where('id', $doctorId);
-            }
+        // Resolve the linked Doctor record for this user
+        if ($isDoctor) {
+            $doctorId = Doctor::where('user_id', $user->id)->value('id');
         }
 
-        // Get counts for stats cards
-        $totalPatients = (clone $patientBaseQuery)->count();
-        $totalDoctors = (clone $doctorBaseQuery)->count();
-        $totalAppointments = (clone $appointmentBaseQuery)->count();
-        
-        // Today's appointments
-        $todayAppointments = (clone $appointmentBaseQuery)->whereDate('date', Carbon::today())->count();
-        
-        // This week's appointments
-        $weekAppointments = (clone $appointmentBaseQuery)->whereBetween('date', [
-            Carbon::now()->startOfWeek(),
-            Carbon::now()->endOfWeek()
-        ])->count();
-        
-        // Monthly appointments
-        $monthAppointments = (clone $appointmentBaseQuery)->whereMonth('date', Carbon::now()->month)
-            ->whereYear('date', Carbon::now()->year)
+        /**
+         * Helper: returns a fresh Appointment query scoped to the current role.
+         *  - Admin  → all appointments
+         *  - Doctor → only their appointments (or impossible query if no Doctor record)
+         */
+        $getApptQuery = function () use ($isDoctor, $doctorId) {
+            $q = Appointment::query();
+            if ($isDoctor) {
+                // SECURITY: if role=doctor but no Doctor record, show nothing
+                $doctorId
+                    ? $q->where('doctor_id', $doctorId)
+                    : $q->whereRaw('0 = 1');
+            }
+            return $q;
+        };
+
+        /**
+         * Helper: returns a fresh Patient query scoped to the current role.
+         *  - Admin  → all patients
+         *  - Doctor → only patients who have at least one appointment with this doctor
+         */
+        $getPatientQuery = function () use ($isDoctor, $doctorId) {
+            $q = Patient::query();
+            if ($isDoctor) {
+                $doctorId
+                    ? $q->whereHas('appointments', fn($sub) => $sub->where('doctor_id', $doctorId))
+                    : $q->whereRaw('0 = 1');
+            }
+            return $q;
+        };
+
+        // ── Stats ──────────────────────────────────────────────────────────
+        $totalPatients     = $getPatientQuery()->count();
+        $totalDoctors      = $isDoctor ? 1 : Doctor::count();
+        $totalAppointments = $getApptQuery()->count();
+
+        $todayAppointments = $getApptQuery()
+            ->whereDate('date', Carbon::today())
             ->count();
-        
-        // Recent appointments (last 5)
-        $recentAppointments = (clone $appointmentBaseQuery)->with(['patient', 'doctor'])
+
+        $weekAppointments = $getApptQuery()
+            ->whereBetween('date', [
+                Carbon::now()->startOfWeek(),
+                Carbon::now()->endOfWeek(),
+            ])->count();
+
+        $monthAppointments = $getApptQuery()
+            ->whereMonth('date', Carbon::now()->month)
+            ->whereYear('date',  Carbon::now()->year)
+            ->count();
+
+        // ── Recent & upcoming ──────────────────────────────────────────────
+        $recentAppointments = $getApptQuery()
+            ->with(['patient', 'doctor'])
             ->orderBy('date', 'desc')
             ->orderBy('start_time', 'desc')
             ->limit(5)
             ->get();
-        
-        // Upcoming appointments for today (Show all today)
-        $upcomingToday = (clone $appointmentBaseQuery)->with(['patient', 'doctor'])
+
+        $upcomingToday = $getApptQuery()
+            ->with(['patient', 'doctor'])
             ->whereDate('date', Carbon::today())
             ->orderBy('start_time')
             ->limit(10)
             ->get();
-        
-        // Appointments by status
-        $appointmentsByStatus = (clone $appointmentBaseQuery)->select('status')
+
+        // ── Status distribution ────────────────────────────────────────────
+        $appointmentsByStatus = $getApptQuery()
+            ->select('status')
             ->get()
             ->groupBy('status')
-            ->map(function ($items) {
-                return $items->count();
-            });
-        
-        // Appointments for the last 7 days
+            ->map(fn($items) => $items->count());
+
+        // ── Last 7 days chart data ─────────────────────────────────────────
         $last7DaysAppointments = [];
         for ($i = 6; $i >= 0; $i--) {
-            $date = Carbon::today()->subDays($i);
-            $count = (clone $appointmentBaseQuery)->whereDate('date', $date)->count();
+            $date                    = Carbon::today()->subDays($i);
             $last7DaysAppointments[] = [
-                'date' => $date->format('d/m'),
-                'count' => $count
+                'date'  => $date->format('d/m'),
+                'count' => $getApptQuery()->whereDate('date', $date)->count(),
             ];
         }
-        
-        // User role distribution
+
+        // User role distribution — always global (admin overview chart only)
         $usersByRole = User::select('role')
             ->get()
             ->groupBy('role')
-            ->map(function ($items) {
-                return $items->count();
-            });
-        
-        // Completed appointments this month
-        $completedThisMonth = (clone $appointmentBaseQuery)->whereMonth('date', Carbon::now()->month)
-            ->whereYear('date', Carbon::now()->year)
+            ->map(fn($items) => $items->count());
+
+        // ── Completion rate ────────────────────────────────────────────────
+        $completedThisMonth = $getApptQuery()
+            ->whereMonth('date', Carbon::now()->month)
+            ->whereYear('date',  Carbon::now()->year)
             ->where('status', 'completed')
             ->count();
-            
-        // Calculate completion rate
-        $completionRate = $monthAppointments > 0 
-            ? round(($completedThisMonth / $monthAppointments) * 100, 1) 
+
+        $completionRate = $monthAppointments > 0
+            ? round(($completedThisMonth / $monthAppointments) * 100, 1)
             : 0;
 
         return view('dashboard', compact(
@@ -116,4 +139,3 @@ class DashboardController extends Controller
         ));
     }
 }
-

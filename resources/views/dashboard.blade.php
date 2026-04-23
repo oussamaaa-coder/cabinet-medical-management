@@ -31,6 +31,7 @@
             </div>
         </div>
         
+        @if(auth()->check() && auth()->user()->role === 'admin')
         <div class="stat-card">
             <div class="stat-icon">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -44,6 +45,7 @@
                 <p class="value">{{ $totalDoctors }}</p>
             </div>
         </div>
+        @endif
         
         <div class="stat-card">
             <div class="stat-icon">

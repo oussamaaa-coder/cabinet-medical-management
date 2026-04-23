@@ -17,12 +17,16 @@ class DossierController extends Controller
     {
         $query = Patient::query();
 
+        $doctorId = null;
         if (\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user()->role === 'doctor') {
             $doctorId = \App\Models\Doctor::where('user_id', \Illuminate\Support\Facades\Auth::id())->value('id');
             if ($doctorId) {
                 $query->whereHas('appointments', function($q) use ($doctorId) {
                     $q->where('doctor_id', $doctorId);
                 });
+            } else {
+                // Doctor role but NO linked Doctor record → show nothing (security)
+                $query->whereRaw('0 = 1');
             }
         }
 

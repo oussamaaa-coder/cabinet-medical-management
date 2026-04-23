@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MediCal — Cabinet Médical du Futur</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="relative bg-white text-slate-900 overflow-x-hidden" x-data="{ mobileMenu: false }">
@@ -184,7 +185,7 @@
                     </ul>
                 </div>
                 <div>
-                    <h5 class="font-bold mb-6 text-slate-900 text-slate-900">Contact</h5>
+                    <h5 class="font-bold mb-6 text-slate-900">Contact</h5>
                     <ul class="space-y-4 text-slate-500">
                         <li>01 23 45 67 89</li>
                         <li>contact@medical.com</li>
@@ -201,6 +202,95 @@
             </div>
         </div>
     </footer>
+
+    <!-- AI Chatbot Assistant -->
+    <div x-data="chatbot()" class="fixed bottom-6 right-6 z-[100] font-sans">
+        <!-- Chat Launcher Button -->
+        <button @click="toggleChat()" 
+                class="w-14 h-14 md:w-16 md:h-16 bg-emerald-500 rounded-full shadow-2xl shadow-emerald-500/40 flex items-center justify-center text-white transition-all duration-300 hover:scale-110 active:scale-95 group relative overflow-hidden">
+            <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+            <svg x-show="!chatOpen" x-transition class="w-7 h-7 md:w-8 md:h-8 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+            </svg>
+            <svg x-show="chatOpen" x-transition class="w-7 h-7 md:w-8 md:h-8 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+            <div class="absolute inset-0 rounded-full bg-emerald-500 animate-ping opacity-20 -z-10"></div>
+        </button>
+
+        <!-- Chat Window -->
+        <div x-show="chatOpen"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 scale-90 translate-y-10"
+             x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+             x-transition:leave-end="opacity-0 scale-90 translate-y-10"
+             x-cloak
+             class="absolute bottom-20 right-0 w-[calc(100vw-3rem)] sm:w-96 h-[550px] bg-white rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-slate-100 overflow-hidden flex flex-col backdrop-blur-xl">
+            
+            <!-- Chat Header -->
+            <div class="p-6 bg-gradient-to-r from-emerald-500 to-teal-600 text-white flex items-center gap-4 shrink-0">
+                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-md">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+                </div>
+                <div>
+                    <h3 class="font-bold tracking-tight text-lg">Assistant Médical</h3>
+                    <div class="flex items-center gap-1.5 opacity-80">
+                        <span class="w-2 h-2 bg-emerald-300 rounded-full animate-pulse"></span>
+                        <span class="text-xs font-medium uppercase tracking-wider">Intelligence Artificielle</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Messages -->
+            <div id="chat-messages" class="flex-1 overflow-y-auto p-5 space-y-4 scroll-smooth bg-slate-50/30">
+                <template x-for="(msg, index) in messages" :key="index">
+                    <div :class="msg.role === 'bot' ? 'flex justify-start' : 'flex justify-end'">
+                        <div :class="msg.role === 'bot' 
+                            ? 'bg-white text-slate-800 rounded-2xl rounded-tl-none px-4 py-3 max-w-[88%] text-sm shadow-sm border border-slate-100' 
+                            : 'bg-emerald-500 text-white rounded-2xl rounded-tr-none px-4 py-3 max-w-[85%] text-sm shadow-md shadow-emerald-500/10'"
+                             x-html="msg.content">
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Quick Replies -->
+                <div x-show="!typing && currentOptions.length > 0" class="flex flex-wrap gap-2 py-2">
+                    <template x-for="opt in currentOptions">
+                        <button @click="handleOption(opt)" 
+                                class="px-4 py-2 bg-white border border-emerald-100 text-emerald-700 text-xs font-bold rounded-full hover:bg-emerald-50 hover:border-emerald-300 transition-all shadow-sm">
+                            <span x-text="opt.label"></span>
+                        </button>
+                    </template>
+                </div>
+
+                <!-- Typing Indicator -->
+                <div x-show="typing" class="flex justify-start">
+                    <div class="bg-white rounded-2xl rounded-tl-none px-4 py-3 flex gap-1 shadow-sm border border-slate-100">
+                        <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-bounce"></span>
+                        <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></span>
+                        <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-bounce" style="animation-delay: 0.4s"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Input -->
+            <div class="p-4 bg-white border-t border-slate-100 shrink-0">
+                <form @submit.prevent="sendMessage()" class="flex items-center gap-2">
+                    <input type="text" 
+                           x-model="userInput" 
+                           @focus="scrollToBottom()"
+                           placeholder="Posez n'importe quelle question..." 
+                           class="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all placeholder:text-slate-400">
+                    <button type="submit" 
+                            class="w-11 h-11 bg-emerald-500 text-white rounded-xl flex items-center justify-center transition-transform hover:scale-105 active:scale-95 shadow-lg shadow-emerald-500/20">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- Mobile Menu Overlay -->
     <div x-show="mobileMenu" 
@@ -235,5 +325,78 @@
             <a href="{{ route('patient.dashboard') }}" class="text-center py-4 rounded-full bg-emerald-500 text-white shadow-xl shadow-emerald-500/20 font-semibold text-lg">Espace Patient</a>
         </div>
     </div>
+
+    <script>
+        function chatbot() {
+            return {
+                chatOpen: false,
+                typing: false,
+                userInput: '',
+                currentOptions: [
+                    { label: '📅 Prendre RDV', value: 'booking' },
+                    { label: '🧑⚕️ Triage Symptômes', value: 'triage' },
+                    { label: '❓ FAQ (Heures/Prix)', value: 'faq' },
+                    { label: '🧾 Documents à apporter', value: 'docs' }
+                ],
+                messages: [
+                    { role: 'bot', content: 'Bonjour ! Je suis votre **Assistant Médical Intelligent**. <br><br>Je peux répondre à toutes vos questions sur le cabinet, votre santé ou vos démarches administratives. Que voulez-vous savoir ?' }
+                ],
+                toggleChat() {
+                    this.chatOpen = !this.chatOpen;
+                    if(this.chatOpen) setTimeout(() => this.scrollToBottom(), 100);
+                },
+                handleOption(opt) {
+                    this.userInput = opt.label;
+                    this.sendMessage(opt.value);
+                },
+                async sendMessage(predefinedValue = null) {
+                    const text = this.userInput.trim();
+                    if (text === '' && !predefinedValue) return;
+
+                    const displayMessage = predefinedValue ? (this.currentOptions.find(o => o.value === predefinedValue)?.label || text) : text;
+                    this.messages.push({ role: 'user', content: displayMessage });
+                    this.userInput = '';
+                    this.typing = true;
+                    this.currentOptions = [];
+
+                    this.scrollToBottom();
+
+                    try {
+                        const response = await fetch("{{ route('chatbot.ask') }}", {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            },
+                            body: JSON.stringify({ message: predefinedValue || text })
+                        });
+
+                        const data = await response.json();
+                        
+                        this.messages.push({ role: 'bot', content: data.reply });
+                        
+                        // Keep core options available after AI response
+                        this.currentOptions = [
+                            { label: '📅 Prendre RDV', value: 'booking' },
+                            { label: '🧑⚕️ Triage Symptômes', value: 'triage' },
+                            { label: '🏠 Retour', value: 'start' }
+                        ];
+
+                    } catch (error) {
+                        this.messages.push({ role: 'bot', content: "Désolé, je rencontre des difficultés de connexion. Veuillez réessayer." });
+                    } finally {
+                        this.typing = false;
+                        this.scrollToBottom();
+                    }
+                },
+                scrollToBottom() {
+                    this.$nextTick(() => {
+                        const chatMessages = document.getElementById('chat-messages');
+                        if (chatMessages) chatMessages.scrollTop = chatMessages.scrollHeight;
+                    });
+                }
+            }
+        }
+    </script>
 </body>
 </html>

@@ -14,6 +14,7 @@ use App\Http\Controllers\DossierController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\HelpController;
 use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PatientPortalController;
 use App\Http\Middleware\AdminOnly;
@@ -23,6 +24,8 @@ use App\Models\User;
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
+
+Route::post('/chatbot/ask', [ChatbotController::class, 'ask'])->name('chatbot.ask');
 
 // Auth
 Route::get('/login', [AuthController::class , 'showLogin'])->name('login');

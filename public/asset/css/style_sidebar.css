@@ -79,9 +79,10 @@ body {
   font-family: 'Plus Jakarta Sans', sans-serif;
   background: var(--page-bg);
   display: flex;
+  flex-direction: column;
   min-height: 100vh;
   color: var(--text-primary);
-  overflow-x: hidden; /* Prevent horizontal scroll */
+  overflow-x: hidden;
   width: 100%;
 }
 

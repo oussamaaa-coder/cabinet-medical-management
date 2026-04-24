@@ -28,6 +28,7 @@
 
             <div class="hidden lg:flex items-center gap-8 font-semibold text-slate-800">
                 <a href="#services" class="hover:text-emerald-500 transition-colors">Services</a>
+                <a href="#reviews" class="hover:text-emerald-500 transition-colors">Témoignages</a>
                 <a href="#portals" class="hover:text-emerald-500 transition-colors">Portails</a>
                 <a href="{{ route('contact') }}" class="hover:text-emerald-500 transition-colors">Contact</a>
             </div>
@@ -158,6 +159,119 @@
                 </div>
             </div>
         </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="reviews" class="py-24 md:py-32 bg-slate-50/50 relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent"></div>
+        
+        <div class="container mx-auto px-6">
+            <div class="text-center max-w-3xl mx-auto mb-16 md:mb-24">
+                <h2 class="text-4xl md:text-6xl font-serif mb-6 text-slate-900" data-split>
+                    La confiance de <span class="italic text-emerald-500">nos patients.</span>
+                </h2>
+                <p class="text-lg text-slate-600" data-gsap="reveal">
+                    Découvrez les retours d'expérience de ceux qui nous font confiance pour leur santé au quotidien.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
+                @foreach($testimonials as $testimonial)
+                <!-- Dynamic Review -->
+                <div class="glass p-8 md:p-10 rounded-[2.5rem] flex flex-col justify-between hover:translate-y-[-10px] transition-all duration-500 group" data-gsap="reveal">
+                    <div>
+                        <div class="flex gap-1 text-emerald-500 mb-6">
+                            @for($i=0; $i<5; $i++)
+                                <svg class="w-5 h-5 {{ $i < $testimonial->rating ? 'fill-current' : 'text-slate-300 fill-none stroke-current' }} transition-transform group-hover:scale-110" style="transition-delay: {{ $i * 50 }}ms" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                            @endfor
+                        </div>
+                        <p class="text-xl md:text-2xl font-serif text-slate-800 leading-relaxed mb-8 italic">
+                            "{{ $testimonial->content }}"
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-4 pt-6 border-t border-slate-100">
+                        <div class="w-14 h-14 rounded-full bg-emerald-100 overflow-hidden flex items-center justify-center border-2 border-white shadow-sm ring-4 ring-emerald-500/5 transition-transform group-hover:scale-110 duration-500">
+                            @if($testimonial->image)
+                                <img src="{{ asset($testimonial->image) }}" alt="{{ $testimonial->name }}" class="w-full h-full object-cover">
+                            @else
+                                <div class="w-full h-full flex items-center justify-center bg-emerald-500 text-white font-bold text-xl">
+                                    {{ strtoupper(substr($testimonial->name, 0, 1)) }}
+                                </div>
+                            @endif
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-900 text-lg leading-none mb-1">{{ $testimonial->name }}</h4>
+                            <p class="text-slate-500 text-[10px] uppercase tracking-[0.2em] font-bold">{{ $testimonial->role ?? 'Patient' }}</p>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+
+            <!-- Review Submission Form -->
+            <div class="mt-20 md:mt-32 max-w-2xl mx-auto" data-gsap="reveal">
+                <div class="glass p-8 md:p-12 rounded-[2.5rem] relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-8 opacity-10">
+                        <svg class="w-24 h-24 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path d="M18 13V5a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2h3l3 3 3-3h3a2 2 0 002-2zM5 7a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h3a1 1 0 100-2H6z"/></svg>
+                    </div>
+
+                    @auth
+                        <h3 class="text-2xl md:text-3xl font-serif mb-4 text-slate-900">Partagez votre <span class="italic text-emerald-500">expérience.</span></h3>
+                        <p class="text-slate-600 mb-8">Votre avis nous aide à améliorer nos services au quotidien.</p>
+
+                        @if(session('testimonial_success'))
+                            <div class="bg-emerald-50 border border-emerald-100 text-emerald-700 px-6 py-4 rounded-2xl mb-8 flex items-center gap-3">
+                                <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                <span class="font-medium">{{ session('testimonial_success') }}</span>
+                            </div>
+                        @endif
+
+                        <form action="{{ route('testimonials.submit') }}" method="POST" class="space-y-6">
+                            @csrf
+                            <div>
+                                <label class="block text-sm font-bold uppercase tracking-widest text-slate-500 mb-3">Quelle note nous donnez-vous ?</label>
+                                <div class="flex gap-2" x-data="{ rating: 5, hover: 0 }">
+                                    <input type="hidden" name="rating" :value="rating">
+                                    <template x-for="i in 5">
+                                        <button type="button" 
+                                                @click="rating = i" 
+                                                @mouseenter="hover = i" 
+                                                @mouseleave="hover = 0"
+                                                class="transition-all duration-300">
+                                            <svg class="w-8 h-8" :class="(hover || rating) >= i ? 'text-emerald-500 fill-current' : 'text-slate-200 fill-none stroke-current'" viewBox="0 0 24 24" stroke-width="2">
+                                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                            </svg>
+                                        </button>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="content" class="block text-sm font-bold uppercase tracking-widest text-slate-500 mb-3">Votre témoignage</label>
+                                <textarea name="content" id="content" rows="4" required
+                                          class="w-full bg-slate-50/50 border border-slate-200 rounded-3xl px-6 py-5 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all resize-none placeholder:text-slate-400"
+                                          placeholder="Racontez-nous votre expérience..."></textarea>
+                            </div>
+
+                            <button type="submit" class="w-full btn-premium bg-emerald-500 text-white shadow-xl shadow-emerald-500/20 group magnetic">
+                                Publier mon avis
+                                <svg class="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                            </button>
+                        </form>
+                    @else
+                        <div class="text-center py-6">
+                            <h3 class="text-2xl font-serif mb-4 text-slate-900">Vous souhaitez laisser <span class="italic text-emerald-500">un avis ?</span></h3>
+                            <p class="text-slate-600 mb-8">Connectez-vous à votre espace patient pour partager votre expérience avec nous.</p>
+                            <a href="{{ route('login') }}" class="inline-flex btn-premium bg-slate-900 text-white shadow-xl shadow-slate-900/20 magnetic">
+                                Se connecter maintenant
+                            </a>
+                        </div>
+                    @endauth
+                </div>
+            </div>
+        </div>
+
+        <div class="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent"></div>
     </section>
 
     <!-- Footer -->
@@ -316,6 +430,7 @@
         
         <div class="flex flex-col items-center gap-8 mt-12">
             <a @click="mobileMenu = false" href="#services" class="hover:text-emerald-500 transition-colors">Services</a>
+            <a @click="mobileMenu = false" href="#reviews" class="hover:text-emerald-500 transition-colors">Témoignages</a>
             <a @click="mobileMenu = false" href="#portals" class="hover:text-emerald-500 transition-colors">Portails</a>
             <a @click="mobileMenu = false" href="{{ route('contact') }}" class="hover:text-emerald-500 transition-colors">Contact</a>
         </div>

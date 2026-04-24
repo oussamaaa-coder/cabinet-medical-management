@@ -27,26 +27,114 @@
         }
     </script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
     <style>
         [x-cloak] { display: none !important; }
+        
+        /* Premium Scrollbar */
+        .lg\:pr-2::-webkit-scrollbar { width: 5px; }
+        .lg\:pr-2::-webkit-scrollbar-track { background: transparent; }
+        .lg\:pr-2::-webkit-scrollbar-thumb { 
+            background: var(--border); 
+            border-radius: 10px; 
+        }
+        .lg\:pr-2::-webkit-scrollbar-thumb:hover { background: var(--accent-mid); }
+
         .calendar-container {
             width: 100%;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
         }
+        
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, minmax(120px, 1fr));
+            gap: 8px;
         }
+
+        @media (max-width: 1400px) {
+            .calendar-grid { grid-template-columns: repeat(7, minmax(100px, 1fr)); }
+        }
+
         @media (max-width: 768px) {
-            .calendar-grid {
-                grid-template-columns: repeat(7, minmax(100px, 1fr));
+            .calendar-grid { 
+                grid-template-columns: repeat(7, minmax(90px, 1fr));
+                gap: 4px;
             }
         }
-        /* Overrides to ensure consistency with global variables */
+
+        /* Premium States */
+        .day-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+        }
+        .day-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-mid);
+            box-shadow: 0 10px 20px -5px rgba(0,0,0,0.05);
+        }
+        .day-card.selected {
+            background: linear-gradient(135deg, var(--accent), #2d6349) !important;
+            border-color: var(--accent) !important;
+            box-shadow: 0 12px 24px -8px rgba(58, 125, 92, 0.4);
+        }
+        .day-card.today {
+            border-color: var(--accent);
+            background: var(--accent-light);
+        }
+
+        /* RDV Cards */
+        .rdv-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .rdv-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--accent);
+            opacity: 0.6;
+        }
+        .rdv-card:hover {
+            transform: translateX(4px);
+            border-color: var(--accent-mid);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        /* Layout */
+        .agenda-flex-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+        @media (min-width: 1200px) {
+            .agenda-flex-wrapper {
+                flex-direction: row !important;
+                flex-wrap: nowrap !important;
+                align-items: flex-start !important;
+            }
+            .agenda-calendar-col {
+                flex: 1 !important;
+                min-width: 0 !important;
+            }
+            .agenda-planning-col {
+                width: 420px !important;
+                flex-shrink: 0 !important;
+                position: sticky;
+                top: 24px;
+            }
+        }
+
+        /* Status Colors Overrides */
         .bg-medical-blue { background-color: var(--accent); }
         .text-medical-blue { color: var(--accent); }
-        .border-medical-blue { border-color: var(--accent); }
     </style>
 
     <div class="p-6 bg-bg-page min-h-screen transition-colors duration-300" x-data="calendarApp()"
@@ -54,34 +142,37 @@
 
         <!-- Toast Notification -->
         <div x-show="successMessage" x-transition.opacity.duration.300ms
-             class="fixed top-8 right-8 z-[100] flex items-center gap-3 bg-green-600 text-white px-6 py-4 rounded-xl shadow-2xl"
+             class="fixed top-8 right-8 z-[100] flex items-center gap-3 bg-medical-blue text-white px-6 py-4 rounded-xl shadow-2xl"
              style="display: none;">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
             <span class="font-bold whitespace-nowrap" x-text="successMessage"></span>
         </div>
 
-        <div class="flex flex-col md:flex-row gap-6">
+        <div class="agenda-flex-wrapper">
 
             <!-- Left Column: Calendar -->
             <div
-                class="w-full md:w-3/5 bg-bg-card rounded-2xl shadow-sm border border-border-custom p-6 transition-colors">
-                <div class="flex items-center justify-between mb-8">
+                class="agenda-calendar-col w-full bg-bg-card rounded-3xl shadow-sm border border-border-custom p-8 transition-colors">
+                <div class="flex items-center justify-between mb-10">
                     <div>
-                        <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-100"
+                        <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 tracking-tight"
                             x-text="monthNames[month] + ' ' + year"></h2>
-                        <p class="text-gray-500 dark:text-gray-400">Gérez vos rendez-vous</p>
+                        <p class="text-text-secondary mt-1 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
+                            Gestion des consultations
+                        </p>
                     </div>
-                    <div class="flex gap-2">
+                    <div class="flex gap-3 bg-bg-page p-1.5 rounded-2xl border border-border-custom">
                         <button @click="previousMonth()"
-                            class="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors text-gray-600 dark:text-gray-400">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            class="p-2.5 hover:bg-bg-card hover:shadow-sm rounded-xl transition-all text-text-primary">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
                                 </path>
                             </svg>
                         </button>
                         <button @click="nextMonth()"
-                            class="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors text-gray-600 dark:text-gray-400">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            class="p-2.5 hover:bg-bg-card hover:shadow-sm rounded-xl transition-all text-text-primary">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
                                 </path>
                             </svg>
@@ -90,123 +181,145 @@
                 </div>
 
                 <div class="calendar-container">
-                    <div class="calendar-grid mb-2">
-                    <template x-for="day in daysOfWeek">
-                        <div class="text-center text-xs font-bold text-gray-400 uppercase py-2" x-text="day"></div>
-                    </template>
-                </div>
+                    <div class="calendar-grid mb-4">
+                        <template x-for="day in daysOfWeek">
+                            <div class="text-center text-[11px] font-bold text-text-muted uppercase tracking-widest py-2" x-text="day"></div>
+                        </template>
+                    </div>
 
-                <div class="calendar-grid gap-1">
-                    <template x-for="blankday in blankdays">
-                        <div class="h-24 md:h-32"></div>
-                    </template>
-                    <template x-for="(date, dateIndex) in noofdays" :key="dateIndex">
-                        <div @click="selectDate(date)"
-                            class="h-24 md:h-32 border border-gray-100 dark:border-gray-800 rounded-xl p-2 cursor-pointer transition-all hover:border-medical-blue relative group"
-                            :class="{
-                                'bg-medical-blue text-white shadow-lg shadow-green-100 dark:shadow-green-900/20 border-medical-blue': isSelected(date),
-                                'bg-green-50/50 dark:bg-green-900/10 border-green-200 dark:border-green-800/30': isToday(date) && !isSelected(date),
-                                'bg-white dark:bg-[#1a2420]': !isSelected(date) && !isToday(date)
-                            }">
-                            <div class="flex justify-between items-start">
-                                <span class="text-sm font-semibold"
-                                    :class="isSelected(date) ? 'text-white' : 'text-gray-700 dark:text-gray-300'"
-                                    x-text="date"></span>
-                                <div class="flex flex-col items-end gap-1">
+                    <div class="calendar-grid">
+                        <template x-for="blankday in blankdays">
+                            <div class="h-28 md:h-36 opacity-20">
+                                <div class="w-full h-full border border-dashed border-border-custom rounded-2xl"></div>
+                            </div>
+                        </template>
+                        <template x-for="(date, dateIndex) in noofdays" :key="dateIndex">
+                            <div @click="selectDate(date)"
+                                class="day-card h-28 md:h-36 rounded-2xl p-4 cursor-pointer relative group overflow-hidden"
+                                :class="{
+                                    'selected text-white': isSelected(date),
+                                    'today': isToday(date) && !isSelected(date)
+                                }">
+                                <div class="flex justify-between items-start">
+                                    <span class="text-lg font-bold tracking-tight"
+                                        :class="isSelected(date) ? 'text-white' : 'text-text-primary'"
+                                        x-text="date"></span>
                                     <template x-if="isToday(date)">
-                                        <span
-                                            class="text-[10px] px-1.5 py-0.5 rounded-full bg-green-500 text-white font-bold uppercase tracking-wider">Aujourd'hui</span>
-                                    </template>
-                                    <template x-if="isHoliday(date)">
-                                        <span
-                                            class="text-[9px] px-1.5 py-0.5 rounded-full bg-red-100 text-red-600 font-bold uppercase tracking-wider">Férié</span>
+                                        <div class="w-2 h-2 rounded-full bg-accent" :class="isSelected(date) ? 'bg-white' : ''"></div>
                                     </template>
                                 </div>
-                            </div>
 
-                            <!-- Appointment Indicators -->
-                            <div class="mt-2 flex flex-wrap gap-1">
-                                <template x-for="apt in getAppointmentsForDate(date).slice(0, 3)">
-                                    <div class="w-1.5 h-1.5 rounded-full" :class="getStatusColor(apt.status)"></div>
+                                <template x-if="isHoliday(date)">
+                                    <p class="text-[9px] mt-1 font-bold uppercase tracking-wider opacity-60"
+                                       :class="isSelected(date) ? 'text-white' : 'text-red-500'"
+                                       x-text="holidays[year + '-' + String(month + 1).padStart(2, '0') + '-' + String(date).padStart(2, '0')]"></p>
                                 </template>
-                                <template x-if="getAppointmentsForDate(date).length > 3">
-                                    <div class="text-[10px] text-gray-400 font-medium">+<span
-                                            x-text="getAppointmentsForDate(date).length - 3"></span></div>
-                                </template>
+
+                                <!-- Appointment Indicators -->
+                                <div class="absolute bottom-4 left-4 right-4">
+                                    <div class="flex gap-1">
+                                        <template x-for="apt in getAppointmentsForDate(date).slice(0, 4)">
+                                            <div class="w-1.5 h-1.5 rounded-full" 
+                                                 :class="isSelected(date) ? 'bg-white/40' : getStatusColor(apt.status)"></div>
+                                        </template>
+                                        <template x-if="getAppointmentsForDate(date).length > 4">
+                                            <div class="text-[9px] font-bold opacity-60"
+                                                 :class="isSelected(date) ? 'text-white' : 'text-text-muted'">
+                                                 +<span x-text="getAppointmentsForDate(date).length - 4"></span>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </template>
+                        </template>
+                    </div>
                 </div>
             </div>
 
             <!-- Right Column: Daily Schedule -->
-            <div class="w-full md:w-2/5 flex flex-col gap-6">
+            <div class="agenda-planning-col w-full flex flex-col gap-6">
                 <!-- Header with Actions -->
-                <div class="flex items-center justify-between">
-                    <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100">
-                        Planning du <span x-text="formatFullDate(selectedDate)"></span>
-                        <template x-if="getHolidayNameForSelectedDate()">
-                            <span class="block text-sm text-red-500 font-semibold"
-                                x-text="getHolidayNameForSelectedDate()"></span>
-                        </template>
-                    </h3>
+                <div class="bg-bg-card p-6 rounded-3xl border border-border-custom shadow-sm">
+                    <div class="flex items-center justify-between gap-4 mb-6">
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 flex flex-col">
+                            <span class="text-xs text-accent font-bold uppercase tracking-wider mb-1">Planning du jour</span>
+                            <span x-text="formatFullDate(selectedDate)"></span>
+                        </h3>
+                    </div>
+                    
                     <button @click="showNewModal = true"
-                        class="bg-medical-blue text-white px-4 py-2 rounded-xl font-semibold flex items-center gap-2 hover:bg-opacity-90 transition-all shadow-md shadow-green-100">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                        </svg>
-                        Nouveau RDV
+                        class="w-full bg-medical-blue text-white px-6 py-4 rounded-2xl font-bold flex items-center justify-center gap-3 hover:shadow-lg hover:shadow-green-100 transition-all group">
+                        <div class="p-1 bg-white/20 rounded-lg group-hover:scale-110 transition-transform">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path>
+                            </svg>
+                        </div>
+                        Nouveau Rendez-vous
                     </button>
                 </div>
 
                 <!-- Appointments List -->
-                <div class="flex flex-col gap-4 overflow-y-auto max-h-[calc(100vh-200px)] lg:pr-2">
+                <div class="flex flex-col gap-4 overflow-y-auto max-h-[calc(100vh-320px)] lg:pr-2 px-1">
                     <template x-if="dailyAppointments.length === 0">
                         <div
-                            class="bg-white dark:bg-[#1a2420] rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 p-12 text-center transition-colors">
+                            class="bg-white dark:bg-[#1a2420] rounded-3xl border border-dashed border-border-custom p-10 text-center flex flex-col items-center">
                             <div
-                                class="bg-gray-50 dark:bg-gray-800/50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-100 dark:border-gray-700">
-                                <svg class="w-8 h-8 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor"
+                                class="bg-bg-page w-20 h-20 rounded-full flex items-center justify-center mb-6 border border-border-custom">
+                                <svg class="w-10 h-10 text-text-muted opacity-30" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                         d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
                                     </path>
                                 </svg>
                             </div>
-                            <h4 class="text-gray-500 dark:text-gray-400 font-medium">Aucun rendez-vous</h4>
-                            <p class="text-sm text-gray-400 dark:text-gray-500">Pour ce jour sélectionné</p>
+                            <h4 class="text-text-primary font-bold text-lg mb-1">Journée calme</h4>
+                            <p class="text-sm text-text-secondary">Aucun rendez-vous pour cette date</p>
                         </div>
                     </template>
+                    
                     <template x-for="apt in dailyAppointments">
                         <div @click="viewDetails(apt)"
-                            class="bg-bg-card border border-border-custom rounded-2xl p-4 cursor-pointer hover:shadow-md transition-all border-l-4 group"
+                            class="rdv-card rounded-2xl p-5 cursor-pointer"
                             :class="getStatusBorder(apt.status)">
-                            <div class="flex justify-between items-start mb-2">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-medical-blue font-bold"
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-12 h-12 rounded-xl bg-accent-light flex items-center justify-center text-accent font-bold text-lg"
                                         x-text="apt.patient.name.substring(0,2).toUpperCase()"></div>
                                     <div>
-                                        <h4 class="font-bold text-gray-800 dark:text-gray-200" x-text="apt.patient.name">
-                                        </h4>
-                                        <p class="text-[10px] text-medical-blue font-bold uppercase" x-text="'Dr. ' + apt.doctor.last_name"></p>
-                                        <p class="text-xs text-gray-500 dark:text-gray-400" x-text="apt.type"></p>
+                                        <h4 class="font-bold text-text-primary leading-tight text-lg" x-text="apt.patient.name"></h4>
+                                        <div class="flex items-center gap-2 mt-1">
+                                            <span class="text-[11px] font-bold text-accent uppercase tracking-wider" x-text="'Dr. ' + apt.doctor.last_name"></span>
+                                            <span class="w-1 h-1 rounded-full bg-border-custom"></span>
+                                            <span class="text-[11px] text-text-secondary font-medium" x-text="apt.type"></span>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                                <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border"
                                     :class="getStatusBadge(apt.status)">
                                     <span x-html="getStatusIcon(apt.status)"></span>
                                     <span x-text="translateStatus(apt.status)"></span>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
-                                <div class="flex items-center gap-1.5">
-                                    <svg class="w-4 h-4 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            
+                            <div class="flex items-center justify-between pt-4 border-t border-border-custom/50 mt-2">
+                                <div class="flex items-center gap-2 text-text-secondary">
+                                    <svg class="w-4 h-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                     </svg>
-                                    <span
+                                    <span class="text-sm font-bold tracking-tight"
                                         x-text="apt.start_time.substring(0,5) + ' - ' + apt.end_time.substring(0,5)"></span>
+                                </div>
+                                <div class="flex -space-x-2">
+                                    <template x-if="apt.sms_reminder">
+                                        <div class="w-6 h-6 rounded-full bg-bg-page border border-border-custom flex items-center justify-center" title="SMS Activé">
+                                            <svg class="w-3 h-3 text-accent" fill="currentColor" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+                                        </div>
+                                    </template>
+                                    <template x-if="apt.email_reminder">
+                                        <div class="w-6 h-6 rounded-full bg-bg-page border border-border-custom flex items-center justify-center" title="Email Activé">
+                                            <svg class="w-3 h-3 text-accent" fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                                        </div>
+                                    </template>
                                 </div>
                             </div>
                         </div>
@@ -651,10 +764,10 @@
 
                 getStatusBadge(status) {
                     switch (status) {
-                        case 'planned': return 'bg-blue-50/50 text-blue-600';
-                        case 'completed': return 'bg-green-50 text-green-600';
-                        case 'cancelled': return 'bg-red-50 text-red-600';
-                        case 'urgent': return 'bg-orange-50 text-orange-600';
+                        case 'planned': return 'bg-blue-50/50 text-blue-600 border-blue-100';
+                        case 'completed': return 'bg-green-50 text-green-600 border-green-100';
+                        case 'cancelled': return 'bg-red-50 text-red-600 border-red-100';
+                        case 'urgent': return 'bg-orange-50 text-orange-600 border-orange-100';
                     }
                 },
 
@@ -803,7 +916,6 @@
                 resetNewApt() {
                     this.newApt = {
                         patient_id: '',
-                        {{-- Restore pre-assigned doctor_id after reset --}}
                         doctor_id: '{{ auth()->check() && auth()->user()->role === "doctor" && ($doctors->first() ?? null) ? $doctors->first()->id : "" }}',
                         date: '',
                         start_time: '09:00',

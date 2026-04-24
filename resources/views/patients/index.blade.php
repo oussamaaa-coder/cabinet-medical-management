@@ -94,10 +94,10 @@
                     <h3 style="margin: 0; font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">Tous les Patients</h3>
                     <span class="badge app-badge-pill" style="margin-left: 12px;">{{ $totalPatients }}</span>
                 </div>
-                <form action="{{ route('patients.index') }}" method="GET" class="app-search-bar">
-                    <div style="position: relative;">
+                <form action="{{ route('patients.index') }}" method="GET" class="app-search-bar" style="flex-grow: 1; max-width: 500px;">
+                    <div style="position: relative; flex-grow: 1;">
                         <svg style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; fill: none; stroke: var(--text-muted); stroke-width: 2;" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                        <input type="text" name="search" id="search-input" class="app-form-control search-input-responsive" placeholder="Rechercher un patient..." value="{{ request('search') }}">
+                        <input type="text" name="search" id="search-input" class="app-form-control search-input-responsive" placeholder="Rechercher un patient..." value="{{ request('search') }}" style="width: 100%;">
                     </div>
                     <button type="submit" class="app-btn app-btn-primary">Chercher</button>
                     @if(request('search'))
@@ -224,8 +224,9 @@
             justify-content: space-between;
             align-items: center;
             text-align: right;
-            padding: 10px 12px;
+            padding: 12px 16px;
             border-bottom: 1px dashed var(--border);
+            gap: 12px;
         }
 
         .app-table td:last-child {
@@ -236,13 +237,22 @@
             content: attr(data-label);
             font-weight: 700;
             text-transform: uppercase;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: var(--text-label);
             text-align: left;
+            flex-shrink: 0;
+            min-width: 100px;
         }
 
         .coord-cell {
             text-align: right;
+            word-break: break-all;
+        }
+
+        .app-table td > div {
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
         }
     }
 

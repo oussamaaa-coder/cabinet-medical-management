@@ -97,6 +97,20 @@
             {{-- ── NAVIGATION ── --}}
             <nav class="sidebar-nav">
 
+                <span class="nav-section-label">Navigation</span>
+
+                <a
+                    href="{{ url('/') }}"
+                    class="nav-item">
+                    <span class="nav-icon">
+                        <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                        </svg>
+                    </span>
+                    <span class="nav-label">Accueil Site</span>
+                </a>
+
                 <span class="nav-section-label">Principal</span>
 
                 <a
@@ -216,8 +230,19 @@
                     <span class="nav-label">Discussion Groupe</span>
                 </a>
 
-                @if(auth()->check() && auth()->user()->role === 'admin')
+                @if(auth()->check() && auth()->user()->isAdmin())
                 <span class="nav-section-label">Admin</span>
+
+                <a
+                    href="{{ route('testimonials.index') }}"
+                    class="nav-item {{ request()->is('testimonials*') ? 'active' : '' }}">
+                    <span class="nav-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
+                        </svg>
+                    </span>
+                    <span class="nav-label">Témoignages</span>
+                </a>
 
                 <a
                     href="{{ route('utilisateurs.index') }}"

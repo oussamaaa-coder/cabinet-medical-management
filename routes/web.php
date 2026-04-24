@@ -17,12 +17,17 @@ use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PatientPortalController;
+use App\Http\Controllers\Admin\TestimonialController as AdminTestimonialController;
+use App\Http\Controllers\TestimonialController;
 use App\Http\Middleware\AdminOnly;
 use App\Http\Middleware\PatientOnly;
 use App\Models\User;
 
+use App\Models\Testimonial;
+
 Route::get('/', function () {
-    return view('welcome');
+    $testimonials = Testimonial::where('is_active', true)->latest()->get();
+    return view('welcome', compact('testimonials'));
 })->name('home');
 
 Route::post('/chatbot/ask', [ChatbotController::class, 'ask'])->name('chatbot.ask');
@@ -69,6 +74,7 @@ Route::middleware(['auth'])->group(function () {
     // Routes pour les doctors (admin seulement)
     Route::middleware([AdminOnly::class])->group(function () {
         Route::resource('doctors', DoctorController::class);
+        Route::resource('testimonials', AdminTestimonialController::class);
     });
 
     // Routes pour les patients
@@ -111,6 +117,9 @@ Route::middleware(['auth'])->group(function () {
     // Settings Routes
     Route::get('/settings', [SettingsController::class , 'index'])->name('settings.index');
     Route::post('/settings', [SettingsController::class , 'update'])->name('settings.update');
+
+    // Testimonial Public Submission
+    Route::post('/testimonials/submit', [TestimonialController::class, 'store'])->name('testimonials.submit');
 
     // Help Routes
     Route::get('/help', [HelpController::class , 'index'])->name('help.index');

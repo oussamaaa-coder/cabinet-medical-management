@@ -60,6 +60,15 @@
 
     {{-- Navigation --}}
     <nav class="pt-nav">
+        <span class="pt-nav-section">Navigation</span>
+
+        <a href="{{ url('/') }}" class="pt-nav-item">
+            <span class="pt-nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            </span>
+            <span class="pt-nav-label">Accueil Site</span>
+        </a>
+
         <span class="pt-nav-section">Mon Espace</span>
 
         <a href="{{ route('patient.dashboard') }}"

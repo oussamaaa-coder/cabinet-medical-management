@@ -448,10 +448,10 @@
                 typing: false,
                 userInput: '',
                 currentOptions: [
-                    { label: '📅 Prendre RDV', value: 'booking' },
-                    { label: '🧑⚕️ Triage Symptômes', value: 'triage' },
-                    { label: '❓ FAQ (Heures/Prix)', value: 'faq' },
-                    { label: '🧾 Documents à apporter', value: 'docs' }
+                    { label: ' Prendre RDV', value: 'booking' },
+                    { label: ' Triage Symptômes', value: 'triage' },
+                    { label: ' FAQ (Heures/Prix)', value: 'faq' },
+                    { label: ' Documents à apporter', value: 'docs' }
                 ],
                 messages: [
                     { role: 'bot', content: 'Bonjour ! Je suis votre **Assistant Médical Intelligent**. <br><br>Je peux répondre à toutes vos questions sur le cabinet, votre santé ou vos démarches administratives. Que voulez-vous savoir ?' }
@@ -492,9 +492,9 @@
                         
                         // Keep core options available after AI response
                         this.currentOptions = [
-                            { label: '📅 Prendre RDV', value: 'booking' },
-                            { label: '🧑⚕️ Triage Symptômes', value: 'triage' },
-                            { label: '🏠 Retour', value: 'start' }
+                            { label: ' Prendre RDV', value: 'booking' },
+                            { label: ' Triage Symptômes', value: 'triage' },
+                            { label: ' Retour', value: 'start' }
                         ];
 
                     } catch (error) {

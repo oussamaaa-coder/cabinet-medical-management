@@ -256,4 +256,87 @@ class PatientPortalController extends Controller
 
         return view('patient.archives', compact('patient', 'pastAppointments', 'prescriptions'));
     }
+
+    // ── Onboarding ──────────────────────────────────────────────
+    public function onboarding()
+    {
+        $patient = $this->getPatient();
+        
+        // If profile is already complete, redirect to dashboard
+        if ($patient && $patient->is_profile_completed) {
+            return redirect()->route('patient.dashboard');
+        }
+
+        return view('patient.onboarding', compact('patient'));
+    }
+
+    public function storeOnboarding(Request $request)
+    {
+        $patient = $this->getPatient();
+
+        $is_majeur = $request->has('is_majeur');
+
+        $rules = [
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'phone' => ['required', 'regex:/^(0[67]\d{8}|212[67]\d{8})$/'],
+            'birth_date' => 'required|date',
+            'gender' => 'required|in:male,female',
+            'cin' => $is_majeur ? 'required|string|size:8|unique:patients,cin,' . $patient->id : 'nullable',
+            'assurance' => 'nullable|in:AMO,CNOPS,CNSS,Mutuelle Privée,Aucune',
+            'num_assurance' => 'nullable|string|max:255',
+            'langue_parlee' => 'nullable|string|max:255',
+            'address' => 'nullable|string',
+            'groupe_sanguin' => 'nullable|in:A+,A-,B+,B-,AB+,AB-,O+,O-,Inconnu',
+            'allergies' => 'nullable|string',
+            'maladies_chroniques' => 'nullable|string',
+            'medicaments_cours' => 'nullable|string',
+            'antecedents_personnels' => 'nullable|string',
+            'antecedents_familiaux' => 'nullable|string',
+            'hospitalisations' => 'nullable|string',
+        ];
+
+        if (!$is_majeur) {
+            $rules = array_merge($rules, [
+                'type_responsable' => 'required|in:Père,Mère,Tuteur Légal',
+                'cin_responsable' => 'required|string|size:8',
+                'nom_responsable' => 'required|string|max:255',
+                'prenom_responsable' => 'required|string|max:255',
+                'phone_responsable' => ['required', 'regex:/^(0[67]\d{8}|212[67]\d{8})$/'],
+                'email_responsable' => 'nullable|email|max:255',
+                'profession_responsable' => 'nullable|string|max:255',
+                'fratrie' => 'nullable|integer|min:0',
+                'voie_accouchement' => 'nullable|in:Basse,Césarienne',
+                'apgar' => 'nullable|integer|min:0|max:10',
+                'allaitement' => 'nullable|in:Maternel,Artificiel,Mixte',
+                'developpement_psychomoteur' => 'nullable|string',
+            ]);
+        }
+
+        $validated = $request->validate($rules);
+        $validated['is_majeur'] = $is_majeur;
+        $validated['is_profile_completed'] = true;
+
+        if ($is_majeur) {
+            // Nullify responsible fields if majeur
+            $validated['type_responsable'] = null;
+            $validated['cin_responsable'] = null;
+            $validated['nom_responsable'] = null;
+            $validated['prenom_responsable'] = null;
+            $validated['phone_responsable'] = null;
+            $validated['email_responsable'] = null;
+            $validated['profession_responsable'] = null;
+            $validated['fratrie'] = null;
+            $validated['voie_accouchement'] = null;
+            $validated['apgar'] = null;
+            $validated['allaitement'] = null;
+            $validated['developpement_psychomoteur'] = null;
+        } else {
+            $validated['cin'] = null;
+        }
+
+        $patient->update($validated);
+
+        return redirect()->route('patient.dashboard')->with('success', 'Votre profil a été complété avec succès !');
+    }
 }

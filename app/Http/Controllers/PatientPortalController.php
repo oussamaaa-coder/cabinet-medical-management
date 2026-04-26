@@ -221,4 +221,39 @@ class PatientPortalController extends Controller
 
         return view('patient.dossier', compact('patient'));
     }
+
+    // ── Archives ───────────────────────────────────────────────
+    public function archives()
+    {
+        $patient = $this->getPatient();
+
+        if (!$patient) {
+            return view('patient.archives', [
+                'patient' => null,
+                'pastAppointments' => collect(),
+                'prescriptions' => collect(),
+            ]);
+        }
+
+        $now = Carbon::now();
+
+        // Pass appointments (completed, cancelled, or date in the past)
+        $pastAppointments = Appointment::with('doctor')
+            ->where('patient_id', $patient->id)
+            ->where(function($q) use ($now) {
+                $q->whereIn('status', ['completed', 'cancelled'])
+                  ->orWhere('date', '<', $now->toDateString());
+            })
+            ->orderByDesc('date')
+            ->orderByDesc('start_time')
+            ->paginate(10, ['*'], 'appointments_page');
+
+        // All prescriptions (technically they are all past/historical)
+        $prescriptions = Prescription::with(['doctor', 'items'])
+            ->where('patient_id', $patient->id)
+            ->orderByDesc('prescription_date')
+            ->paginate(10, ['*'], 'prescriptions_page');
+
+        return view('patient.archives', compact('patient', 'pastAppointments', 'prescriptions'));
+    }
 }

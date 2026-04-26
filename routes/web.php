@@ -63,6 +63,7 @@ Route::middleware(['auth', PatientOnly::class])->prefix('patient')->name('patien
     Route::get('/prescriptions', [PatientPortalController::class, 'prescriptions'])->name('prescriptions');
     Route::get('/prescriptions/{prescription}', [PatientPortalController::class, 'showPrescription'])->name('prescriptions.show');
     Route::get('/dossier', [PatientPortalController::class, 'dossier'])->name('dossier');
+    Route::get('/archives', [PatientPortalController::class, 'archives'])->name('archives');
 });
 
 // Routes protégées

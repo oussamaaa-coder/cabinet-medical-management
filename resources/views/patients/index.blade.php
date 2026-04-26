@@ -164,7 +164,100 @@
                 {{ $patients->appends(request()->query())->links() }}
             </div>
         </div>
-        <!-- ... (scheduled and consulted sections similarly updated) ... -->
+
+        <!-- Section: Patients Planifiés Aujourd'hui -->
+        <div id="section-scheduled" class="content-panel app-card">
+            <div class="app-topbar" style="border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 20px;">
+                <div class="header-left">
+                    <h3 style="margin: 0; font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">Rendez-vous Planifiés Aujourd'hui</h3>
+                    <span class="badge app-badge-pill" style="margin-left: 12px;">{{ $patientsPlannedToday }}</span>
+                </div>
+            </div>
+            
+            <div class="app-table-wrapper">
+                <table class="app-table">
+                    <thead>
+                        <tr>
+                            <th>Patient</th>
+                            <th>Docteur</th>
+                            <th>Heure</th>
+                            <th style="text-align: right;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($appointmentsPlanned as $appointment)
+                        <tr>
+                            <td data-label="Patient">
+                                <div style="display: flex; align-items: center; gap: 12px; font-weight: 600; color: var(--text-primary);">
+                                    <span>{{ $appointment->patient->last_name }} {{ $appointment->patient->first_name }}</span>
+                                </div>
+                            </td>
+                            <td data-label="Docteur">{{ $appointment->doctor->user->name ?? 'N/A' }}</td>
+                            <td data-label="Heure">{{ \Carbon\Carbon::parse($appointment->start_time)->format('H:i') }}</td>
+                            <td data-label="Actions">
+                                <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                                    <a href="{{ route('patients.show', $appointment->patient->id) }}" class="app-btn-action" title="Voir détails">
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="4" style="text-align: center; padding: 48px; color: var(--text-muted); font-style: italic;">Aucun rendez-vous planifié pour aujourd'hui.</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Section: Patients Consultés Aujourd'hui -->
+        <div id="section-consulted" class="content-panel app-card">
+            <div class="app-topbar" style="border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 20px;">
+                <div class="header-left">
+                    <h3 style="margin: 0; font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">Rendez-vous Consultés Aujourd'hui</h3>
+                    <span class="badge app-badge-pill" style="margin-left: 12px;">{{ $patientsConsultedToday }}</span>
+                </div>
+            </div>
+            
+            <div class="app-table-wrapper">
+                <table class="app-table">
+                    <thead>
+                        <tr>
+                            <th>Patient</th>
+                            <th>Docteur</th>
+                            <th>Heure</th>
+                            <th style="text-align: right;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($appointmentsConsulted as $appointment)
+                        <tr>
+                            <td data-label="Patient">
+                                <div style="display: flex; align-items: center; gap: 12px; font-weight: 600; color: var(--text-primary);">
+                                    <span>{{ $appointment->patient->last_name }} {{ $appointment->patient->first_name }}</span>
+                                </div>
+                            </td>
+                            <td data-label="Docteur">{{ $appointment->doctor->user->name ?? 'N/A' }}</td>
+                            <td data-label="Heure">{{ \Carbon\Carbon::parse($appointment->start_time)->format('H:i') }}</td>
+                            <td data-label="Actions">
+                                <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                                    <a href="{{ route('patients.show', $appointment->patient->id) }}" class="app-btn-action" title="Voir détails">
+                                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="4" style="text-align: center; padding: 48px; color: var(--text-muted); font-style: italic;">Aucun rendez-vous consulté pour aujourd'hui.</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 

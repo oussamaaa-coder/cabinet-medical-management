@@ -41,7 +41,7 @@ class AppServiceProvider extends ServiceProvider
                 }
 
                 $user  = Auth::user();
-                $query = Appointment::whereDate('date', Carbon::today());
+                $query = Appointment::query();
 
                 if ($user->role === 'doctor') {
                     // Resolve the Doctor record linked to this user
@@ -54,8 +54,18 @@ class AppServiceProvider extends ServiceProvider
                         $view->with('todayAppointmentsCount', 0);
                         return;
                     }
+                } elseif ($user->role === 'patient') {
+                    // Resolve the Patient record linked to this user
+                    $patientId = \App\Models\Patient::where('user_id', $user->id)->value('id');
+
+                    if ($patientId) {
+                        $query->where('patient_id', $patientId);
+                    } else {
+                        $view->with('todayAppointmentsCount', 0);
+                        return;
+                    }
                 } elseif ($user->role !== 'admin') {
-                    // Any other role (secretary, patient, nurse…) gets 0
+                    // Any other role (secretary, nurse…) gets 0
                     $view->with('todayAppointmentsCount', 0);
                     return;
                 }

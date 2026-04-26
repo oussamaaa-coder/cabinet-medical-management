@@ -69,6 +69,21 @@ class Patient extends Model
     {
         return $this->hasMany(Prescription::class);
     }
+    
+    public function vitals()
+    {
+        return $this->hasMany(Vital::class);
+    }
+
+    public function medicationLogs()
+    {
+        return $this->hasMany(MedicationLog::class);
+    }
+
+    public function medicalDocuments()
+    {
+        return $this->hasMany(MedicalDocument::class);
+    }
 
     public function getNameAttribute()
     {

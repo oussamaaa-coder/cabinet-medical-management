@@ -319,6 +319,17 @@
 
     <!-- AI Chatbot Assistant -->
     <div x-data="chatbot()" class="fixed bottom-6 right-6 z-[100] font-sans">
+        <!-- Proactive Help Bubble -->
+        <div x-show="!chatOpen && showHelpBubble" 
+             x-transition:enter="transition ease-out duration-500"
+             x-transition:enter-start="opacity-0 translate-y-4 scale-90"
+             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+             class="absolute bottom-20 right-0 w-64 bg-white p-4 rounded-2xl shadow-xl border border-emerald-100 mb-2">
+            <p class="text-sm text-slate-700 font-medium">Besoin d'aide pour prendre rendez-vous ? 🏥</p>
+            <p class="text-xs text-slate-500 mt-1">Je peux vous aider en Français ou en Darija.</p>
+            <div class="absolute bottom-[-8px] right-6 w-4 h-4 bg-white border-r border-b border-emerald-100 rotate-45"></div>
+        </div>
+
         <!-- Chat Launcher Button -->
         <button @click="toggleChat()" 
                 class="w-14 h-14 md:w-16 md:h-16 bg-emerald-500 rounded-full shadow-2xl shadow-emerald-500/40 flex items-center justify-center text-white transition-all duration-300 hover:scale-110 active:scale-95 group relative overflow-hidden">
@@ -392,10 +403,17 @@
             <!-- Chat Input -->
             <div class="p-4 bg-white border-t border-slate-100 shrink-0">
                 <form @submit.prevent="sendMessage()" class="flex items-center gap-2">
+                    <button type="button" 
+                            @click="toggleVoice()"
+                            :class="isListening ? 'bg-red-500 text-white animate-pulse' : 'bg-slate-100 text-slate-500 hover:bg-emerald-50 hover:text-emerald-500'"
+                            class="w-11 h-11 rounded-xl flex items-center justify-center transition-all">
+                        <svg x-show="!isListening" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+                        <svg x-show="isListening" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"></path></svg>
+                    </button>
                     <input type="text" 
                            x-model="userInput" 
                            @focus="scrollToBottom()"
-                           placeholder="Posez n'importe quelle question..." 
+                           :placeholder="isListening ? 'Je vous écoute...' : 'Posez votre question...'" 
                            class="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all placeholder:text-slate-400">
                     <button type="submit" 
                             class="w-11 h-11 bg-emerald-500 text-white rounded-xl flex items-center justify-center transition-transform hover:scale-105 active:scale-95 shadow-lg shadow-emerald-500/20">
@@ -447,17 +465,59 @@
                 chatOpen: false,
                 typing: false,
                 userInput: '',
+                showHelpBubble: false,
+                isListening: false,
+                recognition: null,
                 currentOptions: [
                     { label: ' Prendre RDV', value: 'booking' },
                     { label: ' Triage Symptômes', value: 'triage' },
-                    { label: ' FAQ (Heures/Prix)', value: 'faq' },
-                    { label: ' Documents à apporter', value: 'docs' }
+                    { label: ' FAQ (Heures/Prix)', value: 'faq' }
                 ],
                 messages: [
-                    { role: 'bot', content: 'Bonjour ! Je suis votre **Assistant Médical Intelligent**. <br><br>Je peux répondre à toutes vos questions sur le cabinet, votre santé ou vos démarches administratives. Que voulez-vous savoir ?' }
+                    { role: 'bot', content: 'Bonjour ! Je suis votre **Assistant Médical**. Labas ? <br><br>Je peux vous aider à prendre rendez-vous en quelques secondes. Que puis-je faire pour vous ?' }
                 ],
+                init() {
+                    setTimeout(() => this.showHelpBubble = true, 5000);
+                    
+                    // Initialize Speech Recognition
+                    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                        this.recognition = new SpeechRecognition();
+                        this.recognition.lang = 'fr-FR'; // Can be changed to ar-MA for better Darija support
+                        this.recognition.continuous = false;
+                        this.recognition.interimResults = false;
+
+                        this.recognition.onresult = (event) => {
+                            this.userInput = event.results[0][0].transcript;
+                            this.isListening = false;
+                            this.sendMessage();
+                        };
+
+                        this.recognition.onerror = () => {
+                            this.isListening = false;
+                        };
+
+                        this.recognition.onend = () => {
+                            this.isListening = false;
+                        };
+                    }
+                },
+                toggleVoice() {
+                    if (!this.recognition) {
+                        alert("La reconnaissance vocale n'est pas supportée par votre navigateur.");
+                        return;
+                    }
+                    if (this.isListening) {
+                        this.recognition.stop();
+                        this.isListening = false;
+                    } else {
+                        this.recognition.start();
+                        this.isListening = true;
+                    }
+                },
                 toggleChat() {
                     this.chatOpen = !this.chatOpen;
+                    this.showHelpBubble = false;
                     if(this.chatOpen) setTimeout(() => this.scrollToBottom(), 100);
                 },
                 handleOption(opt) {

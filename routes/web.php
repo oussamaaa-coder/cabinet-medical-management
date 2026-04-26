@@ -53,18 +53,10 @@ Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'
 Route::get('/contact', [ContactController::class, 'showForm'])->name('contact');
 Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
 
-use App\Http\Middleware\PatientProfileComplete;
-
 // ── Patient Portal ─────────────────────────────────────────────────────────
 
-// Onboarding Routes (accessible even if profile is incomplete)
+// Main Patient Portal Routes
 Route::middleware(['auth', PatientOnly::class])->prefix('patient')->name('patient.')->group(function () {
-    Route::get('/onboarding', [PatientPortalController::class, 'onboarding'])->name('onboarding');
-    Route::post('/onboarding', [PatientPortalController::class, 'storeOnboarding'])->name('onboarding.store');
-});
-
-// Main Patient Portal Routes (require completed profile)
-Route::middleware(['auth', PatientOnly::class, PatientProfileComplete::class])->prefix('patient')->name('patient.')->group(function () {
     Route::get('/dashboard', [PatientPortalController::class, 'dashboard'])->name('dashboard');
     Route::get('/appointments', [PatientPortalController::class, 'appointments'])->name('appointments');
     Route::get('/appointments/book', [PatientPortalController::class, 'createAppointment'])->name('appointments.book');

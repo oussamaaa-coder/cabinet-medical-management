@@ -41,7 +41,7 @@ class AppServiceProvider extends ServiceProvider
                 }
 
                 $user  = Auth::user();
-                $query = Appointment::query();
+                $query = Appointment::query()->whereNotIn('status', ['completed', 'cancelled']);
 
                 if ($user->role === 'doctor') {
                     // Resolve the Doctor record linked to this user

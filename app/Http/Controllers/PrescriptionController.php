@@ -21,7 +21,19 @@ class PrescriptionController extends Controller
 
     public function create(Request $request)
     {
-        $patients = Patient::all();
+        $patientsQuery = Patient::query();
+        if (\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user()->role === 'doctor') {
+            $doctorId = \App\Models\Doctor::where('user_id', \Illuminate\Support\Facades\Auth::id())->value('id');
+            if ($doctorId) {
+                $patientsQuery->whereHas('appointments', function($q) use ($doctorId) {
+                    $q->where('doctor_id', $doctorId);
+                });
+            } else {
+                $patientsQuery->whereRaw('0 = 1');
+            }
+        }
+        $patients = $patientsQuery->get();
+        
         $selectedPatientId = $request->patient_id;
         
         if (\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user()->role === 'admin') {

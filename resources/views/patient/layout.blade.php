@@ -80,11 +80,15 @@
         </a>
 
         <a href="{{ route('patient.appointments') }}"
-           class="pt-nav-item {{ request()->routeIs('patient.appointments*') ? 'active' : '' }}">
+           class="pt-nav-item {{ request()->routeIs('patient.appointments') ? 'active' : '' }}">
             <span class="pt-nav-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
             </span>
             <span class="pt-nav-label">Mes Rendez-vous</span>
+            @php $apptCount = optional(auth()->user()->patient)->appointments()->whereNotIn('status', ['completed', 'cancelled'])->count() ?? 0; @endphp
+            @if($apptCount > 0)
+                <span style="margin-left:auto; background:var(--pt-accent); color:#fff; font-size:10px; padding:2px 8px; border-radius:10px; font-weight:700;">{{ $apptCount }}</span>
+            @endif
         </a>
 
         <a href="{{ route('patient.appointments.book') }}"

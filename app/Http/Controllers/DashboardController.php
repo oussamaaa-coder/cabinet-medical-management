@@ -48,8 +48,13 @@ class DashboardController extends Controller
             if ($isDoctor) {
                 $doctorId
                     ? $q->where(function($sq) use ($doctorId) {
-                        $sq->where('doctor_id', $doctorId)
-                          ->orWhereHas('appointments', fn($sub) => $sub->where('doctor_id', $doctorId));
+                        // Always include patients with appointments with this doctor
+                        $sq->whereHas('appointments', fn($sub) => $sub->where('doctor_id', $doctorId));
+                        
+                        // Safety: only check doctor_id column on patients table if it exists
+                        if (\Illuminate\Support\Facades\Schema::hasColumn('patients', 'doctor_id')) {
+                            $sq->orWhere('doctor_id', $doctorId);
+                        }
                     })
                     : $q->whereRaw('0 = 1');
             }

@@ -16,12 +16,16 @@ class PatientController extends Controller
         if (\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user()->role === 'doctor') {
             $doctorId = \App\Models\Doctor::where('user_id', \Illuminate\Support\Facades\Auth::id())->value('id');
             if ($doctorId) {
-                // Show patients linked to this doctor OR patients with appointments with this doctor
                 $query->where(function($q) use ($doctorId) {
-                    $q->where('doctor_id', $doctorId)
-                      ->orWhereHas('appointments', function($sq) use ($doctorId) {
-                          $sq->where('doctor_id', $doctorId);
-                      });
+                    // Always check appointments relationship
+                    $q->whereHas('appointments', function($sq) use ($doctorId) {
+                        $sq->where('doctor_id', $doctorId);
+                    });
+
+                    // Safely check doctor_id column on patients table
+                    if (\Illuminate\Support\Facades\Schema::hasColumn('patients', 'doctor_id')) {
+                        $q->orWhere('doctor_id', $doctorId);
+                    }
                 });
             } else {
                 $query->whereRaw('0 = 1');
@@ -113,7 +117,7 @@ class PatientController extends Controller
         // Link patient to the current doctor if the user is a doctor
         if (\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user()->role === 'doctor') {
             $doctorId = \App\Models\Doctor::where('user_id', \Illuminate\Support\Facades\Auth::id())->value('id');
-            if ($doctorId) {
+            if ($doctorId && \Illuminate\Support\Facades\Schema::hasColumn('patients', 'doctor_id')) {
                 $data['doctor_id'] = $doctorId;
             }
         }
@@ -167,10 +171,13 @@ class PatientController extends Controller
             // Check if doctor created the patient OR has an appointment with them
             return Patient::where('id', $id)
                 ->where(function($q) use ($doctorId) {
-                    $q->where('doctor_id', $doctorId)
-                      ->orWhereHas('appointments', function($sq) use ($doctorId) {
-                          $sq->where('doctor_id', $doctorId);
-                      });
+                    $q->whereHas('appointments', function($sq) use ($doctorId) {
+                        $sq->where('doctor_id', $doctorId);
+                    });
+
+                    if (\Illuminate\Support\Facades\Schema::hasColumn('patients', 'doctor_id')) {
+                        $q->orWhere('doctor_id', $doctorId);
+                    }
                 })->exists();
         }
         return true; // Admin has access
@@ -273,10 +280,13 @@ class PatientController extends Controller
             $doctorId = \App\Models\Doctor::where('user_id', \Illuminate\Support\Facades\Auth::id())->value('id');
             if ($doctorId) {
                 $query->where(function($q) use ($doctorId) {
-                    $q->where('doctor_id', $doctorId)
-                      ->orWhereHas('appointments', function($sq) use ($doctorId) {
-                          $sq->where('doctor_id', $doctorId);
-                      });
+                    $q->whereHas('appointments', function($sq) use ($doctorId) {
+                        $sq->where('doctor_id', $doctorId);
+                    });
+
+                    if (\Illuminate\Support\Facades\Schema::hasColumn('patients', 'doctor_id')) {
+                        $q->orWhere('doctor_id', $doctorId);
+                    }
                 });
             } else {
                 $query->whereRaw('0 = 1');

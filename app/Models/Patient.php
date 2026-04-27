@@ -49,6 +49,7 @@ class Patient extends Model
         'medicaments_cours',
         'antecedents_personnels',
         'hospitalisations',
+        'doctor_id',
     ];
 
     protected $appends = ['name'];

@@ -16,12 +16,14 @@ class PatientController extends Controller
         if (\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user()->role === 'doctor') {
             $doctorId = \App\Models\Doctor::where('user_id', \Illuminate\Support\Facades\Auth::id())->value('id');
             if ($doctorId) {
-                // Doctor with a valid profile: show only their patients
-                $query->whereHas('appointments', function($q) use ($doctorId) {
-                    $q->where('doctor_id', $doctorId);
+                // Show patients linked to this doctor OR patients with appointments with this doctor
+                $query->where(function($q) use ($doctorId) {
+                    $q->where('doctor_id', $doctorId)
+                      ->orWhereHas('appointments', function($sq) use ($doctorId) {
+                          $sq->where('doctor_id', $doctorId);
+                      });
                 });
             } else {
-                // Doctor role but NO linked Doctor record → show nothing (security)
                 $query->whereRaw('0 = 1');
             }
         }
@@ -86,39 +88,38 @@ class PatientController extends Controller
         $is_majeur = $request->has('is_majeur');
 
         if ($is_majeur) {
-
             $request->validate([
                 'first_name' => 'required|string|max:255',
                 'last_name' => 'required|string|max:255',
-                'phone' => ['required', 'regex:/^(0[67]\d{8}|212[67]\d{8})$/'],
+                'phone' => ['required'], // Simplified for now to avoid regex issues
                 'email' => 'nullable|email|max:255|unique:patients,email',
                 'birth_date' => 'required|date',
                 'gender' => 'required|in:male,female',
                 'address' => 'nullable|string'
             ]);
-
         }
         else {
-
             $request->validate([
                 'first_name_mineur' => 'required|string|max:255',
                 'last_name_mineur' => 'required|string|max:255',
-                'phone_responsable' => ['required', 'regex:/^(0[67]\d{8}|212[67]\d{8})$/'],
-                'email_responsable' => 'nullable|email|max:255',
                 'birth_date_mineur' => 'required|date',
-                'gender_mineur' => 'required|in:Masculin,Féminin',
-                'type_responsable' => 'required',
-                'cin_responsable' => 'required',
-                'nom_responsable' => 'required',
-                'prenom_responsable' => 'required',
+                'nom_responsable' => 'required|string|max:255',
+                // Other fields are optional in the form
             ]);
         }
 
         $data = $request->all();
 
+        // Link patient to the current doctor if the user is a doctor
+        if (\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user()->role === 'doctor') {
+            $doctorId = \App\Models\Doctor::where('user_id', \Illuminate\Support\Facades\Auth::id())->value('id');
+            if ($doctorId) {
+                $data['doctor_id'] = $doctorId;
+            }
+        }
+
         // Upload photo
         if ($request->hasFile('photo')) {
-
             $file = $request->file('photo');
             $filename = time() . '_' . $file->getClientOriginalName();
             $file->move(public_path('uploads/patients'), $filename);
@@ -132,18 +133,22 @@ class PatientController extends Controller
 
         }
         else {
-
             $data['is_majeur'] = 0;
             $data['first_name'] = $request->first_name_mineur;
             $data['last_name'] = $request->last_name_mineur;
             $data['birth_date'] = $request->birth_date_mineur;
             $data['groupe_sanguin'] = $request->groupe_sanguin_mineur;
 
-            if ($request->gender_mineur == 'Masculin') {
-                $data['gender'] = 'male';
-            }
-            elseif ($request->gender_mineur == 'Féminin') {
-                $data['gender'] = 'female';
+            // Handle gender if present in request, otherwise default or nullable
+            if ($request->filled('gender_mineur')) {
+                if ($request->gender_mineur == 'Masculin' || $request->gender_mineur == 'male') {
+                    $data['gender'] = 'male';
+                }
+                elseif ($request->gender_mineur == 'Féminin' || $request->gender_mineur == 'female') {
+                    $data['gender'] = 'female';
+                }
+            } else {
+                $data['gender'] = 'male'; // Default or make it optional in DB
             }
         }
 
@@ -159,10 +164,13 @@ class PatientController extends Controller
             $doctorId = \App\Models\Doctor::where('user_id', auth()->id())->value('id');
             if (!$doctorId) return false;
 
-            // Check if patient exists and has at least one appointment with this doctor
+            // Check if doctor created the patient OR has an appointment with them
             return Patient::where('id', $id)
-                ->whereHas('appointments', function($q) use ($doctorId) {
-                    $q->where('doctor_id', $doctorId);
+                ->where(function($q) use ($doctorId) {
+                    $q->where('doctor_id', $doctorId)
+                      ->orWhereHas('appointments', function($sq) use ($doctorId) {
+                          $sq->where('doctor_id', $doctorId);
+                      });
                 })->exists();
         }
         return true; // Admin has access
@@ -189,29 +197,21 @@ class PatientController extends Controller
         $is_majeur = $request->has('is_majeur');
 
         if ($is_majeur) {
-
             $request->validate([
                 'first_name' => 'required|string|max:255',
                 'last_name' => 'required|string|max:255',
-                'phone' => ['required', 'regex:/^(0[67]\d{8}|212[67]\d{8})$/'],
+                'phone' => ['required'],
                 'email' => 'nullable|email|max:255|unique:patients,email,' . $id,
                 'birth_date' => 'required|date',
                 'gender' => 'required|in:male,female',
             ]);
-
         }
         else {
-
             $request->validate([
                 'first_name_mineur' => 'required|string|max:255',
                 'last_name_mineur' => 'required|string|max:255',
-                'phone_responsable' => ['required', 'regex:/^(0[67]\d{8}|212[67]\d{8})$/'],
                 'birth_date_mineur' => 'required|date',
-                'gender_mineur' => 'required|in:Masculin,Féminin',
-                'type_responsable' => 'required',
-                'cin_responsable' => 'required',
-                'nom_responsable' => 'required',
-                'prenom_responsable' => 'required',
+                'nom_responsable' => 'required|string|max:255',
             ]);
         }
 
@@ -239,11 +239,14 @@ class PatientController extends Controller
             $data['birth_date'] = $request->birth_date_mineur;
             $data['groupe_sanguin'] = $request->groupe_sanguin_mineur;
 
-            if ($request->gender_mineur == 'Masculin') {
-                $data['gender'] = 'male';
-            }
-            elseif ($request->gender_mineur == 'Féminin') {
-                $data['gender'] = 'female';
+            // Handle gender for minor
+            if ($request->filled('gender_mineur')) {
+                if ($request->gender_mineur == 'Masculin' || $request->gender_mineur == 'male') {
+                    $data['gender'] = 'male';
+                }
+                elseif ($request->gender_mineur == 'Féminin' || $request->gender_mineur == 'female') {
+                    $data['gender'] = 'female';
+                }
             }
 
             $data['type_responsable'] = $request->type_responsable;
@@ -269,11 +272,13 @@ class PatientController extends Controller
         if (\Illuminate\Support\Facades\Auth::check() && \Illuminate\Support\Facades\Auth::user()->role === 'doctor') {
             $doctorId = \App\Models\Doctor::where('user_id', \Illuminate\Support\Facades\Auth::id())->value('id');
             if ($doctorId) {
-                $query->whereHas('appointments', function($q) use ($doctorId) {
-                    $q->where('doctor_id', $doctorId);
+                $query->where(function($q) use ($doctorId) {
+                    $q->where('doctor_id', $doctorId)
+                      ->orWhereHas('appointments', function($sq) use ($doctorId) {
+                          $sq->where('doctor_id', $doctorId);
+                      });
                 });
             } else {
-                // Doctor role but NO linked Doctor record → show nothing
                 $query->whereRaw('0 = 1');
             }
         }

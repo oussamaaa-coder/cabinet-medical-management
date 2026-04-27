@@ -26,8 +26,16 @@ class AppointmentController extends Controller
 
     public function index()
     {
-        $patients = Patient::all();
         $authDoctor = $this->getAuthDoctor();
+
+        $patients = $authDoctor
+            ? Patient::where(function($q) use ($authDoctor) {
+                $q->where('doctor_id', $authDoctor->id)
+                  ->orWhereHas('appointments', function($sq) use ($authDoctor) {
+                      $sq->where('doctor_id', $authDoctor->id);
+                  });
+            })->get()
+            : Patient::all();
 
         if ($authDoctor) {
             // Doctor: only show their own profile in the dropdown
@@ -212,8 +220,17 @@ class AppointmentController extends Controller
 
     public function create()
     {
-        $patients    = Patient::all();
         $authDoctor  = $this->getAuthDoctor();
+
+        $patients = $authDoctor
+            ? Patient::where(function($q) use ($authDoctor) {
+                $q->where('doctor_id', $authDoctor->id)
+                  ->orWhereHas('appointments', function($sq) use ($authDoctor) {
+                      $sq->where('doctor_id', $authDoctor->id);
+                  });
+            })->get()
+            : Patient::all();
+
         $doctors     = $authDoctor
             ? Doctor::where('id', $authDoctor->id)->get()
             : Doctor::all();

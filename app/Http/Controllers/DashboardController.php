@@ -47,7 +47,10 @@ class DashboardController extends Controller
             $q = Patient::query();
             if ($isDoctor) {
                 $doctorId
-                    ? $q->whereHas('appointments', fn($sub) => $sub->where('doctor_id', $doctorId))
+                    ? $q->where(function($sq) use ($doctorId) {
+                        $sq->where('doctor_id', $doctorId)
+                          ->orWhereHas('appointments', fn($sub) => $sub->where('doctor_id', $doctorId));
+                    })
                     : $q->whereRaw('0 = 1');
             }
             return $q;

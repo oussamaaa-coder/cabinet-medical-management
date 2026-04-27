@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap');
 
+[x-cloak] { display: none !important; }
+
 @theme {
     --font-sans: 'Outfit', ui-sans-serif, system-ui, sans-serif;
     --font-serif: 'Instrument Serif', serif;

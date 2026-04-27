@@ -112,7 +112,7 @@
                     <p class="text-slate-600 leading-relaxed mb-6">Réservez vos consultations en quelques secondes, sans attente téléphonique.</p>
                     <span class="text-xs font-bold uppercase tracking-widest text-emerald-500">Digital First</span>
                 </div>
-                
+
                 <!-- Service Card 2 -->
                 <div class="group p-10 rounded-[2.5rem] bg-white border border-slate-100 shadow-sm hover:shadow-xl hover:shadow-emerald-500/5 transition-all duration-500" data-gsap="reveal">
                     <div class="w-16 h-16 bg-medical-dark text-white rounded-2xl flex items-center justify-center mb-8 transform transition-transform group-hover:rotate-6 shadow-lg shadow-emerald-500/20">
@@ -164,7 +164,7 @@
     <!-- Testimonials Section -->
     <section id="reviews" class="py-24 md:py-32 bg-slate-50/50 relative overflow-hidden">
         <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent"></div>
-        
+
         <div class="container mx-auto px-6">
             <div class="text-center max-w-3xl mx-auto mb-16 md:mb-24">
                 <h2 class="text-4xl md:text-6xl font-serif mb-6 text-slate-900" data-split>
@@ -241,9 +241,9 @@
                                 <div class="flex gap-2" x-data="{ rating: 5, hover: 0 }">
                                     <input type="hidden" name="rating" :value="rating">
                                     <template x-for="i in 5">
-                                        <button type="button" 
-                                                @click="rating = i" 
-                                                @mouseenter="hover = i" 
+                                        <button type="button"
+                                                @click="rating = i"
+                                                @mouseenter="hover = i"
                                                 @mouseleave="hover = 0"
                                                 class="transition-all duration-300">
                                             <svg class="w-8 h-8" :class="(hover || rating) >= i ? 'text-emerald-500 fill-current' : 'text-slate-200 fill-none stroke-current'" viewBox="0 0 24 24" stroke-width="2">
@@ -328,7 +328,7 @@
     <!-- AI Chatbot Assistant -->
     <div x-data="chatbot()" class="fixed bottom-6 right-6 z-[100] font-sans">
         <!-- Proactive Help Bubble -->
-        <div x-show="!chatOpen && showHelpBubble" 
+        <div x-show="!chatOpen && showHelpBubble"
              x-transition:enter="transition ease-out duration-500"
              x-transition:enter-start="opacity-0 translate-y-4 scale-90"
              x-transition:enter-end="opacity-100 translate-y-0 scale-100"
@@ -339,7 +339,7 @@
         </div>
 
         <!-- Chat Launcher Button -->
-        <button @click="toggleChat()" 
+        <button @click="toggleChat()"
                 class="w-14 h-14 md:w-16 md:h-16 bg-emerald-500 rounded-full shadow-2xl shadow-emerald-500/40 flex items-center justify-center text-white transition-all duration-300 hover:scale-110 active:scale-95 group relative overflow-hidden">
             <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
             <svg x-show="!chatOpen" x-transition class="w-7 h-7 md:w-8 md:h-8 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -361,7 +361,7 @@
              x-transition:leave-end="opacity-0 scale-90 translate-y-10"
              x-cloak
              class="absolute bottom-20 right-0 w-[calc(100vw-3rem)] sm:w-96 h-[550px] bg-white rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-slate-100 overflow-hidden flex flex-col backdrop-blur-xl">
-            
+
             <!-- Chat Header -->
             <div class="p-6 bg-gradient-to-r from-emerald-500 to-teal-600 text-white flex items-center gap-4 shrink-0">
                 <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-md">
@@ -380,8 +380,8 @@
             <div id="chat-messages" class="flex-1 overflow-y-auto p-5 space-y-4 scroll-smooth bg-slate-50/30">
                 <template x-for="(msg, index) in messages" :key="index">
                     <div :class="msg.role === 'bot' ? 'flex justify-start' : 'flex justify-end'">
-                        <div :class="msg.role === 'bot' 
-                            ? 'bg-white text-slate-800 rounded-2xl rounded-tl-none px-4 py-3 max-w-[88%] text-sm shadow-sm border border-slate-100' 
+                        <div :class="msg.role === 'bot'
+                            ? 'bg-white text-slate-800 rounded-2xl rounded-tl-none px-4 py-3 max-w-[88%] text-sm shadow-sm border border-slate-100'
                             : 'bg-emerald-500 text-white rounded-2xl rounded-tr-none px-4 py-3 max-w-[85%] text-sm shadow-md shadow-emerald-500/10'"
                              x-html="msg.content">
                         </div>
@@ -391,7 +391,7 @@
                 <!-- Quick Replies -->
                 <div x-show="!typing && currentOptions.length > 0" class="flex flex-wrap gap-2 py-2">
                     <template x-for="opt in currentOptions">
-                        <button @click="handleOption(opt)" 
+                        <button @click="handleOption(opt)"
                                 class="px-4 py-2 bg-white border border-emerald-100 text-emerald-700 text-xs font-bold rounded-full hover:bg-emerald-50 hover:border-emerald-300 transition-all shadow-sm">
                             <span x-text="opt.label"></span>
                         </button>
@@ -411,19 +411,19 @@
             <!-- Chat Input -->
             <div class="p-4 bg-white border-t border-slate-100 shrink-0">
                 <form @submit.prevent="sendMessage()" class="flex items-center gap-2">
-                    <button type="button" 
+                    <button type="button"
                             @click="toggleVoice()"
                             :class="isListening ? 'bg-red-500 text-white animate-pulse' : 'bg-slate-100 text-slate-500 hover:bg-emerald-50 hover:text-emerald-500'"
                             class="w-11 h-11 rounded-xl flex items-center justify-center transition-all">
                         <svg x-show="!isListening" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
                         <svg x-show="isListening" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"></path></svg>
                     </button>
-                    <input type="text" 
-                           x-model="userInput" 
+                    <input type="text"
+                           x-model="userInput"
                            @focus="scrollToBottom()"
-                           :placeholder="isListening ? 'Je vous écoute...' : 'Posez votre question...'" 
+                           :placeholder="isListening ? 'Je vous écoute...' : 'Posez votre question...'"
                            class="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all placeholder:text-slate-400">
-                    <button type="submit" 
+                    <button type="submit"
                             class="w-11 h-11 bg-emerald-500 text-white rounded-xl flex items-center justify-center transition-transform hover:scale-105 active:scale-95 shadow-lg shadow-emerald-500/20">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
                     </button>
@@ -433,16 +433,16 @@
     </div>
 
     <!-- Mobile Menu Overlay -->
-    <div x-show="mobileMenu" 
+    <div x-show="mobileMenu"
          x-transition:enter="transition ease-out duration-300"
          x-transition:enter-start="opacity-0 translate-x-full"
          x-transition:enter-end="opacity-100 translate-x-0"
          x-transition:leave="transition ease-in duration-200"
          x-transition:leave-start="opacity-100 translate-x-0"
          x-transition:leave-end="opacity-0 translate-x-full"
-         x-cloak 
+         x-cloak
          class="fixed inset-0 z-[100] bg-white/95 backdrop-blur-lg p-8 flex flex-col items-center justify-center gap-8 text-2xl font-serif md:hidden">
-        
+
         <div class="absolute top-8 left-8 flex items-center gap-2">
             <div class="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center text-white">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
@@ -453,7 +453,7 @@
         <button @click="mobileMenu = false" class="absolute top-8 right-8 p-2 text-slate-400 hover:text-emerald-500 transition-colors">
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
-        
+
         <div class="flex flex-col items-center gap-8 mt-12">
             <a @click="mobileMenu = false" href="#services" class="hover:text-emerald-500 transition-colors">Services</a>
             <a @click="mobileMenu = false" href="#reviews" class="hover:text-emerald-500 transition-colors">Témoignages</a>
@@ -486,7 +486,7 @@
                 ],
                 init() {
                     setTimeout(() => this.showHelpBubble = true, 5000);
-                    
+
                     // Initialize Speech Recognition
                     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
                         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -545,7 +545,7 @@
                     this.scrollToBottom();
 
                     try {
-                        const response = await fetch("{{ route('chatbot.ask') }}", {
+                        const response = await fetch("{{ url('/chatbot/ask') }}", {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -555,9 +555,9 @@
                         });
 
                         const data = await response.json();
-                        
+
                         this.messages.push({ role: 'bot', content: data.reply });
-                        
+
                         // Keep core options available after AI response
                         this.currentOptions = [
                             { label: ' Prendre RDV', value: 'booking' },

@@ -138,18 +138,10 @@ autocomplete="current-password">
 
 
 <div class="row-opts">
-
-<label class="check-label">
-<input type="checkbox" name="remember">
-Se souvenir de moi
-</label>
-
-<a href="{{ route('password.request') }}" class="forgot">
-Mot de passe oublié ?
-</a>
-
+  <a href="{{ route('password.request') }}" class="forgot">
+    Mot de passe oublié ?
+  </a>
 </div>
-
 
 <button type="submit" class="btn-submit">
 

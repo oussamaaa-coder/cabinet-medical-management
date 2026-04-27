@@ -19,9 +19,11 @@ class ChatbotController extends Controller
 
         try {
             $response = Http::withoutVerifying()
+                ->timeout(60)
                 ->withHeaders([
-                'Content-Type' => 'application/json',
-            ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$apiKey}", [
+                    'Content-Type' => 'application/json',
+                    'X-goog-api-key' => $apiKey,
+                ])->post("https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent", [
                 'contents' => [
                     [
                         'parts' => [
@@ -31,8 +33,8 @@ class ChatbotController extends Controller
                             RÈGLES D'OR :
                             1. ACCESSIBILITÉ : Parle en Français ET/OU en Darija (Arabe Marocain) selon la langue du patient. Sois très simple.
                             2. CONCIERGE : Ne dis pas 'allez sur la page X'. Pose des questions une par une : 
-                                - 'Quel est votre problème de santé ?'
-                                - 'Préférez-vous venir le matin ou l'après-midi ?'
+                            - 'Quel est votre problème de santé ?'
+                            - 'Préférez-vous venir le matin ou l'après-midi ?'
                             3. RDV : Quand le patient est prêt, propose-lui de cliquer sur le bouton 'Prendre RDV' ou guide-le pour créer son compte.
                             4. INFOS : (Horaires: Lun-Ven 9h-18h, Sam 9h-13h. Prix: 200-500 DH. Adresse: 123 Avenue de la Santé, Casablanca).
                             5. URGENCE : Si douleur poitrine/respiration -> Dit 'Appelez le 15' immédiatement en gras.
@@ -50,9 +52,15 @@ class ChatbotController extends Controller
                 return response()->json(['reply' => $reply]);
             }
 
+            $errorData = $response->json();
+            $errorMessage = $errorData['error']['message'] ?? "Erreur inconnue";
+            
             Log::error('Gemini API Error Status: ' . $response->status());
             Log::error('Gemini API Error Body: ' . $response->body());
-            return response()->json(['reply' => "Désolé, j'ai rencontré une erreur technique (Status: " . $response->status() . ")."], 500);
+            
+            return response()->json([
+                'reply' => "Désolé, j'ai rencontré une erreur technique (Status: " . $response->status() . "). " . $errorMessage
+            ], 500);
 
         } catch (\Exception $e) {
             Log::error('Chatbot Exception: ' . $e->getMessage());

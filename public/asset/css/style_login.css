@@ -146,12 +146,15 @@ body::before {
   display: grid;
   place-items: center;
   backdrop-filter: blur(6px);
+  flex-shrink: 0;
 }
 
-.logo-mark svg {
+.logo-mark svg,
+.logo-mark img {
   width: 20px;
   height: 20px;
   stroke: #fff;
+  object-fit: contain;
 }
 
 .logo-text {
@@ -177,7 +180,7 @@ body::before {
 
 .hero h2 {
   font-family: 'Playfair Display', serif;
-  font-size: clamp(27px, 2.5vw, 36px);
+  font-size: clamp(22px, 2.5vw, 36px);
   font-weight: 400;
   line-height: 1.22;
   color: #fff;
@@ -267,7 +270,7 @@ body::before {
 
 .form-head h1 {
   font-family: 'Playfair Display', serif;
-  font-size: clamp(26px, 2.6vw, 36px);
+  font-size: clamp(24px, 2.6vw, 36px);
   font-weight: 600;
   color: var(--text-primary);
   line-height: 1.15;
@@ -312,6 +315,9 @@ body::before {
   font-weight: 500;
   margin-bottom: 20px;
   border: 1px solid transparent;
+  background: #fef2f2;
+  color: #991b1b;
+  border-color: #fecaca;
 }
 
 .alert-error {
@@ -356,6 +362,8 @@ body::before {
   border-radius: 12px;
   outline: none;
   transition: border-color .14s var(--ease), box-shadow .14s var(--ease), background .14s var(--ease);
+  /* Empêche le zoom auto sur iOS */
+  -webkit-text-size-adjust: 100%;
 }
 
 .input-wrap input::placeholder {
@@ -393,8 +401,9 @@ body::before {
 .row-opts {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   margin-top: 2px;
+  gap: 8px;
 }
 
 .check-label {
@@ -445,6 +454,10 @@ body::before {
   color: var(--accent);
   text-decoration: none;
   transition: opacity .13s;
+  white-space: nowrap;
+  display: block;
+  text-align: right;
+  width: 100%;
 }
 
 .forgot:hover {
@@ -472,6 +485,8 @@ body::before {
   overflow: hidden;
   box-shadow: 0 4px 18px rgba(58, 125, 92, .38);
   transition: transform .14s var(--ease), box-shadow .14s var(--ease), filter .14s var(--ease);
+  /* Supprime le tap highlight sur mobile */
+  -webkit-tap-highlight-color: transparent;
 }
 
 .btn-submit::after {
@@ -541,37 +556,194 @@ body::before {
 }
 
 /* ══════════════════════════════════════════════
-   Responsive
+   RESPONSIVE — Tablette large (≤ 900px)
    ══════════════════════════════════════════════ */
-@media (max-width: 720px) {
+@media (max-width: 900px) {
   .card {
-    grid-template-columns: 1fr;
-    max-width: 480px;
+    grid-template-columns: 1fr 1.3fr;
+    max-width: 760px;
   }
 
   .card-left {
-    padding: 36px 32px;
+    padding: 44px 36px;
   }
 
   .hero {
-    padding: 20px 0 16px;
+    padding: 24px 0 20px;
+  }
+
+  .hero p {
+    max-width: 100%;
   }
 
   .card-right {
-    padding: 40px 32px;
+    padding: 44px 40px;
   }
 }
 
-@media (max-width: 480px) {
+/* ══════════════════════════════════════════════
+   RESPONSIVE — Tablette (≤ 720px)
+   Bascule en colonne unique, panneau gauche compact
+   ══════════════════════════════════════════════ */
+@media (max-width: 720px) {
+  body {
+    padding: 20px 12px;
+    align-items: flex-start;
+  }
 
-  .card-left,
+  .card {
+    grid-template-columns: 1fr;
+    max-width: 520px;
+    border-radius: 22px;
+  }
+
+  /* Le panneau gauche devient un header compact */
+  .card-left {
+    padding: 28px 28px 24px;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .logo {
+    margin-bottom: 0;
+    flex: 1;
+  }
+
+  /* Hero : masqué sur tablette pour économiser l'espace */
+  .hero {
+    display: none;
+  }
+
+  /* Pills en ligne horizontale défilante */
+  .pill-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 7px;
+    width: 100%;
+  }
+
+  .pill {
+    font-size: 11.5px;
+    padding: 7px 11px;
+  }
+
+  .pill:hover {
+    transform: none;
+  }
+
   .card-right {
-    padding: 30px 22px;
+    padding: 36px 28px 40px;
+  }
+}
+
+/* ══════════════════════════════════════════════
+   RESPONSIVE — Mobile (≤ 480px)
+   ══════════════════════════════════════════════ */
+@media (max-width: 480px) {
+  body {
+    padding: 0;
+    background-image: none;
+    background: #edf2ee;
+    align-items: stretch;
+  }
+
+  body::before {
+    display: none;
+  }
+
+  .card {
+    border-radius: 0;
+    box-shadow: none;
+    min-height: 100dvh;
+    height: auto;
+    grid-template-rows: auto 1fr;
+  }
+
+  .card-right {
+    overflow-y: auto;
+  }
+
+  /* Header mobile ultra-compact */
+  .card-left {
+    padding: 16px 20px 14px;
+    border-radius: 0;
+  }
+
+  .card-left::before,
+  .card-left::after {
+    display: none;
+  }
+
+  .logo-text {
+    font-size: 13.5px;
+  }
+
+  /* Pills masquées sur très petit écran */
+  .pill-list {
+    display: none;
+  }
+
+  .card-right {
+    padding: 28px 20px 36px;
+    border-radius: 0;
+    justify-content: center;
+    flex: 1;
+  }
+
+  .card-right::before {
+    display: none;
+  }
+
+  .form-head {
+    margin-bottom: 24px;
+  }
+
+  .form-head h1 {
+    font-size: 26px;
+  }
+
+  /* Les champs prennent toute la hauteur disponible de façon confortable */
+  .input-wrap input {
+    padding: 14px 44px 14px 15px;
+    font-size: 16px;
+    /* 16px évite le zoom auto sur iOS */
   }
 
   .row-opts {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .btn-submit {
+    padding: 14px 24px;
+    font-size: 15px;
+    border-radius: 13px;
+    margin-top: 22px;
+  }
+
+  .form-footer {
+    font-size: 12.5px;
+  }
+}
+
+/* ══════════════════════════════════════════════
+   RESPONSIVE — Très petit mobile (≤ 360px)
+   ══════════════════════════════════════════════ */
+@media (max-width: 360px) {
+  .card-left {
+    padding: 16px 16px 14px;
+  }
+
+  .card-right {
+    padding: 22px 16px 30px;
+  }
+
+  .logo-text small {
+    display: none;
   }
 }
